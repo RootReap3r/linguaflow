@@ -178,6 +178,7 @@ input[type=text]:focus{border-color:var(--acc)}
   </div>
   <div class="topbar-right">
     <div class="streak-pill">🔥 <span id="streakNum">0</span></div>
+    <div class="streak-pill" id="immersionPill" title="Immersion level — grows 1% per day you practice" style="cursor:default">🌊 <span id="immersionPct">0</span>%</div>
     <select id="cefrSel" class="cefr-sel" onchange="document.getElementById('cefrBadge').textContent=this.value">
       <option value="A1">A1</option><option value="A2">A2</option><option value="B1" selected>B1</option>
       <option value="B2">B2</option><option value="C1">C1</option><option value="C2">C2</option>
@@ -357,6 +358,7 @@ input[type=text]:focus{border-color:var(--acc)}
     <div class="stat-card"><div class="stat-num" id="pStreak">0</div><div class="stat-lbl">🔥 Streak</div></div>
     <div class="stat-card"><div class="stat-num" id="pNodes">0</div><div class="stat-lbl">✓ Done</div></div>
     <div class="stat-card"><div class="stat-num" id="pSessions">0</div><div class="stat-lbl">💬 Sessions</div></div>
+    <div class="stat-card" title="AI speaks more of your target language each day you practice"><div class="stat-num" id="pImmersion">0%</div><div class="stat-lbl">🌊 Immersion</div></div>
   </div>
   <div style="background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r);padding:14px;margin-bottom:12px">
     <div style="font-weight:700;font-size:.83rem;margin-bottom:12px">CEFR Progress</div><div id="pBars"></div>
@@ -476,6 +478,23 @@ function updateStreak(){
   else{s=1;}
   localStorage.setItem('lf_streak',s);localStorage.setItem('lf_last',today);
   $('streakNum').textContent=s;
+  // Track total unique days practiced (never resets) for immersion
+  if(last!==today){
+    const td=parseInt(localStorage.getItem('lf_total_days')||'0')+1;
+    localStorage.setItem('lf_total_days',td);
+  }
+  $('immersionPct').textContent=getImmersionPct();
+}
+function getImmersionPct(){
+  return Math.min(95,parseInt(localStorage.getItem('lf_total_days')||'0'));
+}
+function getImmersionPrompt(lang){
+  const pct=getImmersionPct();
+  if(pct<=5)return `IMMERSION MODE (${pct}%): Respond almost entirely in English. Sprinkle in just 1-2 ${lang} words or short phrases per message (bold them). This is day ${pct} of their journey — keep it welcoming.`;
+  if(pct<=20)return `IMMERSION MODE (${pct}%): Respond ~${pct}% in ${lang}, rest in English. Use simple ${lang} sentences, then immediately translate them in parentheses. Gradually increase ${lang} exposure.`;
+  if(pct<=50)return `IMMERSION MODE (${pct}%): Respond roughly half in ${lang} and half in English. Lead with ${lang}, follow with English translation for tricky parts only. Student is getting comfortable.`;
+  if(pct<=80)return `IMMERSION MODE (${pct}%): Respond mostly in ${lang} (~${pct}%). Only include English for genuinely complex vocabulary. Push the student to understand from context.`;
+  return `IMMERSION MODE (${pct}%): Respond entirely in ${lang}. No English translations — student has earned full immersion. Use natural native-speaker language.`;
 }
 function logActivity(){
   const today=new Date().toISOString().split('T')[0];
@@ -822,12 +841,13 @@ async function startConvo(topicOverride,sysOverride){
   convoSys=sysOverride||`You are a warm ${lang} conversation partner — like a friendly native speaker, not a teacher. Student level: ${cefr}. Topic: ${topic}.
 
 HOW TO RESPOND:
-- Reply naturally in 1-3 short sentences in ${lang}. Think friend, not textbook.
+- Reply naturally in 1-3 short sentences. Think friend, not textbook.
 - Ask ONE follow-up question to keep the conversation going.
-- Put a casual English translation in parentheses on the next line.
 - Aim for 30-80 words total. Never more than 100. Never bullet points or lists.
 - NEVER correct grammar mid-conversation — corrections happen at the end.
-- React genuinely to what the student says.`;
+- React genuinely to what the student says.
+
+${getImmersionPrompt(lang)}`;
   const opener=await callConvoModel(convoSys,`Open a natural friendly conversation about "${topic}". One warm greeting then one easy question for a ${cefr} student. Be brief and friendly.`);
   chatHistory.push({role:'assistant',content:opener});
   const parts=opener.split('\n');
@@ -839,7 +859,9 @@ async function endSession(){
   if(!userResponses.length){alert('No speech recorded yet.');return;}
   const lang=getLang(),cefr=getCEFR();
   synth.cancel();setStatus('speaking','Generating review…');
-  const sys=`You are a supportive ${lang} teacher. Be warm and brief.`;
+  const ipct=getImmersionPct();
+  const reviewLang=ipct>=80?`Respond entirely in ${lang}.`:ipct>=50?`Respond mostly in ${lang}, with English translations for corrections only.`:ipct>=20?`Respond in English but highlight corrections in ${lang}.`:`Respond in English.`;
+  const sys=`You are a supportive ${lang} teacher. Be warm and brief. ${reviewLang}`;
   const prompt=`Student (${cefr}) said:\n${userResponses.map((t,i)=>`${i+1}. "${t}"`).join('\n')}\n\nFeedback:\n1. 2-3 things done well\n2. Up to 3 corrections (wrong → correct)\n3. One phrase to practice\nUnder 150 words.`;
   const review=await callClaude(sys,prompt);
   $('sumBox').style.display='block';$('sumText').textContent=review;
@@ -1239,7 +1261,7 @@ function renderToday(d){
 function renderProgress(){
   const streak=parseInt(localStorage.getItem('lf_streak')||'0');
   const sessions=parseInt(localStorage.getItem('lf_sessions')||'0');
-  $('pStreak').textContent=streak;$('pNodes').textContent=completedNodes.length;$('pSessions').textContent=sessions;
+  $('pStreak').textContent=streak;$('pNodes').textContent=completedNodes.length;$('pSessions').textContent=sessions;$('pImmersion').textContent=getImmersionPct()+'%';
   const bars=$('pBars');bars.innerHTML='';
   const cols={A1:'var(--grn)',A2:'#8bf0b8',B1:'#a89fff',B2:'var(--acc)',C1:'var(--amb)',C2:'var(--acc2)'};
   PATH_DATA.forEach(block=>{
