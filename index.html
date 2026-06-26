@@ -370,7 +370,7 @@ input[type=text]:focus{border-color:var(--acc)}
 </div>
 </main>
 <div class="overlay" id="nodeModal"><div class="mbox"><button class="mclose" onclick="closeModal('nodeModal')">✕</button><div style="font-size:1.5rem;margin-bottom:6px" id="nIcon"></div><h3 id="nTitle"></h3><p id="nDesc"></p><div class="mactions"><button class="btn btn-p" onclick="launchNode()">▶ Start</button><button class="btn btn-g" id="nMarkBtn" onclick="markNodeDone()">✓ Mark Done</button><button class="btn btn-a" onclick="openNodeTest()">⚡ Test Out</button><button class="btn btn-g" onclick="closeModal('nodeModal')">Close</button></div></div></div>
-<div class="overlay" id="settingsModal"><div class="mbox" style="max-width:500px"><button class="mclose" onclick="closeModal('settingsModal')">✕</button><h3>⚙️ Settings &amp; API Keys</h3><p>Keys saved to your device only — never in the code, never on GitHub.</p><div id="keyBlocks"></div><div style="margin-top:4px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">Voice style</label><select id="voiceStyleSel"><option value="natural">Natural &amp; warm</option><option value="clear">Clear &amp; precise</option><option value="slow">Slow &amp; deliberate</option></select></div><div class="mactions"><button class="btn btn-p" onclick="saveKeys()">💾 Save</button><button class="btn btn-g" onclick="testKeys()">🧪 Test Keys</button><button class="btn btn-g" onclick="closeModal('settingsModal')">Cancel</button></div><div id="keyTestOut" style="margin-top:10px"></div></div></div>
+<div class="overlay" id="settingsModal"><div class="mbox" style="max-width:500px"><button class="mclose" onclick="closeModal('settingsModal')">✕</button><h3>⚙️ Settings &amp; API Keys</h3><p>Keys saved to your device only — never in the code, never on GitHub.</p><div id="keyBlocks"></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">Voice style</label><select id="voiceStyleSel"><option value="natural">Natural &amp; warm</option><option value="clear">Clear &amp; precise</option><option value="slow">Slow &amp; deliberate</option></select></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">ElevenLabs Voice ID <span style="color:var(--acc);font-size:.7rem">(optional — overrides default voices)</span></label><input type="text" id="ki-el_voice_id" placeholder="e.g. pNInz6obpgDQGcFmaJgB" autocomplete="off" style="font-family:monospace;font-size:.8rem"><div class="mnote">Find your Voice ID at <a href="https://elevenlabs.io/voice-lab" target="_blank">elevenlabs.io/voice-lab</a> → click a voice → copy ID</div></div><div class="mactions"><button class="btn btn-p" onclick="saveKeys()">💾 Save</button><button class="btn btn-g" onclick="testKeys()">🧪 Test Keys</button><button class="btn btn-g" onclick="closeModal('settingsModal')">Cancel</button></div><div id="keyTestOut" style="margin-top:10px"></div></div></div>
 <div class="overlay" id="stModal"><div class="mbox"><button class="mclose" onclick="closeModal('stModal')">✕</button><h3>🧪 System Diagnostics</h3><div id="stOut" style="margin:12px 0"></div><button class="btn btn-g" onclick="closeModal('stModal')">Close</button></div></div>
 <div class="overlay" id="testModal"><div class="mbox"><button class="mclose" onclick="closeTestModal()">✕</button><div style="font-size:1.3rem;margin-bottom:5px" id="tIcon"></div><h3 id="tTitle"></h3><p id="tDesc" style="margin-bottom:10px"></p><div id="tProgRow" style="display:none;align-items:center;gap:8px;margin-bottom:10px"><div class="test-prog-track"><div class="test-prog-fill" id="tProgFill" style="width:0%"></div></div><span id="tProgLbl" style="font-size:.72rem;color:var(--mut);white-space:nowrap">0/4</span></div><div class="chat-box" id="tChatBox" style="height:210px;display:none"></div><div class="vbar" id="tVbar" style="display:none;margin-bottom:10px"><div class="sdot" id="tDot"></div><span style="font-size:.74rem;color:var(--mut);flex:1" id="tStatus">Ready</span><button class="btn btn-d" id="tListenBtn" onclick="testListen()">🎙 Speak</button><button class="btn btn-g" onclick="testSkip()" style="font-size:.76rem">Skip</button></div><div id="tResults" style="display:none"><div style="text-align:center;margin-bottom:14px"><div style="font-size:2.6rem;font-weight:700;font-family:'Space Grotesk',sans-serif" id="tScore"></div><div style="font-size:.8rem;color:var(--mut);margin-top:3px" id="tScoreLbl"></div></div><div class="stat-grid" style="margin-bottom:12px"><div class="stat-card"><div class="stat-num" id="tAcc">-</div><div class="stat-lbl">Accuracy</div></div><div class="stat-card"><div class="stat-num" id="tVoc">-</div><div class="stat-lbl">Vocabulary</div></div><div class="stat-card"><div class="stat-num" id="tFlu">-</div><div class="stat-lbl">Fluency</div></div></div><div style="background:var(--s2);border-radius:8px;padding:10px 12px;font-size:.8rem;line-height:1.65;margin-bottom:12px" id="tFeedback"></div><div id="tPassAct" style="display:none"><div style="background:rgba(62,232,138,.08);border:1px solid rgba(62,232,138,.25);border-radius:8px;padding:9px 12px;font-size:.8rem;color:var(--grn);margin-bottom:10px">🎉 <strong>Passed!</strong> <span id="tPassMsg"></span></div><div class="mactions"><button class="btn btn-gr" onclick="applyPass()">✓ Unlock</button><button class="btn btn-g" onclick="closeTestModal()">Close</button></div></div><div id="tFailAct" style="display:none"><div style="background:rgba(255,107,138,.08);border:1px solid rgba(255,107,138,.25);border-radius:8px;padding:9px 12px;font-size:.8rem;color:var(--acc2);margin-bottom:10px" id="tFailMsg"></div><div class="mactions"><button class="btn btn-p" onclick="startTest()">↺ Retry</button><button class="btn btn-g" onclick="closeTestModal()">Close</button></div></div></div><div id="tStart"><div class="mactions"><button class="btn btn-p" onclick="startTest()">▶ Begin Test</button><button class="btn btn-g" onclick="closeTestModal()">Cancel</button></div></div></div></div>
 <script>
@@ -403,6 +403,7 @@ const FUT_TENSE={Spanish:'Futuro Simple',French:'Futur Simple',Russian:'Future T
 // ════════════════════════════════
 let KEYS={};
 KEY_DEFS.forEach(k=>{KEYS[k.id]=localStorage.getItem('lf_key_'+k.id)||'';});
+KEYS.el_voice_id=localStorage.getItem('lf_el_voice_id')||'';
 let voiceStyle=localStorage.getItem('lf_voice_style')||'natural';
 let completedNodes=JSON.parse(localStorage.getItem('lf_nodes')||'[]');
 let ptVar='BR';
@@ -515,6 +516,7 @@ function openSettings(){
       <div class="mnote">→ <a href="https://${k.url}" target="_blank">${k.url}</a> · ${k.uses}</div>
     </div>`).join('');
   $('voiceStyleSel').value=voiceStyle;
+  const vid=$('ki-el_voice_id');if(vid)vid.value=KEYS.el_voice_id||'';
   openModal('settingsModal');
 }
 
@@ -524,6 +526,9 @@ function saveKeys(){
     if(val&&val!=='••••••••'){KEYS[k.id]=val;localStorage.setItem('lf_key_'+k.id,val);}
   });
   voiceStyle=$('voiceStyleSel').value;localStorage.setItem('lf_voice_style',voiceStyle);
+  const elv=$('ki-el_voice_id')?.value?.trim();
+  if(elv){KEYS.el_voice_id=elv;localStorage.setItem('lf_el_voice_id',elv);}
+  else{KEYS.el_voice_id='';localStorage.removeItem('lf_el_voice_id');}
   updateVoiceBadge();
   $('keyTestOut').innerHTML='<div style="color:var(--grn);font-size:.8rem">✓ Saved.</div>';
   setTimeout(()=>closeModal('settingsModal'),700);
@@ -653,7 +658,7 @@ function revealWords(el,text,durMs){
 
 async function speakEL(text,lang,onEnd,streamEl){
   setStatus('speaking');
-  const vid=EL_VOICES[lang]||EL_VOICES.Spanish;
+  const vid=KEYS.el_voice_id||EL_VOICES[lang]||EL_VOICES.Spanish;
   const sett=EL_STYLES[voiceStyle]||EL_STYLES.natural;
   try{
     const res=await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${vid}`,{method:'POST',headers:{'xi-api-key':KEYS.elevenlabs,'Content-Type':'application/json','Accept':'audio/mpeg'},body:JSON.stringify({text,model_id:'eleven_multilingual_v2',voice_settings:sett})});
