@@ -387,7 +387,7 @@ const EL_STYLES={natural:{stability:.52,similarity_boost:.82,style:.35,use_speak
 const KEY_DEFS=[
   {id:'claude',    label:'🟠 Claude',     sub:'Conversation, corrections, scoring',      url:'console.anthropic.com',  uses:'Conversation + evaluation'},
   {id:'deepseek',  label:'🔵 DeepSeek',   sub:'Verb drills, vocabulary (40x cheaper)',   url:'platform.deepseek.com',  uses:'Verb drills'},
-  {id:'qwen',      label:'🟣 Qwen',       sub:'Daily lessons, cultural content',          url:'dashscope.aliyuncs.com', uses:'Daily content'},
+  {id:'qwen',      label:'🟣 Qwen',       sub:'Daily lessons, cultural content',          url:'ws-csw7l8xa6p3nrkl6.ap-southeast-1.maas.aliyuncs.com', uses:'Daily content'},
   {id:'elevenlabs',label:'✨ ElevenLabs', sub:'Natural multilingual voice',              url:'elevenlabs.io',          uses:'Voice output'},
   {id:'openai',    label:'🎙 OpenAI',     sub:'Whisper STT — mic on iPhone Safari',      url:'platform.openai.com',    uses:'Speech recognition'},
 ];
@@ -546,7 +546,7 @@ async function testKeys(){
       let ok=false,extra='';
       if(k.id==='claude'){const r=await fetch('/api/claude/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:5,messages:[{role:'user',content:'OK'}]})});ok=r.ok;}
       else if(k.id==='deepseek'){const r=await fetch('https://api.deepseek.com/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'deepseek-chat',max_tokens:5,messages:[{role:'user',content:'OK'}]})});ok=r.ok;}
-      else if(k.id==='qwen'){const r=await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'qwen-max',max_tokens:5,messages:[{role:'user',content:'OK'}]})});ok=r.ok;}
+      else if(k.id==='qwen'){const r=await fetch('/api/qwen/compatible-mode/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'qwen-max',max_tokens:5,messages:[{role:'user',content:'OK'}]})});ok=r.ok;}
       else if(k.id==='elevenlabs'){const r=await fetch('https://api.elevenlabs.io/v1/user',{headers:{'xi-api-key':key}});if(r.ok){const d=await r.json();const u=d.subscription?.character_count||0,l=d.subscription?.character_limit||0;extra=` — ${u.toLocaleString()}/${l.toLocaleString()} chars`;}ok=r.ok;}
       else if(k.id==='openai'){const r=await fetch('https://api.openai.com/v1/models',{headers:{'Authorization':'Bearer '+key}});ok=r.ok;}
       results.push(`${k.label} ${ok?'✓'+extra:'✗ — check key'}`);
@@ -585,7 +585,7 @@ async function runSelfTest(){
       let r;
       if(id==='claude')r=await fetch('/api/claude/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':KEYS[id],'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:5,messages:[{role:'user',content:'OK'}]})});
       else if(id==='deepseek')r=await fetch('https://api.deepseek.com/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+KEYS[id]},body:JSON.stringify({model:'deepseek-chat',max_tokens:5,messages:[{role:'user',content:'OK'}]})});
-      else r=await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+KEYS[id]},body:JSON.stringify({model:'qwen-max',max_tokens:5,messages:[{role:'user',content:'OK'}]})});
+      else r=await fetch('/api/qwen/compatible-mode/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+KEYS[id]},body:JSON.stringify({model:'qwen-max',max_tokens:5,messages:[{role:'user',content:'OK'}]})});
       row(id.charAt(0).toUpperCase()+id.slice(1)+' API',r.ok?'pass':'fail',r.ok?'Connected.':'HTTP '+r.status);
     }catch(e){row(id+' API','fail',e.message);}
   }
@@ -613,13 +613,13 @@ async function callDeepSeek(sys,msg){
 }
 async function callQwen(sys,msg){
   const key=KEYS.qwen;if(!key)return callClaude(sys,msg);
-  const res=await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'qwen-max',max_tokens:1200,messages:[{role:'system',content:sys},{role:'user',content:msg}]})});
+  const res=await fetch('/api/qwen/compatible-mode/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'qwen-max',max_tokens:1200,messages:[{role:'system',content:sys},{role:'user',content:msg}]})});
   const d=await res.json();if(d.error||!d.choices)return callClaude(sys,msg);
   return d.choices?.[0]?.message?.content||'';
 }
 async function callQwenSearch(sys,msg){
   const key=KEYS.qwen;if(!key)return callClaudeSearch(sys,msg);
-  const res=await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'qwen-max',max_tokens:1800,messages:[{role:'system',content:sys},{role:'user',content:msg}],tools:[{type:'web_search',web_search:{enable:true,search_result:true}}]})});
+  const res=await fetch('/api/qwen/compatible-mode/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'qwen-max',max_tokens:1800,messages:[{role:'system',content:sys},{role:'user',content:msg}],tools:[{type:'web_search',web_search:{enable:true,search_result:true}}]})});
   const d=await res.json();if(d.error||!d.choices)return callClaudeSearch(sys,msg);
   return d.choices?.[0]?.message?.content||'';
 }
@@ -634,7 +634,7 @@ async function callConvoModel(sys,msg,hist=[]){
     const d=await res.json();if(!d.error&&d.choices)return d.choices[0].message.content||'';
   }
   if(convoModel==='qwen'&&KEYS.qwen){
-    const res=await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+KEYS.qwen},body:JSON.stringify({model:'qwen-max',max_tokens:200,messages:[{role:'system',content:sys},...hist,{role:'user',content:msg}]})});
+    const res=await fetch('/api/qwen/compatible-mode/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+KEYS.qwen},body:JSON.stringify({model:'qwen-max',max_tokens:200,messages:[{role:'system',content:sys},...hist,{role:'user',content:msg}]})});
     const d=await res.json();if(!d.error&&d.choices)return d.choices[0].message.content||'';
   }
   return callClaude(sys,msg,hist);

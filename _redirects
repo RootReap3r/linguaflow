@@ -1,1 +1,2 @@
 /api/claude/* https://api.anthropic.com/:splat 200
+/api/qwen/* https://ws-csw7l8xa6p3nrkl6.ap-southeast-1.maas.aliyuncs.com/:splat 200
