@@ -382,7 +382,7 @@ const PATH_DATA = [{"level": "A1", "label": "Beginner", "desc": "Everyday expres
 const LANG_META={Spanish:{flag:'🇪🇸',code:'ES'},French:{flag:'🇫🇷',code:'FR'},Russian:{flag:'🇷🇺',code:'RU'},German:{flag:'🇩🇪',code:'DE'},Portuguese:{flag:'🇧🇷',code:'PT'}};
 const LANG_INFO={Spanish:{country:'Spain and Latin America',news:'Spanish-speaking world'},French:{country:'France',news:'France'},Russian:{country:'Russia',news:'Russia'},German:{country:'Germany',news:'Germany'},Portuguese:{country:'Brazil or Portugal',news:'Brazil'}};
 const LANG_CODES={Spanish:'es-ES',French:'fr-FR',Russian:'ru-RU',German:'de-DE',Portuguese:'pt-BR'};
-const EL_VOICES={Spanish:'pNInz6obpgDQGcFmaJgB',French:'jBpfuIE2acCO8z3wKNLl',Russian:'AZnzlk1XvdvUeBnXmlld',German:'GBv7mTt0atIp3Br8iCZE',Portuguese:'pNInz6obpgDQGcFmaJgB'};
+const EL_VOICES={Spanish:'Y6B7kfk4Eyet3NowpN3g',French:'Y6B7kfk4Eyet3NowpN3g',Russian:'Y6B7kfk4Eyet3NowpN3g',German:'Y6B7kfk4Eyet3NowpN3g',Portuguese:'Y6B7kfk4Eyet3NowpN3g'};
 const EL_STYLES={natural:{stability:.52,similarity_boost:.82,style:.35,use_speaker_boost:true},clear:{stability:.75,similarity_boost:.75,style:.1,use_speaker_boost:false},slow:{stability:.65,similarity_boost:.8,style:.2,use_speaker_boost:true}};
 const KEY_DEFS=[
   {id:'claude',    label:'🟠 Claude',     sub:'Conversation, corrections, scoring',      url:'console.anthropic.com',  uses:'Conversation + evaluation'},
@@ -399,7 +399,7 @@ const FUT_TENSE={Spanish:'Futuro Simple',French:'Futur Simple',Russian:'Future T
 // ════════════════════════════════
 let KEYS={};
 KEY_DEFS.forEach(k=>{KEYS[k.id]=localStorage.getItem('lf_key_'+k.id)||'';});
-KEYS.el_voice_id=localStorage.getItem('lf_el_voice_id')||'';
+KEYS.el_voice_id=localStorage.getItem('lf_el_voice_id')||'Y6B7kfk4Eyet3NowpN3g';
 let voiceStyle=localStorage.getItem('lf_voice_style')||'natural';
 let completedNodes=JSON.parse(localStorage.getItem('lf_nodes')||'[]');
 let ptVar='BR';
