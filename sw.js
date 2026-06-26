@@ -5,7 +5,11 @@ const ASSETS = [
   '/index.html',
   '/manifest.json',
   '/icon-192.png',
-  '/icon-512.png'
+  '/icon-512.png',
+  'assets/aria-idle.jpeg',
+  'assets/aria-talking.jpeg',
+  'assets/aria-listening.jpeg',
+  'assets/aria-happy.jpeg'
 ];
 
 self.addEventListener('install', e => {

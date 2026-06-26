@@ -80,6 +80,7 @@ main{flex:1;padding:16px;padding-bottom:calc(80px + env(safe-area-inset-bottom))
 .mbtn.active{background:var(--acc);color:#fff}
 .convo-layout{display:grid;grid-template-columns:155px 1fr;gap:12px;align-items:start}
 @media(max-width:560px){.convo-layout{grid-template-columns:1fr}.av-panel{aspect-ratio:1;max-height:160px}}
+
 .av-panel{background:linear-gradient(160deg,#1a1f4e,#2d3282);border:2px solid var(--bdr);border-radius:var(--r);overflow:hidden;aspect-ratio:155/260;position:relative}
 .av-panel.speaking{border-color:var(--acc);box-shadow:0 0 20px rgba(91,141,238,0.3)}
 .av-panel.listening{border-color:var(--acc2);box-shadow:0 0 20px rgba(255,107,138,0.2)}
@@ -179,7 +180,7 @@ input[type=text]:focus{border-color:var(--acc)}
 .hero-state{font-size:.72rem;color:rgba(255,255,255,0.65);display:block;margin-top:2px}
 .av-aria-img{width:100%;height:100%;object-fit:cover;object-position:top center;transition:opacity 0.3s ease}
 @media(min-width:768px){
-  #bnav{top:0;bottom:0;left:0;right:auto;width:80px;flex-direction:column;border-top:none;border-right:1px solid rgba(124,111,255,.18);padding:calc(12px + env(safe-area-inset-top)) 0 12px}
+  #bnav{top:0;bottom:0;left:0;right:auto;width:80px;flex-direction:column;border-top:none;border-right:1px solid var(--bdr);padding:calc(12px + env(safe-area-inset-top)) 0 12px;box-shadow:2px 0 12px rgba(0,0,0,0.06)}
   main{margin-left:80px}
   .bn{flex-direction:column;gap:3px;padding:10px 0;width:100%}
   .bn-l{font-size:.55rem}
@@ -750,78 +751,31 @@ function setStatus(state,lbl){
   setAvatarState(state);
 }
 
-// ── ORB ANIMATION ──────────────────────────────────────────
-let orbState='idle';
-let orbRaf=null;
+// ── ARIA AVATAR ──────────────────────────────────────────
+const ARIA_IMGS={
+  idle:'assets/aria-idle.jpeg',
+  ready:'assets/aria-idle.jpeg',
+  speaking:'assets/aria-talking.jpeg',
+  listening:'assets/aria-listening.jpeg',
+  thinking:'assets/aria-listening.jpeg',
+  happy:'assets/aria-happy.jpeg'
+};
 
 function initOrb(){
-  ['heroOrb','avOrb'].forEach(id=>{
-    const c=document.getElementById(id);if(!c)return;
-    const ctx=c.getContext('2d');
-    if(!ctx)return;
-    c._ctx=ctx;
-    c._t=0;
+  // preload all images
+  Object.values(ARIA_IMGS).forEach(src=>{const i=new Image();i.src=src;});
+}
+
+function setAriaImage(state){
+  const src=ARIA_IMGS[state]||ARIA_IMGS.idle;
+  ['ariaImg','avAriaImg'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    if(el.src.endsWith(src.split('/').pop()))return; // already correct
+    el.style.opacity='0';
+    setTimeout(()=>{el.src=src;el.style.opacity='1';},200);
   });
-  animateOrbs();
 }
-
-function animateOrbs(){
-  const t=performance.now()/1000;
-  drawOrb('heroOrb',t,220,220,orbState);
-  drawOrb('avOrb',t,155,260,orbState);
-  orbRaf=requestAnimationFrame(animateOrbs);
-}
-
-function drawOrb(id,t,w,h,state){
-  const c=document.getElementById(id);if(!c||!c._ctx)return;
-  const ctx=c._ctx;
-  const cx=w/2, cy=h*0.42;
-  const R = Math.min(w,h)*0.33;
-  ctx.clearRect(0,0,w,h);
-  const cols={
-    idle:     {inner:'#7c6fff',outer:'rgba(124,111,255,0)',glow:'rgba(124,111,255,0.3)',speed:0.4},
-    speaking: {inner:'#3ee88a',outer:'rgba(62,232,138,0)',glow:'rgba(62,232,138,0.4)',speed:1.4},
-    listening:{inner:'#ff6b8a',outer:'rgba(255,107,138,0)',glow:'rgba(255,107,138,0.4)',speed:0.9},
-    thinking: {inner:'#f5a623',outer:'rgba(245,166,35,0)',glow:'rgba(245,166,35,0.3)',speed:0.7},
-    ready:    {inner:'#7c6fff',outer:'rgba(124,111,255,0)',glow:'rgba(124,111,255,0.3)',speed:0.4},
-  };
-  const col=cols[state]||cols.idle;
-  const spd=col.speed;
-  for(let i=3;i>=1;i--){
-    const amp=state==='speaking'?0.18:0.06;
-    const ringR=R*(1.1+i*0.22+Math.sin(t*spd*1.1+i)*amp);
-    const grd=ctx.createRadialGradient(cx,cy,ringR*0.7,cx,cy,ringR*1.15);
-    const alpha=(4-i)*0.1;
-    grd.addColorStop(0,col.glow.replace(/[\d.]+\)$/,alpha+')'));
-    grd.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.beginPath();ctx.arc(cx,cy,ringR,0,Math.PI*2);
-    ctx.fillStyle=grd;ctx.fill();
-  }
-  const pts=64;
-  ctx.beginPath();
-  for(let i=0;i<=pts;i++){
-    const angle=(i/pts)*Math.PI*2;
-    const noise=
-      Math.sin(angle*3+t*spd)*0.055+
-      Math.sin(angle*5-t*spd*0.7)*0.035+
-      Math.sin(angle*7+t*spd*1.3)*0.02+
-      (state==='speaking'?Math.sin(angle*2+t*spd*2.5)*0.04:0);
-    const r=R*(1+noise);
-    const x=cx+Math.cos(angle)*r;
-    const y=cy+Math.sin(angle)*r;
-    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
-  }
-  ctx.closePath();
-  const grd=ctx.createRadialGradient(cx-R*0.25,cy-R*0.25,R*0.05,cx,cy,R*1.15);
-  grd.addColorStop(0,'rgba(255,255,255,0.22)');
-  grd.addColorStop(0.3,col.inner);
-  grd.addColorStop(1,col.outer);
-  ctx.fillStyle=grd;ctx.fill();
-  const hl=ctx.createRadialGradient(cx-R*0.3,cy-R*0.35,0,cx-R*0.3,cy-R*0.35,R*0.55);
-  hl.addColorStop(0,'rgba(255,255,255,0.35)');
-  hl.addColorStop(1,'rgba(255,255,255,0)');
-  ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);
-  ctx.fillStyle=hl;ctx.fill();
   if(state==='speaking'){
     const bw=w*0.5, by=cy+R+16, bars=7;
     for(let i=0;i<bars;i++){
@@ -838,7 +792,7 @@ function drawOrb(id,t,w,h,state){
 }
 
 function setAvatarState(state){
-  orbState=state;
+  setAriaImage(state);
   const panel=$('avPanel'),lbl=$('avState'),ring=$('heroRing'),hs=$('heroState');
   if(panel)panel.className='av-panel'+(state==='speaking'?' speaking':state==='listening'?' listening':'');
   if(lbl)lbl.textContent={speaking:'Speaking…',listening:'Listening…',idle:'Waiting…',thinking:'Thinking…'}[state]||'Waiting…';
@@ -922,6 +876,7 @@ async function endSession(){
   const sys=`You are a supportive ${lang} teacher. Be warm and brief. ${reviewLang}`;
   const prompt=`Student (${cefr}) said:\n${userResponses.map((t,i)=>`${i+1}. "${t}"`).join('\n')}\n\nFeedback:\n1. 2-3 things done well\n2. Up to 3 corrections (wrong → correct)\n3. One phrase to practice\nUnder 150 words.`;
   const review=await callClaude(sys,prompt);
+  setAriaImage('happy');setTimeout(()=>setAriaImage('idle'),4000);
   $('sumBox').style.display='block';$('sumText').textContent=review;
   $('sumBox').scrollIntoView({behavior:'smooth'});setStatus('ready');
 }
