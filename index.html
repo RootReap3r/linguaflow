@@ -776,20 +776,6 @@ function setAriaImage(state){
     setTimeout(()=>{el.src=src;el.style.opacity='1';},200);
   });
 }
-  if(state==='speaking'){
-    const bw=w*0.5, by=cy+R+16, bars=7;
-    for(let i=0;i<bars;i++){
-      const bx=cx-bw/2+(i/(bars-1))*bw;
-      const bh=8+Math.abs(Math.sin(t*4+i*0.7))*18;
-      ctx.fillStyle=col.inner;ctx.globalAlpha=0.7;
-      ctx.beginPath();
-      if(ctx.roundRect)ctx.roundRect(bx-2,by-bh,4,bh,2);
-      else{ctx.rect(bx-2,by-bh,4,bh);}
-      ctx.fill();
-    }
-    ctx.globalAlpha=1;
-  }
-}
 
 function setAvatarState(state){
   setAriaImage(state);
