@@ -15,7 +15,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;700&display=swap');
 :root{--bg:#f0f2f7;--s1:#ffffff;--s2:#f5f7fb;--s3:#eaecf4;--acc:#5b8dee;--acc2:#ff6b8a;--grn:#22c55e;--amb:#f59e0b;--txt:#1a1d2e;--mut:#8892a4;--bdr:#e2e6f0;--r:16px;--shadow:0 2px 12px rgba(0,0,0,0.08)}
 *{box-sizing:border-box;margin:0;padding:0}
-html{height:-webkit-fill-available;overflow:hidden}
+html{height:-webkit-fill-available;overflow-y:auto}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;min-height:-webkit-fill-available;display:flex;flex-direction:column;font-size:14px;-webkit-tap-highlight-color:transparent;overscroll-behavior:none;overflow-y:auto;-webkit-overflow-scrolling:touch;}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:3px}
 #topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:calc(12px + env(safe-area-inset-top)) 16px 10px;background:rgba(255,255,255,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);gap:8px;flex-wrap:wrap}
@@ -325,8 +325,7 @@ input[type=text]:focus{border-color:var(--acc)}
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
     <span style="font-size:.73rem;color:var(--mut);font-weight:600">Model:</span>
     <div class="model-toggle">
-      <button class="mbtn active" id="mb-claude" onclick="setModel('claude',this)">🟠 Claude</button>
-      <button class="mbtn" id="mb-deepseek" onclick="setModel('deepseek',this)">🔵 DeepSeek</button>
+      <button class="mbtn active" id="mb-deepseek" onclick="setModel('deepseek',this)">🔵 DeepSeek</button>
       <button class="mbtn" id="mb-qwen" onclick="setModel('qwen',this)">🟣 Qwen</button>
     </div>
   </div>
@@ -417,6 +416,7 @@ input[type=text]:focus{border-color:var(--acc)}
 <div class="overlay" id="nodeModal"><div class="mbox"><button class="mclose" onclick="closeModal('nodeModal')">✕</button><div style="font-size:1.5rem;margin-bottom:6px" id="nIcon"></div><h3 id="nTitle"></h3><p id="nDesc"></p><div class="mactions"><button class="btn btn-p" onclick="launchNode()">▶ Start</button><button class="btn btn-g" id="nMarkBtn" onclick="markNodeDone()">✓ Mark Done</button><button class="btn btn-a" onclick="openNodeTest()">⚡ Test Out</button><button class="btn btn-g" onclick="closeModal('nodeModal')">Close</button></div></div></div>
 <div class="overlay" id="settingsModal"><div class="mbox" style="max-width:500px"><button class="mclose" onclick="closeModal('settingsModal')">✕</button><h3>⚙️ Settings &amp; API Keys</h3><p>Keys saved to your device only — never in the code, never on GitHub.</p><div id="keyBlocks"></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">Voice style</label><select id="voiceStyleSel"><option value="natural">Natural &amp; warm</option><option value="clear">Clear &amp; precise</option><option value="slow">Slow &amp; deliberate</option></select></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">ElevenLabs Voice ID <span style="color:var(--acc);font-size:.7rem">(optional — overrides default voices)</span></label><input type="text" id="ki-el_voice_id" placeholder="e.g. pNInz6obpgDQGcFmaJgB" autocomplete="off" style="font-family:monospace;font-size:.8rem"><div class="mnote">Find your Voice ID at <a href="https://elevenlabs.io/voice-lab" target="_blank">elevenlabs.io/voice-lab</a> → click a voice → copy ID</div></div><div class="mactions"><button class="btn btn-p" onclick="saveKeys()">💾 Save</button><button class="btn btn-g" onclick="testKeys()">🧪 Test Keys</button><button class="btn btn-g" onclick="closeModal('settingsModal')">Cancel</button></div><div id="keyTestOut" style="margin-top:10px"></div></div></div>
 <div class="overlay" id="stModal"><div class="mbox"><button class="mclose" onclick="closeModal('stModal')">✕</button><h3>🧪 System Diagnostics</h3><div id="stOut" style="margin:12px 0"></div><button class="btn btn-g" onclick="closeModal('stModal')">Close</button></div></div>
+<div class="overlay" id="guidedLessonModal"><div class="mbox" style="max-width:520px;padding:0;overflow:hidden"><div style="background:linear-gradient(135deg,#1a1f4e,#2d3282);padding:16px 20px;display:flex;align-items:center;justify-content:space-between"><div><div id="glIcon" style="font-size:1.4rem;display:inline;margin-right:8px"></div><span id="glTitle" style="font-family:'Space Grotesk',sans-serif;font-weight:700;color:#fff;font-size:.98rem"></span></div><button class="mclose" style="color:rgba(255,255,255,0.7)" onclick="closeGuidedLesson()">✕</button></div><div id="glChat" style="height:340px;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px;background:#f8f9fc"></div><div style="padding:10px 14px;border-top:1px solid var(--bdr);display:flex;gap:8px;align-items:center;background:#fff"><input type="text" id="glInput" placeholder="Type your response…" style="flex:1;padding:8px 12px;border:1px solid var(--bdr);border-radius:8px;font-size:.9rem;outline:none" onkeydown="if(event.key==='Enter')glSend()"><button class="btn btn-d" style="padding:8px 10px;font-size:.8rem" onclick="glListen()">🎙</button><button class="btn btn-p" style="padding:8px 14px;font-size:.8rem" onclick="glSend()">Send</button></div></div></div>
 <div class="overlay" id="testModal"><div class="mbox"><button class="mclose" onclick="closeTestModal()">✕</button><div style="font-size:1.3rem;margin-bottom:5px" id="tIcon"></div><h3 id="tTitle"></h3><p id="tDesc" style="margin-bottom:10px"></p><div id="tProgRow" style="display:none;align-items:center;gap:8px;margin-bottom:10px"><div class="test-prog-track"><div class="test-prog-fill" id="tProgFill" style="width:0%"></div></div><span id="tProgLbl" style="font-size:.72rem;color:var(--mut);white-space:nowrap">0/4</span></div><div class="chat-box" id="tChatBox" style="height:210px;display:none"></div><div class="vbar" id="tVbar" style="display:none;margin-bottom:10px"><div class="sdot" id="tDot"></div><span style="font-size:.74rem;color:var(--mut);flex:1" id="tStatus">Ready</span><button class="btn btn-d" id="tListenBtn" onclick="testListen()">🎙 Speak</button><button class="btn btn-g" onclick="testSkip()" style="font-size:.76rem">Skip</button></div><div id="tResults" style="display:none"><div style="text-align:center;margin-bottom:14px"><div style="font-size:2.6rem;font-weight:700;font-family:'Space Grotesk',sans-serif" id="tScore"></div><div style="font-size:.8rem;color:var(--mut);margin-top:3px" id="tScoreLbl"></div></div><div class="stat-grid" style="margin-bottom:12px"><div class="stat-card"><div class="stat-num" id="tAcc">-</div><div class="stat-lbl">Accuracy</div></div><div class="stat-card"><div class="stat-num" id="tVoc">-</div><div class="stat-lbl">Vocabulary</div></div><div class="stat-card"><div class="stat-num" id="tFlu">-</div><div class="stat-lbl">Fluency</div></div></div><div style="background:var(--s2);border-radius:8px;padding:10px 12px;font-size:.8rem;line-height:1.65;margin-bottom:12px" id="tFeedback"></div><div id="tPassAct" style="display:none"><div style="background:rgba(62,232,138,.08);border:1px solid rgba(62,232,138,.25);border-radius:8px;padding:9px 12px;font-size:.8rem;color:var(--grn);margin-bottom:10px">🎉 <strong>Passed!</strong> <span id="tPassMsg"></span></div><div class="mactions"><button class="btn btn-gr" onclick="applyPass()">✓ Unlock</button><button class="btn btn-g" onclick="closeTestModal()">Close</button></div></div><div id="tFailAct" style="display:none"><div style="background:rgba(255,107,138,.08);border:1px solid rgba(255,107,138,.25);border-radius:8px;padding:9px 12px;font-size:.8rem;color:var(--acc2);margin-bottom:10px" id="tFailMsg"></div><div class="mactions"><button class="btn btn-p" onclick="startTest()">↺ Retry</button><button class="btn btn-g" onclick="closeTestModal()">Close</button></div></div></div><div id="tStart"><div class="mactions"><button class="btn btn-p" onclick="startTest()">▶ Begin Test</button><button class="btn btn-g" onclick="closeTestModal()">Cancel</button></div></div></div></div>
 <script>
 const WL_DATA = {"Spanish": {"pronouns": ["yo — I", "tú — you (inf.)", "él — he", "ella — she", "nosotros — we", "vosotros — you all (Spain)", "ellos/ellas — they", "usted — you (formal)", "ustedes — you all (LA)", "me — me", "te — you", "le — him/her", "nos — us", "se — himself/herself", "con — with (prep.)"], "conjunctions": ["y — and", "o — or", "pero — but", "porque — because", "que — that", "si — if", "aunque — although", "cuando — when", "mientras — while", "sino — but rather", "como — as", "pues — so", "ni — neither/nor", "ya que — since", "a menos que — unless"], "adverbs": ["muy — very", "bien — well", "mal — badly", "también — also", "ya — already", "aquí — here", "allí — there", "siempre — always", "nunca — never", "hoy — today", "mañana — tomorrow", "ayer — yesterday", "mucho — a lot", "poco — a little", "casi — almost"], "prepositions": ["de — of/from", "a — to", "en — in/on", "con — with", "por — by/for", "para — for/to", "sin — without", "sobre — on/about", "entre — between", "hasta — until", "desde — since", "hacia — towards", "ante — before", "bajo — under", "según — according to"], "question_words": ["¿qué? — what", "¿quién? — who", "¿dónde? — where", "¿cuándo? — when", "¿por qué? — why", "¿cómo? — how", "¿cuánto? — how much", "¿cuántos? — how many", "¿cuál? — which", "¿adónde? — where to"], "numbers": ["uno — 1", "dos — 2", "tres — 3", "cuatro — 4", "cinco — 5", "seis — 6", "siete — 7", "ocho — 8", "nueve — 9", "diez — 10", "veinte — 20", "treinta — 30", "cien — 100", "mil — 1000", "primero — 1st"], "adjectives": ["bueno — good", "malo — bad", "grande — big", "pequeño — small", "nuevo — new", "viejo — old", "mucho — much", "poco — little", "mismo — same", "otro — other", "todo — all", "cada — each", "último — last", "propio — own", "diferente — different"], "connectors": ["primero — first", "luego — then", "después — after", "finalmente — finally", "además — moreover", "sin embargo — however", "por lo tanto — therefore", "en cambio — on the other hand", "es decir — that is", "por ejemplo — for example", "sobre todo — above all", "a pesar de — despite", "en cuanto a — regarding", "tanto…como — both…and", "no solo…sino — not only…but"]}, "French": {"pronouns": ["je — I", "tu — you (inf.)", "il — he", "elle — she", "nous — we", "vous — you (pl./formal)", "ils/elles — they", "me — me", "te — you", "lui — him/her", "nous — us", "se — himself/herself", "y — there", "en — of it", "avec — with (prep.)"], "conjunctions": ["et — and", "ou — or", "mais — but", "parce que — because", "que — that", "si — if", "bien que — although", "quand — when", "pendant que — while", "ni — neither/nor", "donc — so", "car — because", "or — now/yet", "puisque — since", "comme — as"], "adverbs": ["très — very", "bien — well", "mal — badly", "aussi — also", "déjà — already", "ici — here", "là — there", "toujours — always", "jamais — never", "aujourd'hui — today", "demain — tomorrow", "hier — yesterday", "beaucoup — a lot", "peu — a little", "presque — almost"], "prepositions": ["de — of/from", "à — to/at", "en — in", "avec — with", "pour — for", "sans — without", "sur — on", "entre — between", "jusqu'à — until", "depuis — since", "vers — towards", "devant — in front of", "derrière — behind", "sous — under", "selon — according to"], "question_words": ["quoi/que — what", "qui — who", "où — where", "quand — when", "pourquoi — why", "comment — how", "combien — how much", "quel/quelle — which", "lequel — which one", "d'où — from where"], "numbers": ["un — 1", "deux — 2", "trois — 3", "quatre — 4", "cinq — 5", "six — 6", "sept — 7", "huit — 8", "neuf — 9", "dix — 10", "vingt — 20", "trente — 30", "cent — 100", "mille — 1000", "premier — 1st"], "adjectives": ["bon — good", "mauvais — bad", "grand — big", "petit — small", "nouveau — new", "vieux — old", "même — same", "autre — other", "tout — all", "chaque — each", "dernier — last", "propre — own", "différent — different", "vrai — true", "seul — alone/only"], "connectors": ["d'abord — first", "puis — then", "ensuite — next", "enfin — finally", "de plus — moreover", "cependant — however", "donc — therefore", "en revanche — on the other hand", "c'est-à-dire — that is", "par exemple — for example", "surtout — above all", "malgré — despite", "quant à — regarding", "non seulement…mais — not only…but", "à cause de — because of"]}, "Russian": {"pronouns": ["я — I", "ты — you (inf.)", "он — he", "она — she", "мы — we", "вы — you (pl./formal)", "они — they", "мне — to me", "тебе — to you", "ему — to him", "ей — to her", "нам — to us", "себя — oneself", "с — with (prep.)", "кто — who"], "conjunctions": ["и — and", "или — or", "но — but", "потому что — because", "что — that", "если — if", "хотя — although", "когда — when", "пока — while", "ни…ни — neither…nor", "поэтому — so", "так как — since", "а — and/but", "однако — however", "либо — either/or"], "adverbs": ["очень — very", "хорошо — well", "плохо — badly", "тоже — also", "уже — already", "здесь — here", "там — there", "всегда — always", "никогда — never", "сегодня — today", "завтра — tomorrow", "вчера — yesterday", "много — a lot", "мало — a little", "почти — almost"], "prepositions": ["в — in/into", "на — on/onto", "с — with/from", "по — along/by", "о — about", "у — by/at", "к — towards", "от — from", "до — until/to", "из — from/out of", "за — behind/for", "над — above", "под — under", "перед — in front of", "между — between"], "question_words": ["что? — what", "кто? — who", "где? — where", "когда? — when", "почему? — why", "как? — how", "сколько? — how much", "какой? — which", "куда? — where to", "откуда? — from where"], "numbers": ["один — 1", "два — 2", "три — 3", "четыре — 4", "пять — 5", "шесть — 6", "семь — 7", "восемь — 8", "девять — 9", "десять — 10", "двадцать — 20", "тридцать — 30", "сто — 100", "тысяча — 1000", "первый — 1st"], "adjectives": ["хороший — good", "плохой — bad", "большой — big", "маленький — small", "новый — new", "старый — old", "такой — such", "другой — other", "весь — all", "каждый — each", "последний — last", "сам — oneself", "разный — different", "настоящий — real", "один — one/alone"], "connectors": ["во-первых — first", "потом — then", "затем — next", "наконец — finally", "кроме того — moreover", "однако — however", "поэтому — therefore", "с другой стороны — on the other hand", "то есть — that is", "например — for example", "прежде всего — above all", "несмотря на — despite", "что касается — regarding", "не только…но и — not only…but", "из-за — because of"]}, "German": {"pronouns": ["ich — I", "du — you (inf.)", "er — he", "sie — she", "wir — we", "ihr — you (pl.)", "sie/Sie — they/you (formal)", "mir — to me", "dir — to you", "ihm — to him", "ihr — to her", "uns — to us", "sich — himself/herself", "mich — me (acc.)", "mit — with (prep.)"], "conjunctions": ["und — and", "oder — or", "aber — but", "weil — because", "dass — that", "wenn — if/when", "obwohl — although", "während — while", "weder…noch — neither…nor", "denn — because", "also — so", "sondern — but rather", "als — than/when", "bevor — before", "nachdem — after"], "adverbs": ["sehr — very", "gut — well", "schlecht — badly", "auch — also", "schon — already", "hier — here", "dort — there", "immer — always", "nie — never", "heute — today", "morgen — tomorrow", "gestern — yesterday", "viel — a lot", "wenig — a little", "fast — almost"], "prepositions": ["von — from/of", "zu — to/at", "in — in", "mit — with", "für — for", "auf — on", "an — at/on", "über — over/about", "unter — under", "zwischen — between", "nach — after/to", "seit — since", "bis — until", "durch — through", "gegen — against"], "question_words": ["was? — what", "wer? — who", "wo? — where", "wann? — when", "warum? — why", "wie? — how", "wie viel? — how much", "welche? — which", "wohin? — where to", "woher? — from where"], "numbers": ["eins — 1", "zwei — 2", "drei — 3", "vier — 4", "fünf — 5", "sechs — 6", "sieben — 7", "acht — 8", "neun — 9", "zehn — 10", "zwanzig — 20", "dreißig — 30", "hundert — 100", "tausend — 1000", "erste — 1st"], "adjectives": ["gut — good", "schlecht — bad", "groß — big", "klein — small", "neu — new", "alt — old", "gleich — same", "andere — other", "ganz — all/whole", "jede — each", "letzte — last", "eigen — own", "verschieden — different", "wahr — true", "allein — alone"], "connectors": ["erstens — first", "dann — then", "danach — after that", "schließlich — finally", "außerdem — moreover", "jedoch — however", "daher — therefore", "andererseits — on the other hand", "das heißt — that is", "zum Beispiel — for example", "vor allem — above all", "trotz — despite", "bezüglich — regarding", "nicht nur…sondern — not only…but", "wegen — because of"]}, "Portuguese": {"pronouns": ["eu — I", "tu/você — you", "ele — he", "ela — she", "nós — we", "vocês — you (pl.)", "eles/elas — they", "me — me", "te/lhe — you", "lhe — him/her", "nos — us", "se — himself/herself", "mim — me (prep.)", "com — with (prep.)", "si — oneself"], "conjunctions": ["e — and", "ou — or", "mas — but", "porque — because", "que — that", "se — if", "embora — although", "quando — when", "enquanto — while", "nem — neither/nor", "portanto — so", "pois — because", "porém — however", "já que — since", "como — as"], "adverbs": ["muito — very", "bem — well", "mal — badly", "também — also", "já — already", "aqui — here", "lá — there", "sempre — always", "nunca — never", "hoje — today", "amanhã — tomorrow", "ontem — yesterday", "bastante — quite", "pouco — a little", "quase — almost"], "prepositions": ["de — of/from", "a — to", "em — in", "com — with", "por — by/for", "para — for/to", "sem — without", "sobre — on/about", "entre — between", "até — until", "desde — since", "após — after", "antes de — before", "dentro de — inside", "fora de — outside"], "question_words": ["o que? — what", "quem? — who", "onde? — where", "quando? — when", "por que? — why", "como? — how", "quanto? — how much", "qual? — which", "aonde? — where to", "de onde? — from where"], "numbers": ["um — 1", "dois — 2", "três — 3", "quatro — 4", "cinco — 5", "seis — 6", "sete — 7", "oito — 8", "nove — 9", "dez — 10", "vinte — 20", "trinta — 30", "cem — 100", "mil — 1000", "primeiro — 1st"], "adjectives": ["bom — good", "mau/ruim — bad", "grande — big", "pequeno — small", "novo — new", "velho — old", "mesmo — same", "outro — other", "todo — all", "cada — each", "último — last", "próprio — own", "diferente — different", "verdadeiro — true", "sozinho — alone"], "connectors": ["primeiro — first", "depois — then", "em seguida — next", "finalmente — finally", "além disso — moreover", "no entanto — however", "portanto — therefore", "por outro lado — on the other hand", "ou seja — that is", "por exemplo — for example", "sobretudo — above all", "apesar de — despite", "quanto a — regarding", "não só…mas — not only…but", "por causa de — because of"]}};
@@ -454,7 +454,8 @@ let completedNodes=JSON.parse(localStorage.getItem('lf_nodes')||'[]');
 let ptVar='BR';
 let convoActive=false,convoTopic='World Cup 2026',convoSys='';
 let chatHistory=[],userResponses=[];
-let convoModel='claude';
+let convoModel='deepseek';
+let currentAudioEl=null;
 let currentNode=null;
 let currentLesson={title:'World Cup 2026',desc:'Teams, goals, tactics'};
 let lessonTxt='';
@@ -654,39 +655,34 @@ async function callClaude(sys,msg,hist=[]){
   const d=await res.json();if(d.error)throw new Error(d.error.message);
   return d.content?.[0]?.text||'';
 }
-async function callDeepSeek(sys,msg){
-  const key=KEYS.deepseek;if(!key)return callClaude(sys,msg);
-  const res=await fetch('https://api.deepseek.com/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'deepseek-chat',max_tokens:800,messages:[{role:'system',content:sys},{role:'user',content:msg}]})});
-  const d=await res.json();if(d.error||!d.choices)return callClaude(sys,msg);
+async function callDeepSeek(sys,msg,hist=[]){
+  const key=KEYS.deepseek;if(!key)return callQwen(sys,msg);
+  const res=await fetch('https://api.deepseek.com/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'deepseek-chat',max_tokens:800,messages:[{role:'system',content:sys},...hist,{role:'user',content:msg}]})});
+  const d=await res.json();if(d.error||!d.choices)return callQwen(sys,msg);
   return d.choices?.[0]?.message?.content||'';
 }
 async function callQwen(sys,msg){
-  const key=KEYS.qwen;if(!key)return callClaude(sys,msg);
-  const res=await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'qwen-max',max_tokens:1200,messages:[{role:'system',content:sys},{role:'user',content:msg}]})});
-  const d=await res.json();if(d.error||!d.choices)return callClaude(sys,msg);
+  const key=KEYS.qwen;if(!key)throw new Error('No AI key set — add DeepSeek or Qwen in Settings.');
+  const res=await fetch('/api/qwen/compatible-mode/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'qwen-max',max_tokens:1200,messages:[{role:'system',content:sys},{role:'user',content:msg}]})});
+  const d=await res.json();if(d.error||!d.choices)throw new Error(d.error?.message||'Qwen error');
   return d.choices?.[0]?.message?.content||'';
 }
 async function callQwenSearch(sys,msg){
-  const key=KEYS.qwen;if(!key)return callClaudeSearch(sys,msg);
-  const res=await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'qwen-max',max_tokens:1800,messages:[{role:'system',content:sys},{role:'user',content:msg}],tools:[{type:'web_search',web_search:{enable:true,search_result:true}}]})});
-  const d=await res.json();if(d.error||!d.choices)return callClaudeSearch(sys,msg);
+  const key=KEYS.qwen;if(!key)return callDeepSeek(sys,msg);
+  const res=await fetch('/api/qwen/compatible-mode/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'qwen-max',max_tokens:1800,messages:[{role:'system',content:sys},{role:'user',content:msg}],tools:[{type:'web_search',web_search:{enable:true,search_result:true}}]})});
+  const d=await res.json();if(d.error||!d.choices)return callDeepSeek(sys,msg);
   return d.choices?.[0]?.message?.content||'';
 }
-async function callClaudeSearch(sys,msg){
-  const key=KEYS.claude;if(!key)throw new Error('No Claude key.');
-  const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:2000,tools:[{type:'web_search_20250305',name:'web_search'}],system:sys,messages:[{role:'user',content:msg}]})});
-  const d=await res.json();let txt='';(d.content||[]).forEach(b=>{if(b.type==='text')txt=b.text;});return txt;
-}
 async function callConvoModel(sys,msg,hist=[]){
-  if(convoModel==='deepseek'&&KEYS.deepseek){
+  if(convoModel==='qwen'&&KEYS.qwen){
+    const res=await fetch('/api/qwen/compatible-mode/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+KEYS.qwen},body:JSON.stringify({model:'qwen-max',max_tokens:200,messages:[{role:'system',content:sys},...hist,{role:'user',content:msg}]})});
+    const d=await res.json();if(!d.error&&d.choices)return d.choices[0].message.content||'';
+  }
+  if(KEYS.deepseek){
     const res=await fetch('https://api.deepseek.com/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+KEYS.deepseek},body:JSON.stringify({model:'deepseek-chat',max_tokens:200,messages:[{role:'system',content:sys},...hist,{role:'user',content:msg}]})});
     const d=await res.json();if(!d.error&&d.choices)return d.choices[0].message.content||'';
   }
-  if(convoModel==='qwen'&&KEYS.qwen){
-    const res=await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+KEYS.qwen},body:JSON.stringify({model:'qwen-max',max_tokens:200,messages:[{role:'system',content:sys},...hist,{role:'user',content:msg}]})});
-    const d=await res.json();if(!d.error&&d.choices)return d.choices[0].message.content||'';
-  }
-  return callClaude(sys,msg,hist);
+  return callQwen(sys,msg);
 }
 
 // ════════════════════════════════
@@ -702,6 +698,7 @@ function revealWords(el,text,durMs){
 }
 
 async function speakEL(text,lang,onEnd,streamEl){
+  if(currentAudioEl){try{currentAudioEl.pause();currentAudioEl.src='';}catch(e){}currentAudioEl=null;}
   setStatus('speaking');
   const vid=KEYS.el_voice_id||EL_VOICES[lang]||EL_VOICES.Spanish;
   const sett=EL_STYLES[voiceStyle]||EL_STYLES.natural;
@@ -709,9 +706,10 @@ async function speakEL(text,lang,onEnd,streamEl){
     const res=await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${vid}`,{method:'POST',headers:{'xi-api-key':KEYS.elevenlabs,'Content-Type':'application/json','Accept':'audio/mpeg'},body:JSON.stringify({text,model_id:'eleven_multilingual_v2',voice_settings:sett})});
     if(!res.ok)throw new Error('EL '+res.status);
     const blob=await res.blob(),url=URL.createObjectURL(blob),audio=new Audio(url);
+    currentAudioEl=audio;
     audio.onloadedmetadata=()=>{if(streamEl)revealWords(streamEl,text,audio.duration*1000);audio.play();};
-    audio.onended=()=>{setStatus('ready');URL.revokeObjectURL(url);if(onEnd)onEnd();};
-    audio.onerror=()=>{setStatus('ready');if(streamEl)streamEl.textContent=text;if(onEnd)onEnd();};
+    audio.onended=()=>{currentAudioEl=null;setStatus('ready');URL.revokeObjectURL(url);if(onEnd)onEnd();};
+    audio.onerror=()=>{currentAudioEl=null;setStatus('ready');if(streamEl)streamEl.textContent=text;if(onEnd)onEnd();};
     setTimeout(()=>{if(audio.readyState>=2&&audio.paused){audio.play();if(streamEl)revealWords(streamEl,text,3000);}},500);
   }catch(e){console.error('ElevenLabs TTS failed:',e);const t=document.createElement('div');t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#c0392b;color:#fff;padding:8px 16px;border-radius:8px;font-size:.8rem;z-index:9999';t.textContent='⚠️ EL voice error: '+e.message;document.body.appendChild(t);setTimeout(()=>t.remove(),4000);setStatus('ready');if(streamEl)streamEl.textContent=text;if(onEnd)onEnd();}
 }
@@ -871,7 +869,7 @@ function setModel(m,el){
 function appendMsg(role,text,tr){
   const box=$('chatBox'),d=document.createElement('div');d.className='msg '+role;
   const safe=text.replace(/</g,'&lt;'),safeTr=tr?tr.replace(/</g,'&lt;'):'';
-  const ml=role==='ai'?`<span style="font-size:.62rem;color:var(--mut);margin-left:5px">${{claude:'Claude',deepseek:'DeepSeek',qwen:'Qwen'}[convoModel]}</span>`:'';
+  const ml=role==='ai'?`<span style="font-size:.62rem;color:var(--mut);margin-left:5px">${{deepseek:'DeepSeek',qwen:'Qwen'}[convoModel]||'AI'}</span>`:'';
   d.innerHTML=`<div class="spk">${role==='ai'?'🤖 Yuki':'🎙 You'}${ml}</div>${safe}`+(safeTr?`<div class="tr">${safeTr}</div>`:'')+
     (role==='ai'?`<button class="sbtn" onclick="speak(${JSON.stringify(text)},'${getLang()}')">🔊</button>`:'');
   box.appendChild(d);box.scrollTop=box.scrollHeight;
@@ -880,7 +878,7 @@ function appendMsg(role,text,tr){
 function appendStreamMsg(role,text,tr){
   const box=$('chatBox'),d=document.createElement('div');d.className='msg '+role;
   const safeTr=tr?tr.replace(/</g,'&lt;'):'';
-  const ml=role==='ai'?`<span style="font-size:.62rem;color:var(--mut);margin-left:5px">${{claude:'Claude',deepseek:'DeepSeek',qwen:'Qwen'}[convoModel]}</span>`:'';
+  const ml=role==='ai'?`<span style="font-size:.62rem;color:var(--mut);margin-left:5px">${{deepseek:'DeepSeek',qwen:'Qwen'}[convoModel]||'AI'}</span>`:'';
   d.innerHTML=`<div class="spk">${role==='ai'?'🤖 Yuki':'🎙 You'}${ml}</div><span class="word-stream"></span>`+
     (safeTr?`<div class="tr">${safeTr}</div>`:'')+
     (role==='ai'?`<button class="sbtn" onclick="speak(${JSON.stringify(text)},'${getLang()}')">🔊</button>`:'');
@@ -924,7 +922,7 @@ async function endSession(){
   const reviewLang=ipct>=80?`Respond entirely in ${lang}.`:ipct>=50?`Respond mostly in ${lang}, with English translations for corrections only.`:ipct>=20?`Respond in English but highlight corrections in ${lang}.`:`Respond in English.`;
   const sys=`You are a supportive ${lang} teacher. Be warm and brief. ${reviewLang}`;
   const prompt=`Student (${cefr}) said:\n${userResponses.map((t,i)=>`${i+1}. "${t}"`).join('\n')}\n\nFeedback:\n1. 2-3 things done well\n2. Up to 3 corrections (wrong → correct)\n3. One phrase to practice\nUnder 150 words.`;
-  const review=await callClaude(sys,prompt);
+  const review=await callDeepSeek(sys,prompt);
   setAriaImage('happy');setTimeout(()=>setAriaImage('idle'),4000);
   $('sumBox').style.display='block';$('sumText').textContent=review;
   $('sumBox').scrollIntoView({behavior:'smooth'});setStatus('ready');
@@ -932,6 +930,7 @@ async function endSession(){
 
 function stopConvo(){
   convoActive=false;synth.cancel();
+  if(currentAudioEl){try{currentAudioEl.pause();currentAudioEl.src='';}catch(e){}currentAudioEl=null;}
   if(recognition)recognition.abort();
   $('startBtn').style.display='inline-block';
   $('listenBtn').style.display='none';
@@ -1021,9 +1020,85 @@ function launchNode(){
     switchTab('drills',$('bn-drills'));setDrillTab('verbs');
     if(n.verb&&n.verb!=='random'){$('verbInput').value=n.verb;drillVerb();}else rndVerb();
   }else if(n.tab==='lessons'){
-    switchTab('learn',$('bn-learn'));
-    if(n.lessonTitle){document.querySelectorAll('.lcard').forEach(c=>{const m=c.querySelector('.lt')?.textContent===n.lessonTitle;c.classList.toggle('sel',m);if(m)currentLesson={title:n.lessonTitle,desc:n.desc};});}
+    startGuidedLesson(n);
   }
+}
+
+// ════════════════════════════════
+// GUIDED LESSON
+// ════════════════════════════════
+let glHistory=[],glNode=null,glListening=false;
+
+async function startGuidedLesson(n){
+  glNode=n;glHistory=[];
+  $('glIcon').textContent=n.icon;$('glTitle').textContent=n.title;
+  $('glChat').innerHTML='';$('glInput').value='';
+  openModal('guidedLessonModal');
+  const lang=getLang(),cefr=getCEFR();
+  glAppend('ai','…');
+  const sys=`You are Aria, a warm and encouraging ${lang} tutor. You are teaching a ${cefr} student a guided lesson on: "${n.title}" — ${n.desc}.
+Lead the lesson step by step:
+1. Briefly introduce the topic (2-3 sentences, in English with key ${lang} words highlighted)
+2. Teach 3-4 key phrases or words with pronunciation tips
+3. Give a simple example using each phrase
+4. Ask the student to try using one phrase in a sentence
+Keep responses short and friendly. After the student responds, correct gently and move forward. Speak naturally, like a real tutor — not a textbook.`;
+  const opening=await callDeepSeek(sys,`Start the lesson on "${n.title}". Introduce the topic warmly and teach the first key phrase.`);
+  glHistory=[{role:'assistant',content:opening}];
+  $('glChat').lastChild.remove();
+  glAppend('ai',opening);
+  speak(opening.substring(0,300),lang);
+}
+
+function glAppend(role,text){
+  const box=$('glChat'),d=document.createElement('div');
+  d.style.cssText=`max-width:85%;padding:9px 13px;border-radius:12px;font-size:.85rem;line-height:1.6;align-self:${role==='ai'?'flex-start':'flex-end'};background:${role==='ai'?'#fff':'linear-gradient(135deg,#5b8dee,#7c6fff)'};color:${role==='ai'?'var(--txt)':'#fff'};border:${role==='ai'?'1px solid var(--bdr)':'none'};box-shadow:0 1px 4px rgba(0,0,0,0.08)`;
+  d.textContent=text;
+  if(role==='ai'){
+    const spk=document.createElement('button');
+    spk.style.cssText='display:block;margin-top:5px;font-size:.7rem;background:none;border:1px solid var(--bdr);color:var(--mut);padding:2px 7px;border-radius:4px;cursor:pointer';
+    spk.textContent='🔊';spk.onclick=()=>speak(text,getLang());
+    d.appendChild(spk);
+  }
+  box.appendChild(d);box.scrollTop=box.scrollHeight;
+}
+
+async function glSend(){
+  const txt=$('glInput').value.trim();if(!txt)return;
+  $('glInput').value='';
+  glAppend('user',txt);
+  glHistory.push({role:'user',content:txt});
+  const lang=getLang(),cefr=getCEFR();
+  const sys=`You are Aria, a warm ${lang} tutor guiding a ${cefr} student through a lesson on "${glNode?.title}". Continue the lesson naturally. If the student made an error, correct gently with the right form. Then move the lesson forward — teach the next concept, ask a follow-up question, or wrap up if enough has been covered. Keep it short (2-4 sentences max).`;
+  const d=document.createElement('div');d.style.cssText='align-self:flex-start;color:var(--mut);font-size:.82rem';d.textContent='…';$('glChat').appendChild(d);$('glChat').scrollTop=$('glChat').scrollHeight;
+  const reply=await callDeepSeek(sys,txt,glHistory.slice(0,-1));
+  d.remove();
+  glHistory.push({role:'assistant',content:reply});
+  glAppend('ai',reply);
+  speak(reply.substring(0,300),lang);
+}
+
+function glListen(){
+  if(!KEYS.openai){alert('Add OpenAI key in Settings for voice input.');return;}
+  const btn=event.target;btn.textContent='⏹';btn.style.background='var(--acc2)';
+  let chunks=[];
+  navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+    const mr=new MediaRecorder(stream,{mimeType:MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':'audio/mp4'});
+    mr.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data);};
+    mr.onstop=async()=>{
+      stream.getTracks().forEach(t=>t.stop());btn.textContent='🎙';btn.style.background='';
+      const blob=new Blob(chunks,{type:mr.mimeType});
+      try{const txt=await whisperSTT(blob);if(txt.trim()){$('glInput').value=txt;glSend();}}catch(e){}
+    };
+    mr.start();
+    btn.onclick=()=>{mr.stop();btn.onclick=glListen;};
+    setTimeout(()=>{if(mr.state==='recording')mr.stop();btn.onclick=glListen;},10000);
+  }).catch(()=>{btn.textContent='🎙';btn.style.background='';alert('Mic access denied.');});
+}
+
+function closeGuidedLesson(){
+  if(currentAudioEl){try{currentAudioEl.pause();currentAudioEl.src='';}catch(e){}currentAudioEl=null;}
+  closeModal('guidedLessonModal');
 }
 
 function markNodeDone(){
@@ -1145,7 +1220,7 @@ async function evalTest(){
   const conv=testHistory.map(m=>`${m.role==='assistant'?'Examiner':'Student'}: ${m.content}`).join('\n');
   const prompt=`Evaluate this ${lang} test (${cefr} level) on "${testCtx.title}":\n${conv}\n\nReturn JSON: {"accuracy":0-100,"vocabulary":0-100,"fluency":0-100,"overall":0-100,"passed":bool,"feedback":"2-3 sentences","pass_note":"if passed","fail_note":"if failed"}\nSkipped turns=0 fluency. Overall=average. Be strict but fair.`;
   try{
-    const raw=await callClaude(sys,prompt);
+    const raw=await callDeepSeek(sys,prompt);
     const clean=raw.replace(/```json|```/g,'').trim();
     const d=JSON.parse(clean.substring(clean.indexOf('{'),clean.lastIndexOf('}')+1));
     showTestResults(d);
@@ -1261,7 +1336,7 @@ async function loadLesson(){
   const sys=`You are a ${lang} language teacher. Format output as HTML using only h3,p,ul,li,strong,em. No markdown.${ptNote}`;
   const prompt=`Create a tight ${cefr}-level ${lang} lesson on: "${currentLesson.title}".
 Use: <h3>Key Vocabulary</h3> (5 words+English), <h3>Example Sentences</h3> (3 sentences), <h3>Mini Dialogue</h3> (4-6 lines A/B+translations), <h3>Your Turn</h3> (practice prompt). Accurate ${lang}, no filler.`;
-  const html=await callClaude(sys,prompt);
+  const html=await callDeepSeek(sys,prompt);
   $('lessonContent').innerHTML=html;lessonTxt=$('lessonContent').innerText;
 }
 
