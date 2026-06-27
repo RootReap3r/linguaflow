@@ -431,8 +431,8 @@ const EL_STYLES={natural:{stability:.52,similarity_boost:.82,style:.35,use_speak
 const KEY_DEFS=[
   {id:'deepseek',  label:'🔵 DeepSeek',   sub:'Conversations, lessons, corrections',   url:'platform.deepseek.com',  uses:'Primary AI'},
   {id:'qwen',      label:'🟣 Qwen',       sub:'Daily lessons, cultural content',          url:'dashscope.aliyuncs.com', uses:'Daily content'},
-  {id:'elevenlabs',label:'✨ ElevenLabs', sub:'Natural multilingual voice',              url:'elevenlabs.io',          uses:'Voice output'},
-  {id:'openai',    label:'🎙 OpenAI',     sub:'Whisper STT — mic on iPhone Safari',      url:'platform.openai.com',    uses:'Speech recognition'},
+  {id:'elevenlabs',label:'✨ ElevenLabs', sub:'Natural multilingual voice (fallback)',   url:'elevenlabs.io',          uses:'Voice fallback'},
+  {id:'openai',    label:'🎙 OpenAI',     sub:'Voice output (TTS) + mic recognition',    url:'platform.openai.com',    uses:'Voice + STT'},
 ];
 const PAST_TENSE={Spanish:'Preterite',French:'Passé Composé',Russian:'Past Tense',German:'Perfekt',Portuguese:'Pretérito Perfeito'};
 const FUT_TENSE={Spanish:'Futuro Simple',French:'Futur Simple',Russian:'Future Tense',German:'Futur I',Portuguese:'Futuro do Indicativo'};
@@ -723,32 +723,31 @@ function speakBrowser(text,lang,rate=.9,onEnd=null){
   synth.speak(u);
 }
 
-const QWEN_TTS_VOICES={Spanish:'loongstella',French:'loongstella',Russian:'loongstella',German:'loongstella',Portuguese:'loongstella'};
+const OPENAI_TTS_VOICES={Spanish:'nova',French:'nova',Russian:'alloy',German:'alloy',Portuguese:'nova',Japanese:'shimmer',Korean:'shimmer',Chinese:'shimmer'};
 
-async function speakQwen(text,lang,onEnd,streamEl){
+async function speakOpenAI(text,lang,onEnd,streamEl){
   if(currentAudioEl){try{currentAudioEl.pause();currentAudioEl.src='';}catch(e){}currentAudioEl=null;}
   setStatus('speaking');
   try{
-    const res=await fetch('/api/qwen-tts/api/v1/services/aigc/text2audiogen/generation',{
+    const res=await fetch('https://api.openai.com/v1/audio/speech',{
       method:'POST',
-      headers:{'Authorization':'Bearer '+KEYS.qwen,'Content-Type':'application/json','X-DashScope-Async':'disable'},
-      body:JSON.stringify({model:'cosyvoice-v2',input:{text},parameters:{voice:QWEN_TTS_VOICES[lang]||'loongstella',format:'mp3',sample_rate:22050}})
+      headers:{'Authorization':'Bearer '+KEYS.openai,'Content-Type':'application/json'},
+      body:JSON.stringify({model:'tts-1',input:text,voice:OPENAI_TTS_VOICES[lang]||'nova',response_format:'mp3'})
     });
-    if(!res.ok)throw new Error('QwenTTS '+res.status);
-    const d=await res.json();
-    const audioUrl=d.output?.audio_address||d.output?.audio;
-    if(!audioUrl)throw new Error('No audio URL in response');
-    const audio=new Audio(audioUrl);
+    if(!res.ok)throw new Error('OpenAI TTS '+res.status);
+    const blob=await res.blob();
+    const url=URL.createObjectURL(blob);
+    const audio=new Audio(url);
     currentAudioEl=audio;
     audio.onloadedmetadata=()=>{if(streamEl)revealWords(streamEl,text,audio.duration*1000);audio.play();};
-    audio.onended=()=>{currentAudioEl=null;setStatus('ready');if(onEnd)onEnd();};
-    audio.onerror=()=>{currentAudioEl=null;setStatus('ready');if(streamEl)streamEl.textContent=text;if(onEnd)onEnd();};
-    setTimeout(()=>{if(audio.readyState>=2&&audio.paused){audio.play();if(streamEl)revealWords(streamEl,text,3000);}},500);
-  }catch(e){console.error('Qwen TTS failed:',e);if(KEYS.elevenlabs)await speakEL(text,lang,onEnd,streamEl);else{speakBrowser(text,lang,.9,onEnd);if(streamEl)streamEl.textContent=text;}}
+    audio.onended=()=>{currentAudioEl=null;setStatus('ready');URL.revokeObjectURL(url);if(onEnd)onEnd();};
+    audio.onerror=()=>{currentAudioEl=null;setStatus('ready');URL.revokeObjectURL(url);if(streamEl)streamEl.textContent=text;if(onEnd)onEnd();};
+    audio.load();
+  }catch(e){console.error('OpenAI TTS failed:',e);const t=document.createElement('div');t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#c0392b;color:#fff;padding:8px 16px;border-radius:8px;font-size:.8rem;z-index:9999';t.textContent='⚠️ TTS error: '+e.message;document.body.appendChild(t);setTimeout(()=>t.remove(),4000);if(KEYS.elevenlabs)await speakEL(text,lang,onEnd,streamEl);else{speakBrowser(text,lang,.9,onEnd);if(streamEl)streamEl.textContent=text;}}
 }
 
 async function speak(text,lang,rate=.9,onEnd=null,streamEl=undefined){
-  if(KEYS.qwen){await speakQwen(text,lang,onEnd,streamEl);}
+  if(KEYS.openai){await speakOpenAI(text,lang,onEnd,streamEl);}
   else if(KEYS.elevenlabs){await speakEL(text,lang,onEnd,streamEl);}
   else{speakBrowser(text,lang,rate,onEnd);if(streamEl)streamEl.textContent=text;}
 }
