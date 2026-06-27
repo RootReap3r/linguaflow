@@ -1,7 +1,7 @@
 {
-  "name": "LinguaFlow",
-  "short_name": "LinguaFlow",
-  "description": "AI-powered language tutor — Spanish, French, Russian, German, Portuguese",
+  "name": "Linguaveni",
+  "short_name": "Linguaveni",
+  "description": "Linguaveni — where languages come together. AI-powered tutor for Spanish, French, Russian, German, Portuguese.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0d0f18",
