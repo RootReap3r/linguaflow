@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/claude/:path*",
+      "destination": "https://api.anthropic.com/:path*"
+    },
+    {
+      "source": "/api/qwen/:path*",
+      "destination": "https://ws-csw7l8xa6p3nrkl6.ap-southeast-1.maas.aliyuncs.com/:path*"
+    }
+  ]
+}
