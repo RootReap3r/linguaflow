@@ -350,11 +350,15 @@ input[type=text]:focus{border-color:var(--acc)}
   </div>
 </div>
 <div id="tab-learn" class="panel">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div class="ptitle" style="margin:0">Topic Lessons</div><button class="btn btn-g" style="font-size:.74rem" onclick="refreshLessonTopics()">🔄 Fresh Topics</button></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div class="ptitle" style="margin:0">Topic Lessons</div><button class="btn btn-g" style="font-size:.74rem" onclick="refreshLessonTopics()">🔄 Fresh Topics</button></div>
+  <div style="display:flex;gap:6px;margin-bottom:12px">
+    <input id="customTopicInput" type="text" placeholder="Or type your own topic…" style="flex:1;padding:8px 12px;border:1px solid var(--bdr);border-radius:10px;font-size:.84rem;background:var(--sfc);color:var(--txt);outline:none"/>
+    <button class="btn btn-p" style="white-space:nowrap;font-size:.8rem" onclick="startCustomTopic()">▶ Go</button>
+  </div>
   <div class="lgrid" id="lessonCardGrid"><div style="color:var(--mut);font-size:.82rem;grid-column:1/-1">Loading topics…</div></div>
-  <div class="lcontent" id="lessonContent"><span style="color:var(--mut)">Select a lesson, then tap Load.</span></div>
+  <div class="lcontent" id="lessonContent"><span style="color:var(--mut)">Tap a topic card to start an AI lesson.</span></div>
   <div class="spacer"></div>
-  <div class="row"><button class="btn btn-p" onclick="loadLesson()">📖 Load Lesson</button><button class="btn btn-g" onclick="speakLesson()">🔊 Read Aloud</button></div>
+  <div class="row"><button class="btn btn-p" onclick="loadLesson()">📖 Study Notes</button><button class="btn btn-g" onclick="speakLesson()">🔊 Read Aloud</button></div>
 </div>
 <div id="tab-drills" class="panel">
   <div class="ptitle">Drills</div>
@@ -440,6 +444,7 @@ const FUT_TENSE={Spanish:'Futuro Simple',French:'Futur Simple',Russian:'Future T
 // ════════════════════════════════
 // STATE
 // ════════════════════════════════
+const msgStore=[];
 let KEYS={};
 KEY_DEFS.forEach(k=>{KEYS[k.id]=localStorage.getItem('lf_key_'+k.id)||'';});
 KEYS.el_voice_id=localStorage.getItem('lf_el_voice_id')||'';
@@ -586,7 +591,8 @@ function saveKeys(){
 
 function updateVoiceBadge(){
   const btn=$('voiceBtn');
-  if(KEYS.elevenlabs){btn.textContent='✨';btn.className='icon-btn el-on';}
+  if(KEYS.openai){btn.textContent='🎙';btn.className='icon-btn el-on';}
+  else if(KEYS.elevenlabs){btn.textContent='✨';btn.className='icon-btn el-on';}
   else{btn.textContent='🔊';btn.className='icon-btn';}
 }
 
@@ -601,7 +607,7 @@ async function testKeys(){
       if(k.id==='deepseek'){const r=await fetch('https://api.deepseek.com/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'deepseek-chat',max_tokens:5,messages:[{role:'user',content:'OK'}]})});ok=r.ok;}
       else if(k.id==='qwen'){const r=await fetch('/api/qwen/compatible-mode/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'qwen-max',max_tokens:5,messages:[{role:'user',content:'OK'}]})});ok=r.ok;}
       else if(k.id==='elevenlabs'){const r=await fetch('https://api.elevenlabs.io/v1/user',{headers:{'xi-api-key':key}});if(r.ok){const d=await r.json();const u=d.subscription?.character_count||0,l=d.subscription?.character_limit||0;extra=` — ${u.toLocaleString()}/${l.toLocaleString()} chars`;}ok=r.ok;}
-      else if(k.id==='openai'){const r=await fetch('https://api.openai.com/v1/models',{headers:{'Authorization':'Bearer '+key}});ok=r.ok;}
+      else if(k.id==='openai'){const r=await fetch('https://api.openai.com/v1/models',{headers:{'Authorization':'Bearer '+key}});ok=r.ok;if(ok)extra=' — TTS (primary voice) + Whisper STT';}
       results.push(`${k.label} ${ok?'✓'+extra:'✗ — check key'}`);
     }catch(e){results.push(`${k.label} ✗ — ${e.message}`);}
   }
@@ -921,7 +927,8 @@ function appendMsg(role,text,tr){
   const box=$('chatBox'),d=document.createElement('div');d.className='msg '+role;
   const safe=text.replace(/</g,'&lt;'),safeTr=tr?tr.replace(/</g,'&lt;'):'';
   const ml=role==='ai'?`<span style="font-size:.62rem;color:var(--mut);margin-left:5px">${{deepseek:'DeepSeek',qwen:'Qwen'}[convoModel]||'AI'}</span>`:'';
-  const aiBtns=role==='ai'?`<div style="display:flex;gap:4px;margin-top:5px"><button class="sbtn" onclick="speak(${JSON.stringify(text)},'${getLang()}')">🔊</button><button class="sbtn" onclick="translateMsg(this,${JSON.stringify(text)})">🌐 Translate</button></div>`:'';
+  const msgIdx=msgStore.push(text)-1;
+  const aiBtns=role==='ai'?`<div style="display:flex;gap:4px;margin-top:5px"><button class="sbtn" onclick="speak(msgStore[${msgIdx}],'${getLang()}')">🔊</button><button class="sbtn" onclick="translateMsg(this,msgStore[${msgIdx}])">🌐 Translate</button></div>`:'';
   d.innerHTML=`<div class="spk">${role==='ai'?'🤖 Yuki':'🎙 You'}${ml}</div>${safe}`+(safeTr?`<div class="tr">${safeTr}</div>`:'')+aiBtns;
   box.appendChild(d);box.scrollTop=box.scrollHeight;
 }
@@ -930,7 +937,8 @@ function appendStreamMsg(role,text,tr){
   const box=$('chatBox'),d=document.createElement('div');d.className='msg '+role;
   const safeTr=tr?tr.replace(/</g,'&lt;'):'';
   const ml=role==='ai'?`<span style="font-size:.62rem;color:var(--mut);margin-left:5px">${{deepseek:'DeepSeek',qwen:'Qwen'}[convoModel]||'AI'}</span>`:'';
-  const aiBtns=role==='ai'?`<div style="display:flex;gap:4px;margin-top:5px"><button class="sbtn" onclick="speak(${JSON.stringify(text)},'${getLang()}')">🔊</button><button class="sbtn" onclick="translateMsg(this,${JSON.stringify(text)})">🌐 Translate</button></div>`:'';
+  const msgIdx=msgStore.push(text)-1;
+  const aiBtns=role==='ai'?`<div style="display:flex;gap:4px;margin-top:5px"><button class="sbtn" onclick="speak(msgStore[${msgIdx}],'${getLang()}')">🔊</button><button class="sbtn" onclick="translateMsg(this,msgStore[${msgIdx}])">🌐 Translate</button></div>`:'';
   d.innerHTML=`<div class="spk">${role==='ai'?'🤖 Yuki':'🎙 You'}${ml}</div><span class="word-stream"></span>`+
     (safeTr?`<div class="tr">${safeTr}</div>`:'')+aiBtns;
   box.appendChild(d);box.scrollTop=box.scrollHeight;
@@ -1382,17 +1390,32 @@ function loadWords(cat,el){
 // LESSONS
 // ════════════════════════════════
 const DEFAULT_LESSONS=[
-  {em:'⚽',title:'World Cup 2026',desc:'Teams, goals, fan talk'},
   {em:'🌅',title:'Morning Routine',desc:'Daily life vocabulary'},
   {em:'🍽️',title:'Ordering Food',desc:'Restaurants, menus'},
   {em:'✈️',title:'Airport & Travel',desc:'Check in, journey phrases'},
   {em:'📅',title:'Making Plans',desc:'Social invitations'},
   {em:'💬',title:'Expressing Opinions',desc:'Agree, disagree, hedge'},
+  {em:'🛒',title:'Shopping',desc:'Prices, sizes, returns'},
+  {em:'🏥',title:'At the Doctor',desc:'Symptoms, appointments'},
+  {em:'💼',title:'Job Interview',desc:'Professional vocabulary'},
+  {em:'🏠',title:'Renting an Apartment',desc:'Housing, contracts'},
+  {em:'📱',title:'Technology & Social Media',desc:'Modern daily vocab'},
+  {em:'🎉',title:'Celebrations & Holidays',desc:'Festivals, greetings'},
+  {em:'🧭',title:'Asking for Directions',desc:'Streets, landmarks'},
 ];
 function renderLessonCards(topics){
   const grid=$('lessonCardGrid');
-  grid.innerHTML=topics.map((t,i)=>`<div class="lcard${i===0?' sel':''}" onclick="selLesson(this,${JSON.stringify(t.title)},${JSON.stringify(t.desc)})"><div class="em">${t.em}</div><div class="lt">${t.title}</div><div class="ld">${t.desc}</div></div>`).join('');
-  selLesson(grid.firstChild,topics[0].title,topics[0].desc);
+  grid.innerHTML=topics.map((t,i)=>{
+    const tj=JSON.stringify(t.title),dj=JSON.stringify(t.desc),ej=JSON.stringify(t.em||'📚');
+    return `<div class="lcard" onclick="selLesson(this,${tj},${dj});startGuidedLesson({icon:${ej},title:${tj},desc:${dj},tab:'lessons',id:'topic-${i}'})"><div class="em">${t.em}</div><div class="lt">${t.title}</div><div class="ld">${t.desc}</div></div>`;
+  }).join('');
+  if(topics[0])currentLesson={title:topics[0].title,desc:topics[0].desc};
+}
+function startCustomTopic(){
+  const val=$('customTopicInput').value.trim();
+  if(!val)return;
+  startGuidedLesson({icon:'✏️',title:val,desc:'Custom topic',tab:'lessons',id:'custom-'+Date.now()});
+  $('customTopicInput').value='';
 }
 async function refreshLessonTopics(){
   const lang=getLang(),cefr=getCEFR(),btn=event.target;
