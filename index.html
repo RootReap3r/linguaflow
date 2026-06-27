@@ -15,8 +15,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;700&display=swap');
 :root{--bg:#f0f2f7;--s1:#ffffff;--s2:#f5f7fb;--s3:#eaecf4;--acc:#5b8dee;--acc2:#ff6b8a;--grn:#22c55e;--amb:#f59e0b;--txt:#1a1d2e;--mut:#8892a4;--bdr:#e2e6f0;--r:16px;--shadow:0 2px 12px rgba(0,0,0,0.08)}
 *{box-sizing:border-box;margin:0;padding:0}
-html{height:-webkit-fill-available;overflow-y:auto}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;min-height:-webkit-fill-available;display:flex;flex-direction:column;font-size:14px;-webkit-tap-highlight-color:transparent;overscroll-behavior:none;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+html{height:100%}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;display:flex;flex-direction:column;font-size:14px;-webkit-tap-highlight-color:transparent;overflow-x:hidden;}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:3px}
 #topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:calc(12px + env(safe-area-inset-top)) 16px 10px;background:rgba(255,255,255,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);gap:8px;flex-wrap:wrap}
 .lang-pill{display:flex;align-items:center;gap:6px;background:var(--s2);border:1px solid var(--bdr);border-radius:20px;padding:6px 12px;font-size:.82rem;font-weight:600;cursor:pointer;position:relative}
@@ -339,24 +339,19 @@ input[type=text]:focus{border-color:var(--acc)}
       <div class="vbar">
         <div class="sdot" id="sDot"></div><span class="slabel" id="sLabel">Ready</span>
         <button class="btn btn-p" id="startBtn" onclick="startConvo()">▶ Start</button>
-        <button class="btn btn-d" id="listenBtn" onclick="doListen()" style="display:none">🎙 Speak</button>
+        <button class="btn btn-d" id="listenBtn" style="display:none;user-select:none" onmousedown="startHoldListen()" onmouseup="stopHoldListen()" ontouchstart="startHoldListen(event)" ontouchend="stopHoldListen()">🎙 Hold to Speak</button>
+        <button class="btn btn-g" id="inspireBtn" onclick="getInspiration()" style="display:none">💡 Inspire</button>
         <button class="btn btn-a" id="reviewBtn" onclick="endSession()" style="display:none">📋 Review</button>
         <button class="btn btn-g" id="stopBtn" onclick="stopConvo()" style="display:none">■ Stop</button>
       </div>
+      <div id="inspireBox" style="display:none;margin-top:8px;display:none"></div>
       <div class="sumbox" id="sumBox"><h4>📋 Session Review</h4><p id="sumText"></p></div>
     </div>
   </div>
 </div>
 <div id="tab-learn" class="panel">
-  <div class="ptitle">Topic Lessons</div>
-  <div class="lgrid">
-    <div class="lcard sel" onclick="selLesson(this,'World Cup 2026','Teams, goals, tactics')"><div class="em">⚽</div><div class="lt">World Cup 2026</div><div class="ld">Teams, goals, fan talk</div></div>
-    <div class="lcard" onclick="selLesson(this,'Morning Routine','Describe your morning')"><div class="em">🌅</div><div class="lt">Morning Routine</div><div class="ld">Daily life vocabulary</div></div>
-    <div class="lcard" onclick="selLesson(this,'Ordering Food','Navigate a restaurant')"><div class="em">🍽️</div><div class="lt">Ordering Food</div><div class="ld">Restaurants, menus</div></div>
-    <div class="lcard" onclick="selLesson(this,'Airport &amp; Travel','Check in, delays')"><div class="em">✈️</div><div class="lt">Airport &amp; Travel</div><div class="ld">Journey phrases</div></div>
-    <div class="lcard" onclick="selLesson(this,'Making Plans','Suggest, accept, decline')"><div class="em">📅</div><div class="lt">Making Plans</div><div class="ld">Social invitations</div></div>
-    <div class="lcard" onclick="selLesson(this,'Expressing Opinions','Agree, disagree, hedge')"><div class="em">💬</div><div class="lt">Expressing Opinions</div><div class="ld">Discussion phrases</div></div>
-  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div class="ptitle" style="margin:0">Topic Lessons</div><button class="btn btn-g" style="font-size:.74rem" onclick="refreshLessonTopics()">🔄 Fresh Topics</button></div>
+  <div class="lgrid" id="lessonCardGrid"><div style="color:var(--mut);font-size:.82rem;grid-column:1/-1">Loading topics…</div></div>
   <div class="lcontent" id="lessonContent"><span style="color:var(--mut)">Select a lesson, then tap Load.</span></div>
   <div class="spacer"></div>
   <div class="row"><button class="btn btn-p" onclick="loadLesson()">📖 Load Lesson</button><button class="btn btn-g" onclick="speakLesson()">🔊 Read Aloud</button></div>
@@ -743,26 +738,71 @@ async function whisperSTT(blob){
   const d=await res.json();return d.text||'';
 }
 
-function doListen(){if(!convoActive)return;if(KEYS.openai)listenWhisper();else listenWebSpeech();}
+let holdMR=null,holdStream=null,holdChunks=[];
 
-function listenWhisper(){
-  setStatus('listening');$('listenBtn').disabled=true;
+function startHoldListen(e){
+  if(e)e.preventDefault();
+  if(!convoActive)return;
+  if(currentAudioEl){try{currentAudioEl.pause();currentAudioEl.src='';}catch(err){}currentAudioEl=null;}
   synth.cancel();
-  let chunks=[];
+  holdChunks=[];
+  $('listenBtn').textContent='🔴 Listening…';$('listenBtn').style.background='var(--acc2)';
+  setStatus('listening');
   navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
-    const mr=new MediaRecorder(stream,{mimeType:MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':'audio/mp4'});
-    mr.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data);};
-    mr.onstop=async()=>{
-      stream.getTracks().forEach(t=>t.stop());
-      const blob=new Blob(chunks,{type:mr.mimeType});
-      try{const txt=await whisperSTT(blob);if(txt.trim())handleUserSpeech(txt.trim());else{setStatus('ready');$('listenBtn').disabled=false;}}
-      catch(e){listenWebSpeech();}
+    holdStream=stream;
+    holdMR=new MediaRecorder(stream,{mimeType:MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':'audio/mp4'});
+    holdMR.ondataavailable=e=>{if(e.data.size>0)holdChunks.push(e.data);};
+    holdMR.onstop=async()=>{
+      holdStream.getTracks().forEach(t=>t.stop());holdStream=null;
+      $('listenBtn').textContent='🎙 Hold to Speak';$('listenBtn').style.background='';
+      if(!holdChunks.length){setStatus('ready');return;}
+      const blob=new Blob(holdChunks,{type:holdMR.mimeType});
+      if(KEYS.openai){
+        try{const txt=await whisperSTT(blob);if(txt.trim())handleUserSpeech(txt.trim());else setStatus('ready');}
+        catch(e){listenWebSpeech();}
+      }else{listenWebSpeech();}
     };
-    mr.start();
-    setTimeout(()=>{if(mr.state==='recording')mr.stop();},8000);
-    $('listenBtn').disabled=false;$('listenBtn').textContent='⏹ Done';
-    $('listenBtn').onclick=()=>{if(mr.state==='recording')mr.stop();$('listenBtn').onclick=doListen;};
-  }).catch(()=>{setStatus('ready');$('listenBtn').disabled=false;alert('Mic access denied. Check browser settings.');});
+    holdMR.start();
+  }).catch(()=>{$('listenBtn').textContent='🎙 Hold to Speak';$('listenBtn').style.background='';setStatus('ready');alert('Mic access denied.');});
+}
+
+function stopHoldListen(){
+  if(holdMR&&holdMR.state==='recording')holdMR.stop();
+}
+
+function doListen(){startHoldListen();}
+
+async function translateMsg(btn,text){
+  btn.disabled=true;btn.textContent='…';
+  try{
+    const lang=getLang();
+    const result=await callDeepSeek(`Translate the following ${lang} text to English. Reply with ONLY the English translation, nothing else.`,text);
+    const d=document.createElement('div');
+    d.style.cssText='font-size:.76rem;color:var(--mut);font-style:italic;margin-top:4px;padding:4px 8px;background:rgba(91,141,238,0.06);border-radius:6px;border-left:2px solid var(--acc)';
+    d.textContent='🌐 '+result;
+    btn.parentElement.insertAdjacentElement('afterend',d);
+    btn.remove();
+  }catch(e){btn.disabled=false;btn.textContent='🌐 Translate';}
+}
+
+async function getInspiration(){
+  const lang=getLang();
+  const last=chatHistory.filter(m=>m.role==='assistant').slice(-1)[0]?.content||'';
+  if(!last){alert('Start a conversation first.');return;}
+  const btn=$('inspireBtn');btn.disabled=true;btn.textContent='💭…';
+  const sys=`You are helping a ${getCEFR()} ${lang} student respond to their tutor. Give exactly 3 short natural responses they could say, in ${lang} with English translation in parentheses. Format: numbered list 1. 2. 3. Keep each under 12 words in ${lang}.`;
+  try{
+    const raw=await callDeepSeek(sys,`The tutor just said: "${last.substring(0,200)}"\n\nGive 3 response options.`);
+    const box=$('inspireBox');
+    box.innerHTML='<div style="font-size:.72rem;color:var(--mut);margin-bottom:6px">💡 Choose a response or say your own:</div>'+
+      raw.split('\n').filter(l=>l.match(/^\d\./)).map(l=>{
+        const text=l.replace(/^\d\.\s*/,'');
+        const lang_part=text.split('(')[0].trim();
+        return `<button onclick="handleUserSpeech(${JSON.stringify(lang_part)});$('inspireBox').style.display='none';$('inspireBox').innerHTML=''" style="display:block;width:100%;text-align:left;background:#fff;border:1px solid var(--bdr);border-radius:8px;padding:8px 12px;margin-bottom:5px;font-size:.82rem;cursor:pointer;color:var(--txt)">${text}</button>`;
+      }).join('');
+    box.style.display='block';
+  }catch(e){alert('Could not get suggestions.');}
+  btn.disabled=false;btn.textContent='💡 Inspire';
 }
 
 function listenWebSpeech(){
@@ -857,8 +897,8 @@ function appendMsg(role,text,tr){
   const box=$('chatBox'),d=document.createElement('div');d.className='msg '+role;
   const safe=text.replace(/</g,'&lt;'),safeTr=tr?tr.replace(/</g,'&lt;'):'';
   const ml=role==='ai'?`<span style="font-size:.62rem;color:var(--mut);margin-left:5px">${{deepseek:'DeepSeek',qwen:'Qwen'}[convoModel]||'AI'}</span>`:'';
-  d.innerHTML=`<div class="spk">${role==='ai'?'🤖 Yuki':'🎙 You'}${ml}</div>${safe}`+(safeTr?`<div class="tr">${safeTr}</div>`:'')+
-    (role==='ai'?`<button class="sbtn" onclick="speak(${JSON.stringify(text)},'${getLang()}')">🔊</button>`:'');
+  const aiBtns=role==='ai'?`<div style="display:flex;gap:4px;margin-top:5px"><button class="sbtn" onclick="speak(${JSON.stringify(text)},'${getLang()}')">🔊</button><button class="sbtn" onclick="translateMsg(this,${JSON.stringify(text)})">🌐 Translate</button></div>`:'';
+  d.innerHTML=`<div class="spk">${role==='ai'?'🤖 Yuki':'🎙 You'}${ml}</div>${safe}`+(safeTr?`<div class="tr">${safeTr}</div>`:'')+aiBtns;
   box.appendChild(d);box.scrollTop=box.scrollHeight;
 }
 
@@ -866,9 +906,9 @@ function appendStreamMsg(role,text,tr){
   const box=$('chatBox'),d=document.createElement('div');d.className='msg '+role;
   const safeTr=tr?tr.replace(/</g,'&lt;'):'';
   const ml=role==='ai'?`<span style="font-size:.62rem;color:var(--mut);margin-left:5px">${{deepseek:'DeepSeek',qwen:'Qwen'}[convoModel]||'AI'}</span>`:'';
+  const aiBtns=role==='ai'?`<div style="display:flex;gap:4px;margin-top:5px"><button class="sbtn" onclick="speak(${JSON.stringify(text)},'${getLang()}')">🔊</button><button class="sbtn" onclick="translateMsg(this,${JSON.stringify(text)})">🌐 Translate</button></div>`:'';
   d.innerHTML=`<div class="spk">${role==='ai'?'🤖 Yuki':'🎙 You'}${ml}</div><span class="word-stream"></span>`+
-    (safeTr?`<div class="tr">${safeTr}</div>`:'')+
-    (role==='ai'?`<button class="sbtn" onclick="speak(${JSON.stringify(text)},'${getLang()}')">🔊</button>`:'');
+    (safeTr?`<div class="tr">${safeTr}</div>`:'')+aiBtns;
   box.appendChild(d);box.scrollTop=box.scrollHeight;
   return d.querySelector('.word-stream');
 }
@@ -878,7 +918,9 @@ async function startConvo(topicOverride,sysOverride){
   convoActive=true;chatHistory=[];userResponses=[];logSession();
   $('chatBox').innerHTML='';
   $('startBtn').style.display='none';
-  $('listenBtn').style.display='inline-block';$('listenBtn').textContent='🎙 Speak';$('listenBtn').onclick=doListen;
+  $('listenBtn').style.display='inline-block';
+  $('inspireBtn').style.display='inline-block';
+  $('inspireBox').style.display='none';$('inspireBox').innerHTML='';
   $('reviewBtn').style.display='inline-block';
   $('stopBtn').style.display='inline-block';
   $('sumBox').style.display='none';
@@ -921,6 +963,8 @@ function stopConvo(){
   if(recognition)recognition.abort();
   $('startBtn').style.display='inline-block';
   $('listenBtn').style.display='none';
+  $('inspireBtn').style.display='none';
+  $('inspireBox').style.display='none';$('inspireBox').innerHTML='';
   $('reviewBtn').style.display='none';
   $('stopBtn').style.display='none';
   setStatus('ready');
@@ -1258,7 +1302,7 @@ All persons. Level ${cefr}. Natural sentences.`;
   try{
     const raw=await callDeepSeek(sys,prompt);
     const d=JSON.parse(raw.replace(/```json|```/g,'').trim());
-    const cH=d.conjugations.map(c=>`<div class="crow"><span class="cp">${c.pronoun}</span><span class="cf">${c.form}</span></div>`).join('');
+    const cH=d.conjugations.map(c=>`<div class="crow"><span class="cp">${c.pronoun}</span><span class="cf">${c.form}</span><button class="sbtn" style="font-size:.65rem;padding:1px 6px;margin-left:4px" onclick="speak('${c.form.replace(/'/g,"\\'")}','${getLang()}')">🔊</button></div>`).join('');
     const eH=d.examples.map(e=>`<div class="ex">${e.target}<div class="en">${e.english}</div></div>`).join('');
     const eT=JSON.stringify(d.examples.map(e=>e.target));
     const past=PAST_TENSE[lang];const fut=FUT_TENSE[lang];
@@ -1305,16 +1349,42 @@ function loadWords(cat,el){
     const word=sep>-1?entry.substring(0,sep):entry;
     const tr=sep>-1?entry.substring(sep+3):'';
     const sw=word.replace(/'/g,"\\'");
-    return `<div class="witem"><div class="w">${word}</div><div class="wtr">${tr}</div><button class="sbtn" style="margin-top:5px;font-size:.68rem" onclick="speak('${sw}','${getLang()}')">🔊</button></div>`;
+    const safeWord=JSON.stringify(word),safeTr=JSON.stringify(tr),safeDesc=JSON.stringify(tr||word);
+    return `<div class="witem"><div class="w">${word}</div><div class="wtr">${tr}</div><div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap"><button class="sbtn" style="font-size:.68rem" onclick="speak('${sw}','${getLang()}')">🔊</button><button class="sbtn" style="font-size:.68rem" onclick="startGuidedLesson({icon:'📖',title:${safeWord},desc:'How to use: '+${safeDesc},tab:'lessons',id:'w-'+${safeWord}})">📖 Lesson</button></div></div>`;
   }).join('');
 }
 
 // ════════════════════════════════
 // LESSONS
 // ════════════════════════════════
+const DEFAULT_LESSONS=[
+  {em:'⚽',title:'World Cup 2026',desc:'Teams, goals, fan talk'},
+  {em:'🌅',title:'Morning Routine',desc:'Daily life vocabulary'},
+  {em:'🍽️',title:'Ordering Food',desc:'Restaurants, menus'},
+  {em:'✈️',title:'Airport & Travel',desc:'Check in, journey phrases'},
+  {em:'📅',title:'Making Plans',desc:'Social invitations'},
+  {em:'💬',title:'Expressing Opinions',desc:'Agree, disagree, hedge'},
+];
+function renderLessonCards(topics){
+  const grid=$('lessonCardGrid');
+  grid.innerHTML=topics.map((t,i)=>`<div class="lcard${i===0?' sel':''}" onclick="selLesson(this,${JSON.stringify(t.title)},${JSON.stringify(t.desc)})"><div class="em">${t.em}</div><div class="lt">${t.title}</div><div class="ld">${t.desc}</div></div>`).join('');
+  selLesson(grid.firstChild,topics[0].title,topics[0].desc);
+}
+async function refreshLessonTopics(){
+  const lang=getLang(),cefr=getCEFR(),btn=event.target;
+  btn.disabled=true;btn.textContent='🔄 Loading…';
+  try{
+    const raw=await callDeepSeek(`You are a ${lang} language teacher.`,
+      `Give 6 engaging ${lang} lesson topics for a ${cefr} student right now in ${new Date().toLocaleDateString('en',{month:'long',year:'numeric'})}. Mix practical and cultural topics. Include current events where relevant. Return ONLY a JSON array like: [{"em":"emoji","title":"Topic Name","desc":"one short phrase"}]. No markdown.`);
+    const clean=raw.replace(/```json|```/g,'').trim();
+    const topics=JSON.parse(clean.substring(clean.indexOf('['),clean.lastIndexOf(']')+1));
+    renderLessonCards(topics);
+  }catch(e){renderLessonCards(DEFAULT_LESSONS);}
+  btn.disabled=false;btn.textContent='🔄 Fresh Topics';
+}
 function selLesson(el,title,desc){
   document.querySelectorAll('.lcard').forEach(c=>c.classList.remove('sel'));
-  el.classList.add('sel');currentLesson={title,desc};
+  if(el)el.classList.add('sel');currentLesson={title,desc};
 }
 
 async function loadLesson(){
@@ -1432,6 +1502,7 @@ function confirmReset(){
 updateVoiceBadge();
 updateStreak();
 renderPath();
+renderLessonCards(DEFAULT_LESSONS);
 initOrb();
 if('speechSynthesis' in window)synth.getVoices();
 setTimeout(()=>loadToday(),1000);
