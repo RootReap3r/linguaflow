@@ -148,6 +148,8 @@ main{flex:1;padding:16px;padding-bottom:calc(80px + env(safe-area-inset-bottom))
 .ci-item{display:flex;align-items:center;gap:9px;padding:6px 0;border-bottom:1px solid var(--bdr);font-size:.8rem}.ci-item:last-child{border-bottom:none}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:none;align-items:center;justify-content:center;padding:16px}
 .overlay.open{display:flex}
+#guidedLessonModal.open{padding:0;background:#fff}
+#lessonCompleteModal.open{padding:16px}
 .mbox{background:#ffffff;border:1px solid var(--bdr);box-shadow:var(--shadow);border-radius:var(--r);padding:20px;max-width:480px;width:100%;max-height:88vh;overflow-y:auto;position:relative}
 .mbox h3{font-family:'Space Grotesk',sans-serif;font-size:.98rem;margin-bottom:6px}.mbox p{font-size:.8rem;color:var(--mut);margin-bottom:12px;line-height:1.6}
 .mclose{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--mut);font-size:1rem;cursor:pointer;padding:4px}
@@ -415,7 +417,90 @@ input[type=text]:focus{border-color:var(--acc)}
 <div class="overlay" id="nodeModal"><div class="mbox"><button class="mclose" onclick="closeModal('nodeModal')">✕</button><div style="font-size:1.5rem;margin-bottom:6px" id="nIcon"></div><h3 id="nTitle"></h3><p id="nDesc"></p><div class="mactions"><button class="btn btn-p" onclick="launchNode()">▶ Start</button><button class="btn btn-g" id="nMarkBtn" onclick="markNodeDone()">✓ Mark Done</button><button class="btn btn-a" onclick="openNodeTest()">⚡ Test Out</button><button class="btn btn-g" onclick="closeModal('nodeModal')">Close</button></div></div></div>
 <div class="overlay" id="settingsModal"><div class="mbox" style="max-width:500px"><button class="mclose" onclick="closeModal('settingsModal')">✕</button><h3>⚙️ Settings &amp; API Keys</h3><p>Keys saved to your device only — never in the code, never on GitHub.</p><div id="keyBlocks"></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">🔊 Voice engine</label><select id="ttsEngineSel"><option value="openai">OpenAI TTS (tts-1-hd) — cheap, good Spanish</option><option value="elevenlabs">ElevenLabs — most natural, higher cost</option><option value="browser">Browser built-in — free, robotic</option></select></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">Voice style (ElevenLabs only)</label><select id="voiceStyleSel"><option value="natural">Natural &amp; warm</option><option value="clear">Clear &amp; precise</option><option value="slow">Slow &amp; deliberate</option></select></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">ElevenLabs Voice ID <span style="color:var(--acc);font-size:.7rem">(optional — overrides default voices)</span></label><input type="text" id="ki-el_voice_id" placeholder="e.g. pNInz6obpgDQGcFmaJgB" autocomplete="off" style="font-family:monospace;font-size:.8rem"><div class="mnote">Find your Voice ID at <a href="https://elevenlabs.io/voice-lab" target="_blank">elevenlabs.io/voice-lab</a> → click a voice → copy ID</div></div><div class="mactions"><button class="btn btn-p" onclick="saveKeys()">💾 Save</button><button class="btn btn-g" onclick="testKeys()">🧪 Test Keys</button><button class="btn btn-g" onclick="closeModal('settingsModal')">Cancel</button></div><div id="keyTestOut" style="margin-top:10px"></div></div></div>
 <div class="overlay" id="stModal"><div class="mbox"><button class="mclose" onclick="closeModal('stModal')">✕</button><h3>🧪 System Diagnostics</h3><div id="stOut" style="margin:12px 0"></div><button class="btn btn-g" onclick="closeModal('stModal')">Close</button></div></div>
-<div class="overlay" id="guidedLessonModal"><div class="mbox" style="max-width:520px;padding:0;overflow:hidden"><div style="background:linear-gradient(135deg,#1a1f4e,#2d3282);padding:16px 20px;display:flex;align-items:center;justify-content:space-between"><div><div id="glIcon" style="font-size:1.4rem;display:inline;margin-right:8px"></div><span id="glTitle" style="font-family:'Space Grotesk',sans-serif;font-weight:700;color:#fff;font-size:.98rem"></span></div><button class="mclose" style="color:rgba(255,255,255,0.7)" onclick="closeGuidedLesson()">✕</button></div><div id="glChat" style="height:340px;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px;background:#f8f9fc"></div><div style="padding:10px 14px;border-top:1px solid var(--bdr);display:flex;gap:8px;align-items:center;background:#fff"><input type="text" id="glInput" placeholder="Type your response…" style="flex:1;padding:8px 12px;border:1px solid var(--bdr);border-radius:8px;font-size:.9rem;outline:none" onkeydown="if(event.key==='Enter')glSend()"><button class="btn btn-d" style="padding:8px 10px;font-size:.8rem" onclick="glListen()">🎙</button><button class="btn btn-p" style="padding:8px 14px;font-size:.8rem" onclick="glSend()">Send</button></div><div style="padding:8px 14px;background:#f0f4ff;border-top:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center"><span style="font-size:.73rem;color:var(--mut)">Ready to move on?</span><button class="btn btn-gr" style="font-size:.8rem;padding:7px 18px" onclick="completeLesson()">✓ Complete Lesson</button></div></div></div>
+<div class="overlay" id="guidedLessonModal" style="padding:0;align-items:stretch;justify-content:stretch">
+<div style="width:100%;height:100%;max-width:600px;margin:0 auto;display:flex;flex-direction:column;background:#fff;position:relative">
+  <!-- Header -->
+  <div style="position:relative;background:linear-gradient(180deg,#1e2d6b 0%,#3b5bdb 100%);flex:0 0 42vh;min-height:220px;display:flex;flex-direction:column">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;position:absolute;top:0;left:0;right:0;z-index:2">
+      <button onclick="closeGuidedLesson()" style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.18);border:none;color:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="display:flex;align-items:center;gap:6px">
+            <div id="glPhaseDot1" style="width:10px;height:10px;border-radius:50%;background:#fff"></div>
+            <div style="width:28px;height:2px;background:rgba(255,255,255,0.4)" id="glPhaseLine"></div>
+            <div id="glPhaseDot2" style="width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.3)"></div>
+          </div>
+          <div style="display:flex;gap:14px">
+            <span id="glPhaseLabel1" style="font-size:.62rem;color:#fff;font-weight:600">Lesson</span>
+            <span id="glPhaseLabel2" style="font-size:.62rem;color:rgba(255,255,255,0.5)">Practice</span>
+          </div>
+        </div>
+      </div>
+      <button onclick="completeLesson()" style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);color:#fff;font-size:.72rem;font-weight:600;padding:5px 12px;border-radius:20px;cursor:pointer">✓ Done</button>
+    </div>
+    <img src="assets/aria-idle.jpeg" alt="Aria" style="width:100%;height:100%;object-fit:cover;object-position:top center;opacity:0.92">
+    <div style="position:absolute;bottom:12px;left:16px;right:16px;display:flex;align-items:flex-end;justify-content:space-between">
+      <div>
+        <div style="font-size:.68rem;color:rgba(255,255,255,0.7);font-weight:600;letter-spacing:.04em;text-transform:uppercase">Aria</div>
+        <div id="glTitle" style="font-family:'Space Grotesk',sans-serif;font-weight:700;color:#fff;font-size:.95rem;line-height:1.2"></div>
+      </div>
+      <div id="glVerbPills" style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end"></div>
+    </div>
+  </div>
+  <!-- Chat -->
+  <div id="glChat" style="flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:8px;background:#f5f7fb"></div>
+  <!-- Type input (hidden by default) -->
+  <div id="glTypeBar" style="display:none;padding:8px 12px;background:#fff;border-top:1px solid var(--bdr)">
+    <div style="display:flex;gap:8px;align-items:center">
+      <input type="text" id="glInput" placeholder="Type your response…" style="flex:1;padding:9px 14px;border:1px solid var(--bdr);border-radius:22px;font-size:.9rem;outline:none;background:#f5f7fb" onkeydown="if(event.key==='Enter')glSend()">
+      <button onclick="glSend()" style="background:var(--acc);color:#fff;border:none;border-radius:50%;width:38px;height:38px;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center">↑</button>
+    </div>
+  </div>
+  <!-- Bottom bar -->
+  <div style="padding:12px 24px 20px;background:#fff;border-top:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between">
+    <button onclick="glToggleType()" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;color:var(--acc)">
+      <div style="width:44px;height:44px;border-radius:50%;background:#eef2ff;display:flex;align-items:center;justify-content:center;font-size:1.1rem">⌨️</div>
+      <span style="font-size:.68rem;font-weight:600;color:var(--acc)">Type</span>
+    </button>
+    <button id="glMicBtn" onmousedown="glHoldStart()" onmouseup="glHoldStop()" ontouchstart="glHoldStart(event)" ontouchend="glHoldStop()" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer">
+      <div id="glMicCircle" style="width:66px;height:66px;border-radius:50%;background:linear-gradient(135deg,#5b8dee,#7c6fff);display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:0 4px 16px rgba(91,141,238,0.4);transition:transform .1s">🎙</div>
+      <span style="font-size:.68rem;font-weight:600;color:var(--mut)">Hold</span>
+    </button>
+    <button onclick="glGetInspiration()" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer">
+      <div style="width:44px;height:44px;border-radius:50%;background:#fff3e0;display:flex;align-items:center;justify-content:center;font-size:1.1rem">💡</div>
+      <span style="font-size:.68rem;font-weight:600;color:#f59e0b">Inspire</span>
+    </button>
+  </div>
+</div>
+</div>
+<!-- Lesson Complete Screen -->
+<div class="overlay" id="lessonCompleteModal">
+<div class="mbox" style="text-align:center;max-width:360px">
+  <div style="font-size:2.8rem;margin-bottom:8px">🏁</div>
+  <h2 style="font-family:'Space Grotesk',sans-serif;color:var(--acc);margin-bottom:6px">Lesson Complete!</h2>
+  <p style="font-size:.84rem;color:var(--mut);margin-bottom:20px" id="lcSubtitle">You're crushing it! Fluency is just around the corner.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:22px">
+    <div style="background:#e8f4fd;border:2px solid #5b8dee;border-radius:12px;padding:12px 8px">
+      <div style="font-size:.72rem;color:#5b8dee;font-weight:600;margin-bottom:6px">New Words</div>
+      <div style="font-size:1.5rem;font-weight:700;color:#5b8dee" id="lcWords">0</div>
+    </div>
+    <div style="background:#e8fdf2;border:2px solid #22c55e;border-radius:12px;padding:12px 8px">
+      <div style="font-size:.72rem;color:#22c55e;font-weight:600;margin-bottom:6px">Exchanges</div>
+      <div style="font-size:1.5rem;font-weight:700;color:#22c55e" id="lcExchanges">0</div>
+    </div>
+    <div style="background:#fff8e1;border:2px solid #f59e0b;border-radius:12px;padding:12px 8px">
+      <div style="font-size:.72rem;color:#f59e0b;font-weight:600;margin-bottom:6px">Duration</div>
+      <div style="font-size:1.5rem;font-weight:700;color:#f59e0b" id="lcDuration">0:00</div>
+    </div>
+  </div>
+  <div id="lcVerbRecap" style="background:#f5f7fb;border-radius:10px;padding:10px 14px;margin-bottom:18px;text-align:left;display:none">
+    <div style="font-size:.72rem;font-weight:700;color:var(--mut);margin-bottom:6px">VERBS PRACTICED</div>
+    <div id="lcVerbList" style="font-size:.84rem;color:var(--txt);line-height:1.7"></div>
+  </div>
+  <button onclick="continueToNextLesson()" class="btn btn-p" style="width:100%;margin-bottom:10px;font-size:.9rem;padding:13px">Continue to Next Lesson</button>
+  <button onclick="closeModal('lessonCompleteModal')" class="btn btn-g" style="width:100%;font-size:.88rem">Go to Home</button>
+</div>
+</div>
 <div class="overlay" id="testModal"><div class="mbox"><button class="mclose" onclick="closeTestModal()">✕</button><div style="font-size:1.3rem;margin-bottom:5px" id="tIcon"></div><h3 id="tTitle"></h3><p id="tDesc" style="margin-bottom:10px"></p><div id="tProgRow" style="display:none;align-items:center;gap:8px;margin-bottom:10px"><div class="test-prog-track"><div class="test-prog-fill" id="tProgFill" style="width:0%"></div></div><span id="tProgLbl" style="font-size:.72rem;color:var(--mut);white-space:nowrap">0/4</span></div><div class="chat-box" id="tChatBox" style="height:210px;display:none"></div><div class="vbar" id="tVbar" style="display:none;margin-bottom:10px"><div class="sdot" id="tDot"></div><span style="font-size:.74rem;color:var(--mut);flex:1" id="tStatus">Ready</span><button class="btn btn-d" id="tListenBtn" onclick="testListen()">🎙 Speak</button><button class="btn btn-g" onclick="testSkip()" style="font-size:.76rem">Skip</button></div><div id="tResults" style="display:none"><div style="text-align:center;margin-bottom:14px"><div style="font-size:2.6rem;font-weight:700;font-family:'Space Grotesk',sans-serif" id="tScore"></div><div style="font-size:.8rem;color:var(--mut);margin-top:3px" id="tScoreLbl"></div></div><div class="stat-grid" style="margin-bottom:12px"><div class="stat-card"><div class="stat-num" id="tAcc">-</div><div class="stat-lbl">Accuracy</div></div><div class="stat-card"><div class="stat-num" id="tVoc">-</div><div class="stat-lbl">Vocabulary</div></div><div class="stat-card"><div class="stat-num" id="tFlu">-</div><div class="stat-lbl">Fluency</div></div></div><div style="background:var(--s2);border-radius:8px;padding:10px 12px;font-size:.8rem;line-height:1.65;margin-bottom:12px" id="tFeedback"></div><div id="tPassAct" style="display:none"><div style="background:rgba(62,232,138,.08);border:1px solid rgba(62,232,138,.25);border-radius:8px;padding:9px 12px;font-size:.8rem;color:var(--grn);margin-bottom:10px">🎉 <strong>Passed!</strong> <span id="tPassMsg"></span></div><div class="mactions"><button class="btn btn-gr" onclick="applyPass()">✓ Unlock</button><button class="btn btn-g" onclick="closeTestModal()">Close</button></div></div><div id="tFailAct" style="display:none"><div style="background:rgba(255,107,138,.08);border:1px solid rgba(255,107,138,.25);border-radius:8px;padding:9px 12px;font-size:.8rem;color:var(--acc2);margin-bottom:10px" id="tFailMsg"></div><div class="mactions"><button class="btn btn-p" onclick="startTest()">↺ Retry</button><button class="btn btn-g" onclick="closeTestModal()">Close</button></div></div></div><div id="tStart"><div class="mactions"><button class="btn btn-p" onclick="startTest()">▶ Begin Test</button><button class="btn btn-g" onclick="closeTestModal()">Cancel</button></div></div></div></div>
 <script>
 const WL_DATA = {"Spanish": {"pronouns": ["yo — I", "tú — you (inf.)", "él — he", "ella — she", "nosotros — we", "vosotros — you all (Spain)", "ellos/ellas — they", "usted — you (formal)", "ustedes — you all (LA)", "me — me", "te — you", "le — him/her", "nos — us", "se — himself/herself", "con — with (prep.)"], "conjunctions": ["y — and", "o — or", "pero — but", "porque — because", "que — that", "si — if", "aunque — although", "cuando — when", "mientras — while", "sino — but rather", "como — as", "pues — so", "ni — neither/nor", "ya que — since", "a menos que — unless"], "adverbs": ["muy — very", "bien — well", "mal — badly", "también — also", "ya — already", "aquí — here", "allí — there", "siempre — always", "nunca — never", "hoy — today", "mañana — tomorrow", "ayer — yesterday", "mucho — a lot", "poco — a little", "casi — almost"], "prepositions": ["de — of/from", "a — to", "en — in/on", "con — with", "por — by/for", "para — for/to", "sin — without", "sobre — on/about", "entre — between", "hasta — until", "desde — since", "hacia — towards", "ante — before", "bajo — under", "según — according to"], "question_words": ["¿qué? — what", "¿quién? — who", "¿dónde? — where", "¿cuándo? — when", "¿por qué? — why", "¿cómo? — how", "¿cuánto? — how much", "¿cuántos? — how many", "¿cuál? — which", "¿adónde? — where to"], "numbers": ["uno — 1", "dos — 2", "tres — 3", "cuatro — 4", "cinco — 5", "seis — 6", "siete — 7", "ocho — 8", "nueve — 9", "diez — 10", "veinte — 20", "treinta — 30", "cien — 100", "mil — 1000", "primero — 1st"], "adjectives": ["bueno — good", "malo — bad", "grande — big", "pequeño — small", "nuevo — new", "viejo — old", "mucho — much", "poco — little", "mismo — same", "otro — other", "todo — all", "cada — each", "último — last", "propio — own", "diferente — different"], "connectors": ["primero — first", "luego — then", "después — after", "finalmente — finally", "además — moreover", "sin embargo — however", "por lo tanto — therefore", "en cambio — on the other hand", "es decir — that is", "por ejemplo — for example", "sobre todo — above all", "a pesar de — despite", "en cuanto a — regarding", "tanto…como — both…and", "no solo…sino — not only…but"]}, "French": {"pronouns": ["je — I", "tu — you (inf.)", "il — he", "elle — she", "nous — we", "vous — you (pl./formal)", "ils/elles — they", "me — me", "te — you", "lui — him/her", "nous — us", "se — himself/herself", "y — there", "en — of it", "avec — with (prep.)"], "conjunctions": ["et — and", "ou — or", "mais — but", "parce que — because", "que — that", "si — if", "bien que — although", "quand — when", "pendant que — while", "ni — neither/nor", "donc — so", "car — because", "or — now/yet", "puisque — since", "comme — as"], "adverbs": ["très — very", "bien — well", "mal — badly", "aussi — also", "déjà — already", "ici — here", "là — there", "toujours — always", "jamais — never", "aujourd'hui — today", "demain — tomorrow", "hier — yesterday", "beaucoup — a lot", "peu — a little", "presque — almost"], "prepositions": ["de — of/from", "à — to/at", "en — in", "avec — with", "pour — for", "sans — without", "sur — on", "entre — between", "jusqu'à — until", "depuis — since", "vers — towards", "devant — in front of", "derrière — behind", "sous — under", "selon — according to"], "question_words": ["quoi/que — what", "qui — who", "où — where", "quand — when", "pourquoi — why", "comment — how", "combien — how much", "quel/quelle — which", "lequel — which one", "d'où — from where"], "numbers": ["un — 1", "deux — 2", "trois — 3", "quatre — 4", "cinq — 5", "six — 6", "sept — 7", "huit — 8", "neuf — 9", "dix — 10", "vingt — 20", "trente — 30", "cent — 100", "mille — 1000", "premier — 1st"], "adjectives": ["bon — good", "mauvais — bad", "grand — big", "petit — small", "nouveau — new", "vieux — old", "même — same", "autre — other", "tout — all", "chaque — each", "dernier — last", "propre — own", "différent — different", "vrai — true", "seul — alone/only"], "connectors": ["d'abord — first", "puis — then", "ensuite — next", "enfin — finally", "de plus — moreover", "cependant — however", "donc — therefore", "en revanche — on the other hand", "c'est-à-dire — that is", "par exemple — for example", "surtout — above all", "malgré — despite", "quant à — regarding", "non seulement…mais — not only…but", "à cause de — because of"]}, "Russian": {"pronouns": ["я — I", "ты — you (inf.)", "он — he", "она — she", "мы — we", "вы — you (pl./formal)", "они — they", "мне — to me", "тебе — to you", "ему — to him", "ей — to her", "нам — to us", "себя — oneself", "с — with (prep.)", "кто — who"], "conjunctions": ["и — and", "или — or", "но — but", "потому что — because", "что — that", "если — if", "хотя — although", "когда — when", "пока — while", "ни…ни — neither…nor", "поэтому — so", "так как — since", "а — and/but", "однако — however", "либо — either/or"], "adverbs": ["очень — very", "хорошо — well", "плохо — badly", "тоже — also", "уже — already", "здесь — here", "там — there", "всегда — always", "никогда — never", "сегодня — today", "завтра — tomorrow", "вчера — yesterday", "много — a lot", "мало — a little", "почти — almost"], "prepositions": ["в — in/into", "на — on/onto", "с — with/from", "по — along/by", "о — about", "у — by/at", "к — towards", "от — from", "до — until/to", "из — from/out of", "за — behind/for", "над — above", "под — under", "перед — in front of", "между — between"], "question_words": ["что? — what", "кто? — who", "где? — where", "когда? — when", "почему? — why", "как? — how", "сколько? — how much", "какой? — which", "куда? — where to", "откуда? — from where"], "numbers": ["один — 1", "два — 2", "три — 3", "четыре — 4", "пять — 5", "шесть — 6", "семь — 7", "восемь — 8", "девять — 9", "десять — 10", "двадцать — 20", "тридцать — 30", "сто — 100", "тысяча — 1000", "первый — 1st"], "adjectives": ["хороший — good", "плохой — bad", "большой — big", "маленький — small", "новый — new", "старый — old", "такой — such", "другой — other", "весь — all", "каждый — each", "последний — last", "сам — oneself", "разный — different", "настоящий — real", "один — one/alone"], "connectors": ["во-первых — first", "потом — then", "затем — next", "наконец — finally", "кроме того — moreover", "однако — however", "поэтому — therefore", "с другой стороны — on the other hand", "то есть — that is", "например — for example", "прежде всего — above all", "несмотря на — despite", "что касается — regarding", "не только…но и — not only…but", "из-за — because of"]}, "German": {"pronouns": ["ich — I", "du — you (inf.)", "er — he", "sie — she", "wir — we", "ihr — you (pl.)", "sie/Sie — they/you (formal)", "mir — to me", "dir — to you", "ihm — to him", "ihr — to her", "uns — to us", "sich — himself/herself", "mich — me (acc.)", "mit — with (prep.)"], "conjunctions": ["und — and", "oder — or", "aber — but", "weil — because", "dass — that", "wenn — if/when", "obwohl — although", "während — while", "weder…noch — neither…nor", "denn — because", "also — so", "sondern — but rather", "als — than/when", "bevor — before", "nachdem — after"], "adverbs": ["sehr — very", "gut — well", "schlecht — badly", "auch — also", "schon — already", "hier — here", "dort — there", "immer — always", "nie — never", "heute — today", "morgen — tomorrow", "gestern — yesterday", "viel — a lot", "wenig — a little", "fast — almost"], "prepositions": ["von — from/of", "zu — to/at", "in — in", "mit — with", "für — for", "auf — on", "an — at/on", "über — over/about", "unter — under", "zwischen — between", "nach — after/to", "seit — since", "bis — until", "durch — through", "gegen — against"], "question_words": ["was? — what", "wer? — who", "wo? — where", "wann? — when", "warum? — why", "wie? — how", "wie viel? — how much", "welche? — which", "wohin? — where to", "woher? — from where"], "numbers": ["eins — 1", "zwei — 2", "drei — 3", "vier — 4", "fünf — 5", "sechs — 6", "sieben — 7", "acht — 8", "neun — 9", "zehn — 10", "zwanzig — 20", "dreißig — 30", "hundert — 100", "tausend — 1000", "erste — 1st"], "adjectives": ["gut — good", "schlecht — bad", "groß — big", "klein — small", "neu — new", "alt — old", "gleich — same", "andere — other", "ganz — all/whole", "jede — each", "letzte — last", "eigen — own", "verschieden — different", "wahr — true", "allein — alone"], "connectors": ["erstens — first", "dann — then", "danach — after that", "schließlich — finally", "außerdem — moreover", "jedoch — however", "daher — therefore", "andererseits — on the other hand", "das heißt — that is", "zum Beispiel — for example", "vor allem — above all", "trotz — despite", "bezüglich — regarding", "nicht nur…sondern — not only…but", "wegen — because of"]}, "Portuguese": {"pronouns": ["eu — I", "tu/você — you", "ele — he", "ela — she", "nós — we", "vocês — you (pl.)", "eles/elas — they", "me — me", "te/lhe — you", "lhe — him/her", "nos — us", "se — himself/herself", "mim — me (prep.)", "com — with (prep.)", "si — oneself"], "conjunctions": ["e — and", "ou — or", "mas — but", "porque — because", "que — that", "se — if", "embora — although", "quando — when", "enquanto — while", "nem — neither/nor", "portanto — so", "pois — because", "porém — however", "já que — since", "como — as"], "adverbs": ["muito — very", "bem — well", "mal — badly", "também — also", "já — already", "aqui — here", "lá — there", "sempre — always", "nunca — never", "hoje — today", "amanhã — tomorrow", "ontem — yesterday", "bastante — quite", "pouco — a little", "quase — almost"], "prepositions": ["de — of/from", "a — to", "em — in", "com — with", "por — by/for", "para — for/to", "sem — without", "sobre — on/about", "entre — between", "até — until", "desde — since", "após — after", "antes de — before", "dentro de — inside", "fora de — outside"], "question_words": ["o que? — what", "quem? — who", "onde? — where", "quando? — when", "por que? — why", "como? — how", "quanto? — how much", "qual? — which", "aonde? — where to", "de onde? — from where"], "numbers": ["um — 1", "dois — 2", "três — 3", "quatro — 4", "cinco — 5", "seis — 6", "sete — 7", "oito — 8", "nove — 9", "dez — 10", "vinte — 20", "trinta — 30", "cem — 100", "mil — 1000", "primeiro — 1st"], "adjectives": ["bom — good", "mau/ruim — bad", "grande — big", "pequeno — small", "novo — new", "velho — old", "mesmo — same", "outro — other", "todo — all", "cada — each", "último — last", "próprio — own", "diferente — different", "verdadeiro — true", "sozinho — alone"], "connectors": ["primeiro — first", "depois — then", "em seguida — next", "finalmente — finally", "além disso — moreover", "no entanto — however", "portanto — therefore", "por outro lado — on the other hand", "ou seja — that is", "por exemplo — for example", "sobretudo — above all", "apesar de — despite", "quanto a — regarding", "não só…mas — not only…but", "por causa de — because of"]}};
@@ -1158,112 +1243,205 @@ function launchNode(){
 // ════════════════════════════════
 // GUIDED LESSON
 // ════════════════════════════════
-let glHistory=[],glNode=null,glListening=false;
+let glHistory=[],glNode=null,glVerbs=[],glStartTime=null,glMR=null,glTypeVisible=false;
 
 function startWordLesson(idx){
   const w=wordStore[idx];if(!w)return;
-  startGuidedLesson({icon:'📖',title:w.word+' ('+w.tr+')',desc:'Teach how to use "'+w.word+'" in sentences. Give 2-3 example sentences, explain any grammar rules, then ask the student to make their own sentence.',tab:'lessons',id:'word-'+idx});
+  startGuidedLesson({icon:'📖',title:w.word+' ('+w.tr+')',desc:'Teach how to use "'+w.word+'" in context.',tab:'lessons',id:'word-'+idx});
 }
 
 async function startGuidedLesson(n){
-  glNode=n;glHistory=[];
-  $('glIcon').textContent=n.icon;$('glTitle').textContent=n.title;
-  $('glChat').innerHTML='';$('glInput').value='';
+  glNode=n;glHistory=[];glVerbs=[];glStartTime=Date.now();glTypeVisible=false;
+  $('glTitle').textContent=n.title;
+  $('glChat').innerHTML='';
+  if($('glInput'))$('glInput').value='';
+  $('glTypeBar').style.display='none';
+  $('glVerbPills').innerHTML='';
+  $('glPhaseDot1').style.background='#fff';
+  $('glPhaseDot2').style.background='rgba(255,255,255,0.3)';
+  $('glPhaseLabel1').style.color='#fff';
+  $('glPhaseLabel2').style.color='rgba(255,255,255,0.5)';
   openModal('guidedLessonModal');
   const lang=getLang(),cefr=getCEFR();
   glAppend('ai','…');
-  const sys=`You are Aria, a warm and encouraging ${lang} tutor. You are teaching a ${cefr} student a guided lesson on: "${n.title}" — ${n.desc}.
-Lead the lesson step by step:
-1. Introduce the topic warmly
-2. Teach 3-4 key phrases or words with examples
-3. Ask the student to try using a phrase
-4. Correct gently, then move to the next concept
-Keep responses short (2-4 sentences). After the student responds, correct gently and move forward. Speak naturally, like a real tutor.
+  const sys=`You are Aria, a warm and encouraging ${lang} language tutor. You are teaching a ${cefr} student a lesson on: "${n.title}".
+
+LESSON STRUCTURE — follow this exactly:
+1. Greet briefly and introduce the topic in ONE sentence.
+2. Pick 2-3 key verbs relevant to "${n.title}" and state them at the start like: "Our verbs today: [verb1] (meaning), [verb2] (meaning), [verb3] (meaning)."
+3. Teach ONE concept at a time — short sentences only (1-2 sentences per response max).
+4. After teaching something, ask the student to repeat a phrase or answer a question.
+5. Validate their response warmly, correct gently if needed, then move to the next concept.
+6. Weave the chosen verbs into every example sentence throughout the lesson.
+7. End each turn with exactly ONE question or prompt for the student — never multiple questions.
+
+STYLE: Short, natural, encouraging. Like a real tutor in a session — not a lecture.
 ${getLessonImmersionPrompt(lang)}`;
-  const opening=await callDeepSeek(sys,`Start the lesson on "${n.title}". Introduce the topic warmly and teach the first key phrase.`);
+  const opening=await callDeepSeek(sys,`Start the lesson on "${n.title}". Greet, state the 2-3 verbs for today, then teach the first concept.`);
   glHistory=[{role:'assistant',content:opening}];
   $('glChat').lastChild.remove();
   glAppend('ai',opening);
-  speak(opening.substring(0,300),lang);
+  speak(opening.substring(0,400),lang);
+  // Extract verbs from opening and show as pills
+  const verbMatch=opening.match(/verbs? today[:\s]+([^.!\n]+)/i);
+  if(verbMatch){
+    const pills=verbMatch[1].split(/[,;]/).slice(0,3).map(v=>v.trim().split('(')[0].trim()).filter(Boolean);
+    glVerbs=pills;
+    $('glVerbPills').innerHTML=pills.map(v=>`<div style="background:rgba(255,255,255,0.2);color:#fff;font-size:.68rem;font-weight:600;padding:3px 9px;border-radius:12px;border:1px solid rgba(255,255,255,0.35)">${v}</div>`).join('');
+  }
 }
 
 function glAppend(role,text){
   const box=$('glChat'),d=document.createElement('div');
-  d.style.cssText=`max-width:85%;padding:9px 13px;border-radius:12px;font-size:.85rem;line-height:1.6;align-self:${role==='ai'?'flex-start':'flex-end'};background:${role==='ai'?'#fff':'linear-gradient(135deg,#5b8dee,#7c6fff)'};color:${role==='ai'?'var(--txt)':'#fff'};border:${role==='ai'?'1px solid var(--bdr)':'none'};box-shadow:0 1px 4px rgba(0,0,0,0.08)`;
-  d.textContent=text;
-  if(role==='ai'){
-    const spk=document.createElement('button');
-    spk.style.cssText='display:block;margin-top:5px;font-size:.7rem;background:none;border:1px solid var(--bdr);color:var(--mut);padding:2px 7px;border-radius:4px;cursor:pointer';
-    spk.textContent='🔊';spk.onclick=()=>speak(text,getLang());
-    d.appendChild(spk);
+  d.style.cssText=`max-width:88%;padding:10px 14px;border-radius:18px;font-size:.88rem;line-height:1.55;align-self:${role==='ai'?'flex-start':'flex-end'};background:${role==='ai'?'#fff':'linear-gradient(135deg,#5b8dee,#7c6fff)'};color:${role==='ai'?'var(--txt)':'#fff'};border:${role==='ai'?'1px solid #e8ecf4':'none'};box-shadow:0 1px 6px rgba(0,0,0,0.07)`;
+  if(role==='user'){
+    const icon=document.createElement('div');
+    icon.style.cssText='align-self:flex-end;width:26px;height:26px;border-radius:50%;background:#dde4ff;display:flex;align-items:center;justify-content:center;font-size:.7rem;margin-bottom:-4px;margin-right:2px;flex-shrink:0';
+    icon.textContent='👤';
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:flex-end;gap:6px;align-self:flex-end;max-width:88%';
+    d.style.alignSelf='unset';row.appendChild(icon);row.appendChild(d);
+    d.textContent=text;box.appendChild(row);box.scrollTop=box.scrollHeight;return;
   }
+  d.textContent=text;
+  const btns=document.createElement('div');
+  btns.style.cssText='display:flex;gap:6px;margin-top:7px';
+  const tr=document.createElement('button');
+  tr.style.cssText='background:none;border:1px solid #dde4ff;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:.75rem;display:flex;align-items:center;justify-content:center;color:#8892a4';
+  tr.textContent='🈯';
+  const tIdx=msgStore.push(text)-1;
+  tr.onclick=()=>translateMsg(tr,msgStore[tIdx]);
+  const spk=document.createElement('button');
+  spk.style.cssText=tr.style.cssText;spk.textContent='▶';
+  spk.onclick=()=>speak(msgStore[tIdx],getLang());
+  btns.appendChild(tr);btns.appendChild(spk);d.appendChild(btns);
   box.appendChild(d);box.scrollTop=box.scrollHeight;
+  // Switch to practice phase after 4 exchanges
+  if(glHistory.length>=8){
+    $('glPhaseDot2').style.background='#fff';
+    $('glPhaseLabel2').style.color='#fff';
+    $('glPhaseDot1').style.background='rgba(255,255,255,0.4)';
+    $('glPhaseLabel1').style.color='rgba(255,255,255,0.6)';
+  }
 }
 
 async function glSend(){
   const txt=$('glInput').value.trim();if(!txt)return;
   $('glInput').value='';
-  glAppend('user',txt);
   glHistory.push({role:'user',content:txt});
+  glAppend('user',txt);
   const lang=getLang(),cefr=getCEFR();
-  const sys=`You are Aria, a warm ${lang} tutor guiding a ${cefr} student through a lesson on "${glNode?.title}". Continue the lesson naturally. If the student made an error, correct gently with the right form. Then move the lesson forward — teach the next concept, ask a follow-up question, or wrap up if enough has been covered. Keep it short (2-4 sentences max). ${getLessonImmersionPrompt(lang)}`;
-  const d=document.createElement('div');d.style.cssText='align-self:flex-start;color:var(--mut);font-size:.82rem';d.textContent='…';$('glChat').appendChild(d);$('glChat').scrollTop=$('glChat').scrollHeight;
-  const reply=await callDeepSeek(sys,txt,glHistory.slice(0,-1));
-  d.remove();
+  const dot=document.createElement('div');
+  dot.style.cssText='align-self:flex-start;color:var(--mut);font-size:.85rem;padding:8px 4px';
+  dot.textContent='…';$('glChat').appendChild(dot);$('glChat').scrollTop=$('glChat').scrollHeight;
+  const sys=`You are Aria, a warm ${lang} tutor. Lesson: "${glNode?.title}". Verbs being practiced: ${glVerbs.join(', ')||'relevant verbs'}.
+If the student made an error, correct gently and give the right form. Then move forward — teach the next concept or ask the next question. Keep it to 1-2 sentences max. End with exactly one prompt for the student. ${getLessonImmersionPrompt(lang)}`;
+  const reply=await callDeepSeek(sys,txt,glHistory.slice(-8));
+  dot.remove();
   glHistory.push({role:'assistant',content:reply});
   glAppend('ai',reply);
-  speak(reply.substring(0,300),lang);
+  speak(reply.substring(0,400),lang);
 }
 
-function glListen(){
-  if(!KEYS.openai){alert('Add OpenAI key in Settings for voice input.');return;}
-  const btn=event.target;btn.textContent='⏹';btn.style.background='var(--acc2)';
+function glToggleType(){
+  glTypeVisible=!glTypeVisible;
+  $('glTypeBar').style.display=glTypeVisible?'block':'none';
+  if(glTypeVisible)$('glInput').focus();
+}
+
+let glHoldMR=null;
+function glHoldStart(e){
+  if(e)e.preventDefault();
+  if(!KEYS.openai){$('glInput').focus();glToggleType();return;}
+  $('glMicCircle').style.transform='scale(0.92)';
+  $('glMicCircle').style.background='linear-gradient(135deg,#ff6b8a,#e0002b)';
   let chunks=[];
   navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
-    const mr=new MediaRecorder(stream,{mimeType:MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':'audio/mp4'});
-    mr.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data);};
-    mr.onstop=async()=>{
-      stream.getTracks().forEach(t=>t.stop());btn.textContent='🎙';btn.style.background='';
-      const blob=new Blob(chunks,{type:mr.mimeType});
+    glHoldMR=new MediaRecorder(stream,{mimeType:MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':'audio/mp4'});
+    glHoldMR.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data);};
+    glHoldMR.onstop=async()=>{
+      stream.getTracks().forEach(t=>t.stop());
+      $('glMicCircle').style.transform='';
+      $('glMicCircle').style.background='linear-gradient(135deg,#5b8dee,#7c6fff)';
+      const blob=new Blob(chunks,{type:glHoldMR.mimeType});
       try{const txt=await whisperSTT(blob);if(txt.trim()){$('glInput').value=txt;glSend();}}catch(e){}
     };
-    mr.start();
-    btn.onclick=()=>{mr.stop();btn.onclick=glListen;};
-    setTimeout(()=>{if(mr.state==='recording')mr.stop();btn.onclick=glListen;},10000);
-  }).catch(()=>{btn.textContent='🎙';btn.style.background='';alert('Mic access denied.');});
+    glHoldMR.start();
+  }).catch(()=>{$('glMicCircle').style.transform='';$('glMicCircle').style.background='linear-gradient(135deg,#5b8dee,#7c6fff)';});
+}
+function glHoldStop(){
+  if(glHoldMR&&glHoldMR.state==='recording')glHoldMR.stop();
+}
+
+async function glGetInspiration(){
+  const lang=getLang();
+  const last=glHistory.filter(m=>m.role==='assistant').slice(-1)[0]?.content||'';
+  const raw=await callDeepSeek(`You are a ${lang} language helper.`,`Aria just said: "${last.substring(0,200)}"\n\nGive 3 short natural student responses (in ${lang}). Number them 1. 2. 3. One per line, no explanation.`);
+  const lines=raw.split('\n').filter(l=>l.match(/^\d\./)).slice(0,3);
+  if(!lines.length)return;
+  const box=document.createElement('div');
+  box.style.cssText='padding:8px 12px;background:#fff;border-top:1px solid var(--bdr)';
+  box.innerHTML='<div style="font-size:.68rem;color:var(--mut);margin-bottom:5px;font-weight:600">💡 Choose a response:</div>'+
+    lines.map(l=>{const t=l.replace(/^\d\.\s*/,'');
+      return `<button onclick="$('glInput').value=${JSON.stringify(t)};glSend();this.parentElement.remove()" style="display:block;width:100%;text-align:left;background:#f5f7fb;border:1px solid var(--bdr);border-radius:10px;padding:7px 11px;margin-bottom:5px;font-size:.83rem;cursor:pointer;color:var(--txt)">${t}</button>`;
+    }).join('');
+  const bar=$('glTypeBar').parentElement;
+  const existing=bar.querySelector('.inspire-box');if(existing)existing.remove();
+  box.className='inspire-box';
+  $('glTypeBar').insertAdjacentElement('beforebegin',box);
+  $('glTypeBar').style.display='none';glTypeVisible=false;
 }
 
 function closeGuidedLesson(){
   if(currentAudioEl){try{currentAudioEl.pause();currentAudioEl.src='';}catch(e){}currentAudioEl=null;}
+  if(glHoldMR&&glHoldMR.state==='recording')glHoldMR.stop();
   closeModal('guidedLessonModal');
 }
 
 function completeLesson(){
   if(currentAudioEl){try{currentAudioEl.pause();currentAudioEl.src='';}catch(e){}currentAudioEl=null;}
-  // Mark the corresponding path node as done if this lesson came from the path
+  if(glHoldMR&&glHoldMR.state==='recording')glHoldMR.stop();
+  // Mark node done
   if(glNode?.id){
-    // Find matching node in PATH_DATA by id or by lessonTitle
-    let matched=false;
     PATH_DATA.forEach(block=>block.nodes.forEach(n=>{
       if(n.id===glNode.id||(n.lessonTitle&&n.lessonTitle===glNode.title)||(n.title===glNode.title)){
         if(!completedNodes.includes(n.id))completedNodes.push(n.id);
-        matched=true;
       }
     }));
-    if(matched){
-      localStorage.setItem('lf_nodes',JSON.stringify(completedNodes));
-      logActivity();
-    }
+    localStorage.setItem('lf_nodes',JSON.stringify(completedNodes));
+    logActivity();
   }
   closeModal('guidedLessonModal');
-  // Show brief confirmation toast
-  const t=document.createElement('div');
-  t.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#2ecc71;color:#fff;padding:10px 20px;border-radius:10px;font-size:.85rem;font-weight:600;z-index:9999;box-shadow:0 4px 14px rgba(0,0,0,0.2)';
-  t.textContent='✓ Lesson complete!';
-  document.body.appendChild(t);
-  setTimeout(()=>t.remove(),2500);
+  // Build stats
+  const exchanges=glHistory.filter(m=>m.role==='user').length;
+  const duration=glStartTime?Math.round((Date.now()-glStartTime)/1000):0;
+  const mins=Math.floor(duration/60),secs=duration%60;
+  const wordCount=glHistory.filter(m=>m.role==='assistant').map(m=>m.content.split(/\s+/).length).reduce((a,b)=>a+b,0);
+  const newWords=Math.min(Math.round(wordCount/8),20);
+  $('lcWords').textContent=newWords;
+  $('lcExchanges').textContent=exchanges;
+  $('lcDuration').textContent=`${mins}:${String(secs).padStart(2,'0')}`;
+  if(glVerbs.length){$('lcVerbRecap').style.display='block';$('lcVerbList').textContent=glVerbs.join(' · ');}
+  else{$('lcVerbRecap').style.display='none';}
+  const msgs=['You crushed it! Fluency is just around the corner.','Great work! Every lesson builds your confidence.','Excellent session! You\'re making real progress.','Aria is proud of you! Keep it up.'];
+  $('lcSubtitle').textContent=msgs[Math.floor(Math.random()*msgs.length)];
+  openModal('lessonCompleteModal');
   renderPath();
   if($('tab-progress').classList.contains('active'))renderProgress();
+}
+
+function continueToNextLesson(){
+  closeModal('lessonCompleteModal');
+  // Find next unlocked node after the current one
+  if(!glNode?.id)return;
+  let found=false,nextNode=null;
+  outer:for(const block of PATH_DATA){
+    for(const n of block.nodes){
+      if(found&&!completedNodes.includes(n.id)){nextNode=n;break outer;}
+      if(n.id===glNode.id)found=true;
+    }
+  }
+  if(nextNode)setTimeout(()=>startGuidedLesson(nextNode),300);
 }
 
 function markNodeDone(){
