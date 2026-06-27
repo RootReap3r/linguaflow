@@ -1,0 +1,39 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/claude/:path*",
+      "destination": "https://api.anthropic.com/:path*"
+    },
+    {
+      "source": "/api/qwen/:path*",
+      "destination": "https://ws-csw7l8xa6p3nrkl6.ap-southeast-1.maas.aliyuncs.com/:path*"
+    },
+    {
+      "source": "/api/qwen-tts/:path*",
+      "destination": "https://dashscope.aliyuncs.com/:path*"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://api.openai.com https://api.elevenlabs.io; frame-ancestors 'none'"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    }
+  ]
+}
