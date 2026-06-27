@@ -434,8 +434,7 @@ const LANG_CODES={Spanish:'es-ES',French:'fr-FR',Russian:'ru-RU',German:'de-DE',
 const EL_VOICES={Spanish:'pNInz6obpgDQGcFmaJgB',French:'jBpfuIE2acCO8z3wKNLl',Russian:'AZnzlk1XvdvUeBnXmlld',German:'GBv7mTt0atIp3Br8iCZE',Portuguese:'pNInz6obpgDQGcFmaJgB'};
 const EL_STYLES={natural:{stability:.52,similarity_boost:.82,style:.35,use_speaker_boost:true},clear:{stability:.75,similarity_boost:.75,style:.1,use_speaker_boost:false},slow:{stability:.65,similarity_boost:.8,style:.2,use_speaker_boost:true}};
 const KEY_DEFS=[
-  {id:'claude',    label:'🟠 Claude',     sub:'Conversation, corrections, scoring',      url:'console.anthropic.com',  uses:'Conversation + evaluation'},
-  {id:'deepseek',  label:'🔵 DeepSeek',   sub:'Verb drills, vocabulary (40x cheaper)',   url:'platform.deepseek.com',  uses:'Verb drills'},
+  {id:'deepseek',  label:'🔵 DeepSeek',   sub:'Conversations, lessons, corrections',   url:'platform.deepseek.com',  uses:'Primary AI'},
   {id:'qwen',      label:'🟣 Qwen',       sub:'Daily lessons, cultural content',          url:'dashscope.aliyuncs.com', uses:'Daily content'},
   {id:'elevenlabs',label:'✨ ElevenLabs', sub:'Natural multilingual voice',              url:'elevenlabs.io',          uses:'Voice output'},
   {id:'openai',    label:'🎙 OpenAI',     sub:'Whisper STT — mic on iPhone Safari',      url:'platform.openai.com',    uses:'Speech recognition'},
@@ -531,11 +530,21 @@ function getImmersionPct(){
 }
 function getImmersionPrompt(lang){
   const pct=getImmersionPct();
-  if(pct<=5)return `IMMERSION MODE (${pct}%): Respond almost entirely in English. Sprinkle in just 1-2 ${lang} words or short phrases per message (bold them). This is day ${pct} of their journey — keep it welcoming.`;
-  if(pct<=20)return `IMMERSION MODE (${pct}%): Respond ~${pct}% in ${lang}, rest in English. Use simple ${lang} sentences, then immediately translate them in parentheses. Gradually increase ${lang} exposure.`;
-  if(pct<=50)return `IMMERSION MODE (${pct}%): Respond roughly half in ${lang} and half in English. Lead with ${lang}, follow with English translation for tricky parts only. Student is getting comfortable.`;
-  if(pct<=80)return `IMMERSION MODE (${pct}%): Respond mostly in ${lang} (~${pct}%). Only include English for genuinely complex vocabulary. Push the student to understand from context.`;
-  return `IMMERSION MODE (${pct}%): Respond entirely in ${lang}. No English translations — student has earned full immersion. Use natural native-speaker language.`;
+  if(pct<=5)return `LANGUAGE RULE (Day ${pct}, ${pct}% immersion): Speak mostly English. Introduce 1-2 key ${lang} words per message, bolded, with English translation immediately after. Example: "Let's say **hola** (hello)!"`;
+  if(pct<=15)return `LANGUAGE RULE (${pct}% immersion): Use ~${pct}% ${lang}. Short simple ${lang} phrases followed immediately by English translation in parentheses. Build confidence gently.`;
+  if(pct<=30)return `LANGUAGE RULE (${pct}% immersion): About ${pct}% ${lang}, rest English. Lead sentences in ${lang}, translate only the tricky parts. Student is beginning to understand.`;
+  if(pct<=50)return `LANGUAGE RULE (${pct}% immersion): Roughly half ${lang}, half English. Use ${lang} for questions and key points, English for explanations. Student is getting comfortable.`;
+  if(pct<=70)return `LANGUAGE RULE (${pct}% immersion): Mostly ${lang} now (~${pct}%). Only use English for genuinely new vocabulary. Push the student to understand from context.`;
+  if(pct<=90)return `LANGUAGE RULE (${pct}% immersion): Almost entirely ${lang}. Occasional English only for critical misunderstandings. Student is advanced.`;
+  return `LANGUAGE RULE (${pct}% immersion): 100% ${lang} only. No English at all. Native-speed natural conversation. Student has earned full immersion.`;
+}
+function getLessonImmersionPrompt(lang){
+  const pct=getImmersionPct();
+  if(pct<=10)return `Teach in English. Introduce ${lang} words one at a time with translations. Keep it welcoming and simple.`;
+  if(pct<=25)return `Teach mostly in English but use ${lang} for all examples and key phrases. Always provide English translation immediately after.`;
+  if(pct<=50)return `Teach in a mix — explain concepts in English, but demonstrate and practice in ${lang}. Provide translations for new words only.`;
+  if(pct<=75)return `Teach mostly in ${lang}. Use English only for grammar explanations of complex rules. Encourage student to respond in ${lang}.`;
+  return `Teach entirely in ${lang}. No English. Correct errors gently in ${lang}. Full immersion lesson.`;
 }
 function logActivity(){
   const today=new Date().toISOString().split('T')[0];
@@ -594,9 +603,8 @@ async function testKeys(){
     if(!key){results.push(`${k.label} — no key set`);continue;}
     try{
       let ok=false,extra='';
-      if(k.id==='claude'){const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:5,messages:[{role:'user',content:'OK'}]})});ok=r.ok;}
-      else if(k.id==='deepseek'){const r=await fetch('https://api.deepseek.com/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'deepseek-chat',max_tokens:5,messages:[{role:'user',content:'OK'}]})});ok=r.ok;}
-      else if(k.id==='qwen'){const r=await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'qwen-max',max_tokens:5,messages:[{role:'user',content:'OK'}]})});ok=r.ok;}
+      if(k.id==='deepseek'){const r=await fetch('https://api.deepseek.com/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'deepseek-chat',max_tokens:5,messages:[{role:'user',content:'OK'}]})});ok=r.ok;}
+      else if(k.id==='qwen'){const r=await fetch('/api/qwen/compatible-mode/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'qwen-max',max_tokens:5,messages:[{role:'user',content:'OK'}]})});ok=r.ok;}
       else if(k.id==='elevenlabs'){const r=await fetch('https://api.elevenlabs.io/v1/user',{headers:{'xi-api-key':key}});if(r.ok){const d=await r.json();const u=d.subscription?.character_count||0,l=d.subscription?.character_limit||0;extra=` — ${u.toLocaleString()}/${l.toLocaleString()} chars`;}ok=r.ok;}
       else if(k.id==='openai'){const r=await fetch('https://api.openai.com/v1/models',{headers:{'Authorization':'Bearer '+key}});ok=r.ok;}
       results.push(`${k.label} ${ok?'✓'+extra:'✗ — check key'}`);
@@ -629,15 +637,14 @@ async function runSelfTest(){
   if(!SR)row('Web Speech API','warn','Not available — Whisper handles iPhone mic.');
   else{try{const s=await navigator.mediaDevices.getUserMedia({audio:true});s.getTracks().forEach(t=>t.stop());row('Microphone','pass','Permission granted.');}catch(e){row('Microphone','fail','Allow mic in browser settings.');}}
   row('Whisper STT (iPhone)',KEYS.openai?'pass':'warn',KEYS.openai?'Key set — iPhone mic works.':'Add OpenAI key in Settings for iPhone mic.');
-  for(const id of['claude','deepseek','qwen']){
-    if(!KEYS[id]){row(id.charAt(0).toUpperCase()+id.slice(1)+' API','warn','No key — add in ⚙️ Settings.');continue;}
+  for(const id of['deepseek','qwen']){
+    if(!KEYS[id]){row(id==='deepseek'?'DeepSeek':'Qwen'+' API','warn','No key — add in ⚙️ Settings.');continue;}
     try{
       let r;
-      if(id==='claude')r=await fetch('/api/claude/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':KEYS[id],'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:5,messages:[{role:'user',content:'OK'}]})});
-      else if(id==='deepseek')r=await fetch('https://api.deepseek.com/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+KEYS[id]},body:JSON.stringify({model:'deepseek-chat',max_tokens:5,messages:[{role:'user',content:'OK'}]})});
+      if(id==='deepseek')r=await fetch('https://api.deepseek.com/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+KEYS[id]},body:JSON.stringify({model:'deepseek-chat',max_tokens:5,messages:[{role:'user',content:'OK'}]})});
       else r=await fetch('/api/qwen/compatible-mode/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+KEYS[id]},body:JSON.stringify({model:'qwen-max',max_tokens:5,messages:[{role:'user',content:'OK'}]})});
-      row(id.charAt(0).toUpperCase()+id.slice(1)+' API',r.ok?'pass':'fail',r.ok?'Connected.':'HTTP '+r.status);
-    }catch(e){row(id+' API','fail',e.message);}
+      row(id==='deepseek'?'DeepSeek':'Qwen',r.ok?'pass':'fail',r.ok?'Connected.':'HTTP '+r.status);
+    }catch(e){row(id==='deepseek'?'DeepSeek':'Qwen','fail',e.message);}
   }
   if(KEYS.elevenlabs){
     try{const r=await fetch('https://api.elevenlabs.io/v1/user',{headers:{'xi-api-key':KEYS.elevenlabs}});if(r.ok){const d=await r.json();row('ElevenLabs','pass',`${(d.subscription?.character_count||0).toLocaleString()}/${(d.subscription?.character_limit||0).toLocaleString()} chars used.`);}else row('ElevenLabs','fail','Key rejected.');}
@@ -649,12 +656,6 @@ async function runSelfTest(){
 // ════════════════════════════════
 // API CALLS
 // ════════════════════════════════
-async function callClaude(sys,msg,hist=[]){
-  const key=KEYS.claude;if(!key)throw new Error('No Claude key — add in ⚙️ Settings.');
-  const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:800,system:sys,messages:[...hist,{role:'user',content:msg}]})});
-  const d=await res.json();if(d.error)throw new Error(d.error.message);
-  return d.content?.[0]?.text||'';
-}
 async function callDeepSeek(sys,msg,hist=[]){
   const key=KEYS.deepseek;if(!key)return callQwen(sys,msg);
   const res=await fetch('https://api.deepseek.com/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'deepseek-chat',max_tokens:800,messages:[{role:'system',content:sys},...hist,{role:'user',content:msg}]})});
@@ -1024,11 +1025,12 @@ async function startGuidedLesson(n){
   glAppend('ai','…');
   const sys=`You are Aria, a warm and encouraging ${lang} tutor. You are teaching a ${cefr} student a guided lesson on: "${n.title}" — ${n.desc}.
 Lead the lesson step by step:
-1. Briefly introduce the topic (2-3 sentences, in English with key ${lang} words highlighted)
-2. Teach 3-4 key phrases or words with pronunciation tips
-3. Give a simple example using each phrase
-4. Ask the student to try using one phrase in a sentence
-Keep responses short and friendly. After the student responds, correct gently and move forward. Speak naturally, like a real tutor — not a textbook.`;
+1. Introduce the topic warmly
+2. Teach 3-4 key phrases or words with examples
+3. Ask the student to try using a phrase
+4. Correct gently, then move to the next concept
+Keep responses short (2-4 sentences). After the student responds, correct gently and move forward. Speak naturally, like a real tutor.
+${getLessonImmersionPrompt(lang)}`;
   const opening=await callDeepSeek(sys,`Start the lesson on "${n.title}". Introduce the topic warmly and teach the first key phrase.`);
   glHistory=[{role:'assistant',content:opening}];
   $('glChat').lastChild.remove();
@@ -1055,7 +1057,7 @@ async function glSend(){
   glAppend('user',txt);
   glHistory.push({role:'user',content:txt});
   const lang=getLang(),cefr=getCEFR();
-  const sys=`You are Aria, a warm ${lang} tutor guiding a ${cefr} student through a lesson on "${glNode?.title}". Continue the lesson naturally. If the student made an error, correct gently with the right form. Then move the lesson forward — teach the next concept, ask a follow-up question, or wrap up if enough has been covered. Keep it short (2-4 sentences max).`;
+  const sys=`You are Aria, a warm ${lang} tutor guiding a ${cefr} student through a lesson on "${glNode?.title}". Continue the lesson naturally. If the student made an error, correct gently with the right form. Then move the lesson forward — teach the next concept, ask a follow-up question, or wrap up if enough has been covered. Keep it short (2-4 sentences max). ${getLessonImmersionPrompt(lang)}`;
   const d=document.createElement('div');d.style.cssText='align-self:flex-start;color:var(--mut);font-size:.82rem';d.textContent='…';$('glChat').appendChild(d);$('glChat').scrollTop=$('glChat').scrollHeight;
   const reply=await callDeepSeek(sys,txt,glHistory.slice(0,-1));
   d.remove();
