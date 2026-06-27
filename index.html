@@ -445,6 +445,7 @@ const FUT_TENSE={Spanish:'Futuro Simple',French:'Futur Simple',Russian:'Future T
 // STATE
 // ════════════════════════════════
 const msgStore=[];
+const wordStore=[];
 let KEYS={};
 KEY_DEFS.forEach(k=>{KEYS[k.id]=localStorage.getItem('lf_key_'+k.id)||'';});
 KEYS.el_voice_id=localStorage.getItem('lf_el_voice_id')||'';
@@ -1077,8 +1078,8 @@ function launchNode(){
     if(n.topic){convoTopic=n.topic;document.querySelectorAll('#topicPills .pill').forEach(p=>{if(p.textContent.includes(n.topic.split(' ')[0]))p.classList.add('active');else p.classList.remove('active');});}
     setTimeout(startConvo,150);
   }else if(n.tab==='words'){
-    switchTab('drills',$('bn-drills'));setDrillTab('words');
-    if(n.wordCat){const t=document.querySelector(`.wtab[onclick*="${n.wordCat}"]`);if(t)loadWords(n.wordCat,t);}
+    // Launch a guided lesson on the vocabulary topic
+    startGuidedLesson({icon:n.icon,title:n.title,desc:n.desc+' Focus on teaching the key '+getLang()+' words and getting the student to use them.',tab:'lessons',id:n.id,wordCat:n.wordCat});
   }else if(n.tab==='verbs'){
     switchTab('drills',$('bn-drills'));setDrillTab('verbs');
     if(n.verb&&n.verb!=='random'){$('verbInput').value=n.verb;drillVerb();}else rndVerb();
@@ -1091,6 +1092,11 @@ function launchNode(){
 // GUIDED LESSON
 // ════════════════════════════════
 let glHistory=[],glNode=null,glListening=false;
+
+function startWordLesson(idx){
+  const w=wordStore[idx];if(!w)return;
+  startGuidedLesson({icon:'📖',title:w.word+' ('+w.tr+')',desc:'Teach how to use "'+w.word+'" in sentences. Give 2-3 example sentences, explain any grammar rules, then ask the student to make their own sentence.',tab:'lessons',id:'word-'+idx});
+}
 
 async function startGuidedLesson(n){
   glNode=n;glHistory=[];
@@ -1376,13 +1382,12 @@ function loadWords(cat,el){
   const lang=getLang(),data=WL_DATA[lang]?.[cat];
   const grid=$('wordGrid');
   if(!data){grid.innerHTML='<div style="color:var(--mut)">No data.</div>';return;}
-  grid.innerHTML=data.map(entry=>{
+  grid.innerHTML=data.map((entry,i)=>{
     const sep=entry.indexOf(' — ');
     const word=sep>-1?entry.substring(0,sep):entry;
     const tr=sep>-1?entry.substring(sep+3):'';
-    const sw=word.replace(/'/g,"\\'");
-    const safeWord=JSON.stringify(word),safeTr=JSON.stringify(tr),safeDesc=JSON.stringify(tr||word);
-    return `<div class="witem"><div class="w">${word}</div><div class="wtr">${tr}</div><div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap"><button class="sbtn" style="font-size:.68rem" onclick="speak('${sw}','${getLang()}')">🔊</button><button class="sbtn" style="font-size:.68rem" onclick="startGuidedLesson({icon:'📖',title:${safeWord},desc:'How to use: '+${safeDesc},tab:'lessons',id:'w-'+${safeWord}})">📖 Lesson</button></div></div>`;
+    const wIdx=wordStore.push({word,tr,cat})-1;
+    return `<div class="witem"><div class="w">${word}</div><div class="wtr">${tr}</div><div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap"><button class="sbtn" style="font-size:.68rem" onclick="speak(wordStore[${wIdx}].word,'${getLang()}')">🔊</button><button class="sbtn" style="font-size:.68rem" onclick="startWordLesson(${wIdx})">📖 Lesson</button></div></div>`;
   }).join('');
 }
 
