@@ -255,17 +255,10 @@ input[type=text]:focus{border-color:var(--acc)}
       <option value="B2">B2</option><option value="C1">C1</option><option value="C2">C2</option>
     </select>
     <span id="cefrBadge" style="font-size:.76rem;font-weight:700;color:var(--acc);font-family:'Space Grotesk',sans-serif">B1</span>
+    <button class="icon-btn" onclick="goFreeTalk()" title="Free Talk with Aria">✨</button>
     <div class="icon-btn" id="voiceBtn" onclick="openSettings()">🔊</div>
     <div class="icon-btn" onclick="openSelfTest()">🧪</div>
   </div>
-</div>
-<div class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-label">
-    <span class="hero-name">Aria</span>
-    <span class="hero-state" id="heroState">Your AI tutor</span>
-  </div>
-  <button class="free-talk-btn" onclick="goFreeTalk()">✨ Free Talk</button>
 </div>
 <nav id="bnav">
   <button class="bn active" id="bn-home" onclick="switchTab('home',this)"><div class="bn-i">🏠</div><div class="bn-l">Home</div></button>
@@ -1233,11 +1226,9 @@ function setAriaImage(state){
 
 function setAvatarState(state){
   setAriaImage(state);
-  const panel=$('avPanel'),lbl=$('avState'),ring=$('heroRing'),hs=$('heroState');
+  const panel=$('avPanel'),lbl=$('avState');
   if(panel)panel.className='av-panel'+(state==='speaking'?' speaking':state==='listening'?' listening':'');
   if(lbl)lbl.textContent={speaking:'Speaking…',listening:'Listening…',idle:'Waiting…',thinking:'Thinking…'}[state]||'Waiting…';
-  if(ring)ring.className='hero-ring'+(state==='speaking'?' speaking':state==='listening'?' listening':'');
-  if(hs)hs.textContent={speaking:'Speaking…',listening:'Listening…',idle:'Waiting…',thinking:'Thinking…'}[state]||'Your AI tutor';
 }
 
 function startMouth(){}
