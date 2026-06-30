@@ -261,10 +261,6 @@ input[type=text]:focus{border-color:var(--acc)}
 </div>
 <div class="hero">
   <div class="hero-bg"></div>
-  <div class="hero-avatar-wrap">
-    <img id="ariaImg" src="assets/aria-idle.jpeg" alt="Aria" class="hero-avatar-img">
-    <div class="hero-ring" id="heroRing" style="display:none"></div>
-  </div>
   <div class="hero-label">
     <span class="hero-name">Aria</span>
     <span class="hero-state" id="heroState">Your AI tutor</span>
@@ -415,6 +411,7 @@ input[type=text]:focus{border-color:var(--acc)}
 </div>
 </main>
 <div class="overlay" id="nodeModal"><div class="mbox"><button class="mclose" onclick="closeModal('nodeModal')">✕</button><div style="font-size:1.5rem;margin-bottom:6px" id="nIcon"></div><h3 id="nTitle"></h3><p id="nDesc"></p><div class="mactions"><button class="btn btn-p" onclick="launchNode()">▶ Start</button><button class="btn btn-g" id="nMarkBtn" onclick="markNodeDone()">✓ Mark Done</button><button class="btn btn-a" onclick="openNodeTest()">⚡ Test Out</button><button class="btn btn-g" onclick="closeModal('nodeModal')">Close</button></div></div></div>
+<div class="overlay" id="objModal"><div class="mbox"><button class="mclose" onclick="closeModal('objModal')">✕</button><div style="font-size:1.5rem;margin-bottom:6px" id="oIcon"></div><h3 id="oTitle"></h3><p id="oDesc"></p><div id="oProg" style="font-size:.76rem;color:var(--mut);margin:4px 0 10px"></div><div id="oLessonList" style="display:flex;flex-direction:column;gap:6px;text-align:left"></div><div class="mactions"><button class="btn btn-g" onclick="closeModal('objModal')">Close</button></div></div></div>
 <div class="overlay" id="settingsModal"><div class="mbox" style="max-width:500px"><button class="mclose" onclick="closeModal('settingsModal')">✕</button><h3>⚙️ Settings &amp; API Keys</h3><p>Keys saved to your device only — never in the code, never on GitHub.</p><div id="keyBlocks"></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">🔊 Voice engine</label><select id="ttsEngineSel"><option value="openai">OpenAI TTS (tts-1-hd) — cheap, good Spanish</option><option value="elevenlabs">ElevenLabs — most natural, higher cost</option><option value="azure">Azure TTS — neural, many languages</option><option value="browser">Browser built-in — free, robotic</option></select></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">Voice style (ElevenLabs only)</label><select id="voiceStyleSel"><option value="natural">Natural &amp; warm</option><option value="clear">Clear &amp; precise</option><option value="slow">Slow &amp; deliberate</option></select></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">ElevenLabs Voice ID <span style="color:var(--acc);font-size:.7rem">(optional — overrides default voices)</span></label><input type="text" id="ki-el_voice_id" placeholder="e.g. pNInz6obpgDQGcFmaJgB" autocomplete="off" style="font-family:monospace;font-size:.8rem"><div class="mnote">Find your Voice ID at <a href="https://elevenlabs.io/voice-lab" target="_blank">elevenlabs.io/voice-lab</a> → click a voice → copy ID</div></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">Azure Region <span style="color:var(--acc);font-size:.7rem">(required for Azure TTS)</span></label><input type="text" id="ki-azure_region" placeholder="e.g. eastus" autocomplete="off" style="font-family:monospace;font-size:.8rem"><div class="mnote">Found on your Azure Speech resource page, e.g. <code>eastus</code>, <code>westeurope</code></div></div><div class="mactions"><button class="btn btn-p" onclick="saveKeys()">💾 Save</button><button class="btn btn-g" onclick="testKeys()">🧪 Test Keys</button><button class="btn btn-g" onclick="closeModal('settingsModal')">Cancel</button></div><div id="keyTestOut" style="margin-top:10px"></div></div></div>
 <div class="overlay" id="stModal"><div class="mbox"><button class="mclose" onclick="closeModal('stModal')">✕</button><h3>🧪 System Diagnostics</h3><div id="stOut" style="margin:12px 0"></div><button class="btn btn-g" onclick="closeModal('stModal')">Close</button></div></div>
 <div class="overlay" id="guidedLessonModal" style="padding:0;align-items:stretch;justify-content:stretch">
@@ -436,9 +433,11 @@ input[type=text]:focus{border-color:var(--acc)}
           </div>
         </div>
       </div>
-      <button onclick="completeLesson()" style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);color:#fff;font-size:.72rem;font-weight:600;padding:5px 12px;border-radius:20px;cursor:pointer">✓ Done</button>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span id="glCountdown" style="font-size:.68rem;color:rgba(255,255,255,0.75);font-weight:600;font-variant-numeric:tabular-nums">10:00</span>
+        <button onclick="completeLesson()" style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);color:#fff;font-size:.72rem;font-weight:600;padding:5px 12px;border-radius:20px;cursor:pointer">✓ Done</button>
+      </div>
     </div>
-    <img src="assets/aria-idle.jpeg" alt="Aria" style="width:100%;height:100%;object-fit:cover;object-position:top center;opacity:0.92">
     <div style="position:absolute;bottom:12px;left:16px;right:16px;display:flex;align-items:flex-end;justify-content:space-between">
       <div>
         <div style="font-size:.68rem;color:rgba(255,255,255,0.7);font-weight:600;letter-spacing:.04em;text-transform:uppercase">Aria</div>
@@ -516,70 +515,168 @@ const TOP_VERBS = {"Spanish": ["ser", "estar", "tener", "hacer", "poder", "decir
 "Chinese": ["是","有","做","说","去","来","看","知道","想","吃","喝","买","读","写","听","用","工作","学习","回来","起床","睡觉","等待","见面","打开","关闭","教","走","跑","骑","进入","出去","拿","玩","唱歌","游泳","旅行","爱","帮助","找","需要"]};
 const PATH_DATA = [
 {"level":"A1","label":"Beginner","desc":"Everyday expressions and basic phrases.","nodes":[
-  {"id":"a1-1","icon":"👋","title":"Greetings & Introductions","desc":"Hello, goodbye, my name is, where are you from.","tag":"vocab","tab":"lessons","lessonTitle":"Greetings & Introductions","sug":true},
-  {"id":"a1-2a","icon":"🔢","title":"Numbers 1-100","desc":"Count, do basic math out loud, give your phone number.","tag":"vocab","tab":"words","wordCat":"numbers"},
-  {"id":"a1-2b","icon":"📅","title":"Days, Months & Dates","desc":"Days of the week, months, saying today's date.","tag":"vocab","tab":"lessons","lessonTitle":"Days, Months & Dates"},
-  {"id":"a1-3","icon":"👤","title":"Pronouns & To Be","desc":"I, you, he, she + the verb to be conjugated.","tag":"grammar","tab":"words","wordCat":"pronouns"},
-  {"id":"a1-4","icon":"❓","title":"Question Words","desc":"Who, what, where, when, why, how.","tag":"vocab","tab":"words","wordCat":"question_words"},
-  {"id":"a1-5","icon":"🎨","title":"Colors & Descriptions","desc":"Basic colors and how to describe things around you.","tag":"vocab","tab":"lessons","lessonTitle":"Colors & Descriptions"},
-  {"id":"a1-6a","icon":"👨‍👩‍👧","title":"Family — Immediate","desc":"Mom, dad, brother, sister, parents, son, daughter.","tag":"vocab","tab":"lessons","lessonTitle":"Family Members — Immediate Family"},
-  {"id":"a1-6b","icon":"👵","title":"Family — Extended & In-Laws","desc":"Grandparents, aunts, uncles, cousins, in-laws, step-family.","tag":"vocab","tab":"lessons","lessonTitle":"Family Members — Extended Family & In-Laws"},
-  {"id":"a1-6c","icon":"💬","title":"Family — Talking About Them","desc":"Possessives (my sister, his mom) and describing relationships in sentences.","tag":"vocab","tab":"lessons","lessonTitle":"Family Members — Possessives & Describing Relationships"},
-  {"id":"a1-7a","icon":"🏠","title":"House — Rooms & Spaces","desc":"Kitchen, bedroom, bathroom, living room — naming rooms and saying where things are.","tag":"vocab","tab":"lessons","lessonTitle":"Around the House — Rooms & Spaces"},
-  {"id":"a1-7b","icon":"🛋️","title":"House — Furniture & Objects","desc":"Bed, table, chair, fridge, TV — everyday household objects.","tag":"vocab","tab":"lessons","lessonTitle":"Around the House — Furniture & Objects"},
-  {"id":"a1-8","icon":"💬","title":"First Conversation","desc":"Short chat about yourself — name, country, hobby.","tag":"convo","tab":"convo","topic":"Daily Routine"}
+  {"id":"a1-1","icon":"👋","title":"Greetings & Introductions","desc":"Hello, goodbye, my name is, where are you from.","tag":"vocab","sug":true,"lessons":[
+    {"id":"a1-1","title":"Greetings & Introductions","desc":"Hello, goodbye, my name is, where are you from.","tag":"vocab","tab":"lessons","lessonTitle":"Greetings & Introductions"}
+  ]},
+  {"id":"a1-2","icon":"🔢","title":"Numbers & Calendar","desc":"Counting and talking about dates.","tag":"vocab","lessons":[
+    {"id":"a1-2a","icon":"🔢","title":"Numbers 1-100","desc":"Count, do basic math out loud, give your phone number.","tag":"vocab","tab":"words","wordCat":"numbers"},
+    {"id":"a1-2b","icon":"📅","title":"Days, Months & Dates","desc":"Days of the week, months, saying today's date.","tag":"vocab","tab":"lessons","lessonTitle":"Days, Months & Dates"}
+  ]},
+  {"id":"a1-3","icon":"👤","title":"Pronouns & To Be","desc":"I, you, he, she + the verb to be conjugated.","tag":"grammar","lessons":[
+    {"id":"a1-3","title":"Pronouns & To Be","desc":"I, you, he, she + the verb to be conjugated.","tag":"grammar","tab":"words","wordCat":"pronouns"}
+  ]},
+  {"id":"a1-4","icon":"❓","title":"Question Words","desc":"Who, what, where, when, why, how.","tag":"vocab","lessons":[
+    {"id":"a1-4","title":"Question Words","desc":"Who, what, where, when, why, how.","tag":"vocab","tab":"words","wordCat":"question_words"}
+  ]},
+  {"id":"a1-5","icon":"🎨","title":"Colors & Descriptions","desc":"Basic colors and how to describe things around you.","tag":"vocab","lessons":[
+    {"id":"a1-5","title":"Colors & Descriptions","desc":"Basic colors and how to describe things around you.","tag":"vocab","tab":"lessons","lessonTitle":"Colors & Descriptions"}
+  ]},
+  {"id":"a1-6","icon":"👨‍👩‍👧","title":"Family Members","desc":"Talking about your family, immediate to extended.","tag":"vocab","lessons":[
+    {"id":"a1-6a","icon":"👨‍👩‍👧","title":"Immediate Family","desc":"Mom, dad, brother, sister, parents, son, daughter.","tag":"vocab","tab":"lessons","lessonTitle":"Family Members — Immediate Family"},
+    {"id":"a1-6b","icon":"👵","title":"Extended Family & In-Laws","desc":"Grandparents, aunts, uncles, cousins, in-laws, step-family.","tag":"vocab","tab":"lessons","lessonTitle":"Family Members — Extended Family & In-Laws"},
+    {"id":"a1-6c","icon":"💬","title":"Talking About Family","desc":"Possessives (my sister, his mom) and describing relationships in sentences.","tag":"vocab","tab":"lessons","lessonTitle":"Family Members — Possessives & Describing Relationships"}
+  ]},
+  {"id":"a1-7","icon":"🏠","title":"Around the House","desc":"Rooms, furniture, and everyday objects at home.","tag":"vocab","lessons":[
+    {"id":"a1-7a","icon":"🏠","title":"Rooms & Spaces","desc":"Kitchen, bedroom, bathroom, living room — naming rooms and saying where things are.","tag":"vocab","tab":"lessons","lessonTitle":"Around the House — Rooms & Spaces"},
+    {"id":"a1-7b","icon":"🛋️","title":"Furniture & Objects","desc":"Bed, table, chair, fridge, TV — everyday household objects.","tag":"vocab","tab":"lessons","lessonTitle":"Around the House — Furniture & Objects"}
+  ]},
+  {"id":"a1-8","icon":"💬","title":"First Conversation","desc":"Short chat about yourself — name, country, hobby.","tag":"convo","lessons":[
+    {"id":"a1-8","title":"First Conversation","desc":"Short chat about yourself — name, country, hobby.","tag":"convo","tab":"convo","topic":"Daily Routine"}
+  ]}
 ]},
 {"level":"A2","label":"Elementary","desc":"Routine tasks and familiar topics.","nodes":[
-  {"id":"a2-1","icon":"📍","title":"Prepositions — with, in, on…","desc":"In, on, at, with, from, to — the glue words.","tag":"grammar","tab":"words","wordCat":"prepositions"},
-  {"id":"a2-2","icon":"🔗","title":"Conjunctions & Connectors","desc":"And, but, because, although — chain ideas together.","tag":"grammar","tab":"words","wordCat":"conjunctions"},
-  {"id":"a2-3","icon":"⚡","title":"Core Verbs — To Have & To Go","desc":"Conjugate tener/avoir/haben and ir/aller/gehen.","tag":"grammar","tab":"verbs","verb":"random"},
-  {"id":"a2-4a","icon":"🍽️","title":"Food — Names & Meals","desc":"Common foods, drinks, breakfast/lunch/dinner vocabulary.","tag":"vocab","tab":"lessons","lessonTitle":"Food Vocabulary — Names & Meals"},
-  {"id":"a2-4b","icon":"🧾","title":"Ordering at a Restaurant","desc":"Café and restaurant phrases — ordering, paying, asking for the bill.","tag":"vocab","tab":"lessons","lessonTitle":"Ordering at a Restaurant"},
-  {"id":"a2-5","icon":"🛒","title":"Shopping & Money","desc":"Prices, paying, sizes, I'd like to buy…","tag":"vocab","tab":"lessons","lessonTitle":"Shopping"},
-  {"id":"a2-6","icon":"🗺️","title":"Asking for Directions","desc":"Where is, turn left, straight ahead, how far.","tag":"vocab","tab":"lessons","lessonTitle":"Asking for Directions"},
-  {"id":"a2-7","icon":"⏰","title":"Telling the Time","desc":"What time is it? Morning, afternoon, half past.","tag":"vocab","tab":"lessons","lessonTitle":"Telling the Time"},
-  {"id":"a2-8","icon":"🌤️","title":"Weather & Seasons","desc":"It's hot, raining, cloudy — talk about the weather.","tag":"vocab","tab":"lessons","lessonTitle":"Weather & Seasons"},
-  {"id":"a2-9","icon":"💬","title":"Daily Life Chat","desc":"Talk through your morning routine.","tag":"convo","tab":"convo","topic":"Daily Routine"}
+  {"id":"a2-1","icon":"📍","title":"Prepositions — with, in, on…","desc":"In, on, at, with, from, to — the glue words.","tag":"grammar","lessons":[
+    {"id":"a2-1","title":"Prepositions — with, in, on…","desc":"In, on, at, with, from, to — the glue words.","tag":"grammar","tab":"words","wordCat":"prepositions"}
+  ]},
+  {"id":"a2-2","icon":"🔗","title":"Conjunctions & Connectors","desc":"And, but, because, although — chain ideas together.","tag":"grammar","lessons":[
+    {"id":"a2-2","title":"Conjunctions & Connectors","desc":"And, but, because, although — chain ideas together.","tag":"grammar","tab":"words","wordCat":"conjunctions"}
+  ]},
+  {"id":"a2-3","icon":"⚡","title":"Core Verbs — To Have & To Go","desc":"Conjugate tener/avoir/haben and ir/aller/gehen.","tag":"grammar","lessons":[
+    {"id":"a2-3","title":"Core Verbs — To Have & To Go","desc":"Conjugate tener/avoir/haben and ir/aller/gehen.","tag":"grammar","tab":"verbs","verb":"random"}
+  ]},
+  {"id":"a2-4","icon":"🍽️","title":"Food & Restaurants","desc":"Food vocabulary and ordering at a restaurant.","tag":"vocab","lessons":[
+    {"id":"a2-4a","icon":"🍽️","title":"Food Names & Meals","desc":"Common foods, drinks, breakfast/lunch/dinner vocabulary.","tag":"vocab","tab":"lessons","lessonTitle":"Food Vocabulary — Names & Meals"},
+    {"id":"a2-4b","icon":"🧾","title":"Ordering at a Restaurant","desc":"Café and restaurant phrases — ordering, paying, asking for the bill.","tag":"vocab","tab":"lessons","lessonTitle":"Ordering at a Restaurant"}
+  ]},
+  {"id":"a2-5","icon":"🛒","title":"Shopping & Money","desc":"Prices, paying, sizes, I'd like to buy…","tag":"vocab","lessons":[
+    {"id":"a2-5","title":"Shopping & Money","desc":"Prices, paying, sizes, I'd like to buy…","tag":"vocab","tab":"lessons","lessonTitle":"Shopping"}
+  ]},
+  {"id":"a2-6","icon":"🗺️","title":"Asking for Directions","desc":"Where is, turn left, straight ahead, how far.","tag":"vocab","lessons":[
+    {"id":"a2-6","title":"Asking for Directions","desc":"Where is, turn left, straight ahead, how far.","tag":"vocab","tab":"lessons","lessonTitle":"Asking for Directions"}
+  ]},
+  {"id":"a2-7","icon":"⏰","title":"Telling the Time","desc":"What time is it? Morning, afternoon, half past.","tag":"vocab","lessons":[
+    {"id":"a2-7","title":"Telling the Time","desc":"What time is it? Morning, afternoon, half past.","tag":"vocab","tab":"lessons","lessonTitle":"Telling the Time"}
+  ]},
+  {"id":"a2-8","icon":"🌤️","title":"Weather & Seasons","desc":"It's hot, raining, cloudy — talk about the weather.","tag":"vocab","lessons":[
+    {"id":"a2-8","title":"Weather & Seasons","desc":"It's hot, raining, cloudy — talk about the weather.","tag":"vocab","tab":"lessons","lessonTitle":"Weather & Seasons"}
+  ]},
+  {"id":"a2-9","icon":"💬","title":"Daily Life Chat","desc":"Talk through your morning routine.","tag":"convo","lessons":[
+    {"id":"a2-9","title":"Daily Life Chat","desc":"Talk through your morning routine.","tag":"convo","tab":"convo","topic":"Daily Routine"}
+  ]}
 ]},
 {"level":"B1","label":"Intermediate","desc":"Most situations while travelling.","nodes":[
-  {"id":"b1-1","icon":"⏮","title":"Past Tense — Regular Verbs","desc":"Preterite/Passé composé/Perfekt — tell stories.","tag":"grammar","tab":"verbs","verb":"hablar"},
-  {"id":"b1-2","icon":"⏩","title":"Future Tense","desc":"I will, I'm going to — plan and predict.","tag":"grammar","tab":"verbs","verb":"ir"},
-  {"id":"b1-3","icon":"💨","title":"Adverbs & Flow Words","desc":"Always, never, almost, however, therefore.","tag":"grammar","tab":"words","wordCat":"adverbs"},
-  {"id":"b1-4","icon":"🗣️","title":"Expressing Opinions","desc":"I think, I agree, in my opinion.","tag":"convo","tab":"lessons","lessonTitle":"Expressing Opinions"},
-  {"id":"b1-5","icon":"✈️","title":"Travel Scenarios","desc":"Airport, check-in, passport control, luggage.","tag":"vocab","tab":"lessons","lessonTitle":"Airport & Travel"},
-  {"id":"b1-6","icon":"🏥","title":"At the Doctor","desc":"Symptoms, body parts, making an appointment.","tag":"vocab","tab":"lessons","lessonTitle":"At the Doctor"},
-  {"id":"b1-7","icon":"📱","title":"Technology & Devices","desc":"Phone, internet, social media vocabulary.","tag":"vocab","tab":"lessons","lessonTitle":"Technology & Social Media"},
-  {"id":"b1-8","icon":"🎉","title":"Celebrations & Invitations","desc":"Birthday, holiday greetings, inviting someone out.","tag":"convo","tab":"lessons","lessonTitle":"Celebrations & Holidays"},
-  {"id":"b1-9","icon":"⚽","title":"Sports & Hobbies","desc":"Talk about what you like to do. Sports vocabulary.","tag":"convo","tab":"convo","topic":"Sports & Hobbies"},
-  {"id":"b1-10","icon":"💬","title":"Real Conversation","desc":"Free chat — travel, food, your life.","tag":"convo","tab":"convo","topic":"Daily Routine"}
+  {"id":"b1-1","icon":"⏮","title":"Past Tense — Regular Verbs","desc":"Preterite/Passé composé/Perfekt — tell stories.","tag":"grammar","lessons":[
+    {"id":"b1-1","title":"Past Tense — Regular Verbs","desc":"Preterite/Passé composé/Perfekt — tell stories.","tag":"grammar","tab":"verbs","verb":"hablar"}
+  ]},
+  {"id":"b1-2","icon":"⏩","title":"Future Tense","desc":"I will, I'm going to — plan and predict.","tag":"grammar","lessons":[
+    {"id":"b1-2","title":"Future Tense","desc":"I will, I'm going to — plan and predict.","tag":"grammar","tab":"verbs","verb":"ir"}
+  ]},
+  {"id":"b1-3","icon":"💨","title":"Adverbs & Flow Words","desc":"Always, never, almost, however, therefore.","tag":"grammar","lessons":[
+    {"id":"b1-3","title":"Adverbs & Flow Words","desc":"Always, never, almost, however, therefore.","tag":"grammar","tab":"words","wordCat":"adverbs"}
+  ]},
+  {"id":"b1-4","icon":"🗣️","title":"Expressing Opinions","desc":"I think, I agree, in my opinion.","tag":"convo","lessons":[
+    {"id":"b1-4","title":"Expressing Opinions","desc":"I think, I agree, in my opinion.","tag":"convo","tab":"lessons","lessonTitle":"Expressing Opinions"}
+  ]},
+  {"id":"b1-5","icon":"✈️","title":"Travel Scenarios","desc":"Airport, check-in, passport control, luggage.","tag":"vocab","lessons":[
+    {"id":"b1-5","title":"Travel Scenarios","desc":"Airport, check-in, passport control, luggage.","tag":"vocab","tab":"lessons","lessonTitle":"Airport & Travel"}
+  ]},
+  {"id":"b1-6","icon":"🏥","title":"At the Doctor","desc":"Symptoms, body parts, making an appointment.","tag":"vocab","lessons":[
+    {"id":"b1-6","title":"At the Doctor","desc":"Symptoms, body parts, making an appointment.","tag":"vocab","tab":"lessons","lessonTitle":"At the Doctor"}
+  ]},
+  {"id":"b1-7","icon":"📱","title":"Technology & Devices","desc":"Phone, internet, social media vocabulary.","tag":"vocab","lessons":[
+    {"id":"b1-7","title":"Technology & Devices","desc":"Phone, internet, social media vocabulary.","tag":"vocab","tab":"lessons","lessonTitle":"Technology & Social Media"}
+  ]},
+  {"id":"b1-8","icon":"🎉","title":"Celebrations & Invitations","desc":"Birthday, holiday greetings, inviting someone out.","tag":"convo","lessons":[
+    {"id":"b1-8","title":"Celebrations & Invitations","desc":"Birthday, holiday greetings, inviting someone out.","tag":"convo","tab":"lessons","lessonTitle":"Celebrations & Holidays"}
+  ]},
+  {"id":"b1-9","icon":"⚽","title":"Sports & Hobbies","desc":"Talk about what you like to do. Sports vocabulary.","tag":"convo","lessons":[
+    {"id":"b1-9","title":"Sports & Hobbies","desc":"Talk about what you like to do. Sports vocabulary.","tag":"convo","tab":"convo","topic":"Sports & Hobbies"}
+  ]},
+  {"id":"b1-10","icon":"💬","title":"Real Conversation","desc":"Free chat — travel, food, your life.","tag":"convo","lessons":[
+    {"id":"b1-10","title":"Real Conversation","desc":"Free chat — travel, food, your life.","tag":"convo","tab":"convo","topic":"Daily Routine"}
+  ]}
 ]},
 {"level":"B2","label":"Upper Intermediate","desc":"Fluency with native speakers.","nodes":[
-  {"id":"b2-1","icon":"🌀","title":"Subjunctive / Konjunktiv","desc":"Wishes, doubts, hypotheticals — the mood of uncertainty.","tag":"grammar","tab":"verbs","verb":"querer"},
-  {"id":"b2-2","icon":"🔄","title":"Passive Voice","desc":"The house was built, the letter was written.","tag":"grammar","tab":"lessons","lessonTitle":"Passive Voice"},
-  {"id":"b2-3","icon":"🎨","title":"Descriptive Adjectives","desc":"Expand beyond good and bad — vivid descriptions.","tag":"vocab","tab":"words","wordCat":"adjectives"},
-  {"id":"b2-4","icon":"📅","title":"Making & Declining Plans","desc":"Social negotiation — agree, cancel, reschedule.","tag":"convo","tab":"lessons","lessonTitle":"Making Plans"},
-  {"id":"b2-5","icon":"💼","title":"Work & Professional Life","desc":"Meetings, emails, workplace phrases.","tag":"convo","tab":"convo","topic":"Work & Career"},
-  {"id":"b2-6","icon":"🏠","title":"Renting & Housing","desc":"Apartment hunting, contracts, talking to a landlord.","tag":"vocab","tab":"lessons","lessonTitle":"Renting an Apartment"},
-  {"id":"b2-7","icon":"🍳","title":"Cooking & Recipes","desc":"Follow a recipe — ingredients, quantities, methods.","tag":"vocab","tab":"lessons","lessonTitle":"Cooking & Recipes"},
-  {"id":"b2-8","icon":"📰","title":"Current Events Chat","desc":"Discuss real news, share your views.","tag":"convo","tab":"convo","topic":"Current Events"},
-  {"id":"b2-9","icon":"😄","title":"Humor & Small Talk","desc":"Jokes, idioms, being funny in the language.","tag":"convo","tab":"lessons","lessonTitle":"Humor & Small Talk"},
-  {"id":"b2-10","icon":"⚽","title":"World Cup 2026","desc":"Teams, predictions, fan talk — timely sports convo.","tag":"convo","tab":"convo","topic":"World Cup 2026","sug":true}
+  {"id":"b2-1","icon":"🌀","title":"Subjunctive / Konjunktiv","desc":"Wishes, doubts, hypotheticals — the mood of uncertainty.","tag":"grammar","lessons":[
+    {"id":"b2-1","title":"Subjunctive / Konjunktiv","desc":"Wishes, doubts, hypotheticals — the mood of uncertainty.","tag":"grammar","tab":"verbs","verb":"querer"}
+  ]},
+  {"id":"b2-2","icon":"🔄","title":"Passive Voice","desc":"The house was built, the letter was written.","tag":"grammar","lessons":[
+    {"id":"b2-2","title":"Passive Voice","desc":"The house was built, the letter was written.","tag":"grammar","tab":"lessons","lessonTitle":"Passive Voice"}
+  ]},
+  {"id":"b2-3","icon":"🎨","title":"Descriptive Adjectives","desc":"Expand beyond good and bad — vivid descriptions.","tag":"vocab","lessons":[
+    {"id":"b2-3","title":"Descriptive Adjectives","desc":"Expand beyond good and bad — vivid descriptions.","tag":"vocab","tab":"words","wordCat":"adjectives"}
+  ]},
+  {"id":"b2-4","icon":"📅","title":"Making & Declining Plans","desc":"Social negotiation — agree, cancel, reschedule.","tag":"convo","lessons":[
+    {"id":"b2-4","title":"Making & Declining Plans","desc":"Social negotiation — agree, cancel, reschedule.","tag":"convo","tab":"lessons","lessonTitle":"Making Plans"}
+  ]},
+  {"id":"b2-5","icon":"💼","title":"Work & Professional Life","desc":"Meetings, emails, workplace phrases.","tag":"convo","lessons":[
+    {"id":"b2-5","title":"Work & Professional Life","desc":"Meetings, emails, workplace phrases.","tag":"convo","tab":"convo","topic":"Work & Career"}
+  ]},
+  {"id":"b2-6","icon":"🏠","title":"Renting & Housing","desc":"Apartment hunting, contracts, talking to a landlord.","tag":"vocab","lessons":[
+    {"id":"b2-6","title":"Renting & Housing","desc":"Apartment hunting, contracts, talking to a landlord.","tag":"vocab","tab":"lessons","lessonTitle":"Renting an Apartment"}
+  ]},
+  {"id":"b2-7","icon":"🍳","title":"Cooking & Recipes","desc":"Follow a recipe — ingredients, quantities, methods.","tag":"vocab","lessons":[
+    {"id":"b2-7","title":"Cooking & Recipes","desc":"Follow a recipe — ingredients, quantities, methods.","tag":"vocab","tab":"lessons","lessonTitle":"Cooking & Recipes"}
+  ]},
+  {"id":"b2-8","icon":"📰","title":"Current Events Chat","desc":"Discuss real news, share your views.","tag":"convo","lessons":[
+    {"id":"b2-8","title":"Current Events Chat","desc":"Discuss real news, share your views.","tag":"convo","tab":"convo","topic":"Current Events"}
+  ]},
+  {"id":"b2-9","icon":"😄","title":"Humor & Small Talk","desc":"Jokes, idioms, being funny in the language.","tag":"convo","lessons":[
+    {"id":"b2-9","title":"Humor & Small Talk","desc":"Jokes, idioms, being funny in the language.","tag":"convo","tab":"lessons","lessonTitle":"Humor & Small Talk"}
+  ]},
+  {"id":"b2-10","icon":"⚽","title":"World Cup 2026","desc":"Teams, predictions, fan talk — timely sports convo.","tag":"convo","sug":true,"lessons":[
+    {"id":"b2-10","title":"World Cup 2026","desc":"Teams, predictions, fan talk — timely sports convo.","tag":"convo","tab":"convo","topic":"World Cup 2026"}
+  ]}
 ]},
 {"level":"C1","label":"Advanced","desc":"Fluent, spontaneous expression.","nodes":[
-  {"id":"c1-1","icon":"🧠","title":"Nuance & Register","desc":"Formal vs informal, hedging, softening language.","tag":"grammar","tab":"lessons","lessonTitle":"Nuance & Register"},
-  {"id":"c1-2","icon":"🔀","title":"Advanced Connectors","desc":"Nevertheless, whereas, provided that, notwithstanding.","tag":"grammar","tab":"words","wordCat":"connectors"},
-  {"id":"c1-3","icon":"⚖️","title":"Debate & Argumentation","desc":"Structure arguments, concede points, rebut.","tag":"convo","tab":"convo","topic":"Technology & AI"},
-  {"id":"c1-4","icon":"🎭","title":"Idioms & Set Phrases","desc":"Native-level expressions that don't translate literally.","tag":"vocab","tab":"lessons","lessonTitle":"Idioms & Expressions"},
-  {"id":"c1-5","icon":"📺","title":"Media & Culture","desc":"Movies, music, literature — talk about culture like a native.","tag":"convo","tab":"convo","topic":"Culture & Society"},
-  {"id":"c1-6","icon":"✍️","title":"Writing Style","desc":"Formal letters, emails, essays — written register.","tag":"grammar","tab":"lessons","lessonTitle":"Writing Style"},
-  {"id":"c1-7","icon":"🔬","title":"Abstract Concepts","desc":"Time, justice, freedom — talk about ideas.","tag":"convo","tab":"convo","topic":"Philosophy & Ideas"}
+  {"id":"c1-1","icon":"🧠","title":"Nuance & Register","desc":"Formal vs informal, hedging, softening language.","tag":"grammar","lessons":[
+    {"id":"c1-1","title":"Nuance & Register","desc":"Formal vs informal, hedging, softening language.","tag":"grammar","tab":"lessons","lessonTitle":"Nuance & Register"}
+  ]},
+  {"id":"c1-2","icon":"🔀","title":"Advanced Connectors","desc":"Nevertheless, whereas, provided that, notwithstanding.","tag":"grammar","lessons":[
+    {"id":"c1-2","title":"Advanced Connectors","desc":"Nevertheless, whereas, provided that, notwithstanding.","tag":"grammar","tab":"words","wordCat":"connectors"}
+  ]},
+  {"id":"c1-3","icon":"⚖️","title":"Debate & Argumentation","desc":"Structure arguments, concede points, rebut.","tag":"convo","lessons":[
+    {"id":"c1-3","title":"Debate & Argumentation","desc":"Structure arguments, concede points, rebut.","tag":"convo","tab":"convo","topic":"Technology & AI"}
+  ]},
+  {"id":"c1-4","icon":"🎭","title":"Idioms & Set Phrases","desc":"Native-level expressions that don't translate literally.","tag":"vocab","lessons":[
+    {"id":"c1-4","title":"Idioms & Set Phrases","desc":"Native-level expressions that don't translate literally.","tag":"vocab","tab":"lessons","lessonTitle":"Idioms & Expressions"}
+  ]},
+  {"id":"c1-5","icon":"📺","title":"Media & Culture","desc":"Movies, music, literature — talk about culture like a native.","tag":"convo","lessons":[
+    {"id":"c1-5","title":"Media & Culture","desc":"Movies, music, literature — talk about culture like a native.","tag":"convo","tab":"convo","topic":"Culture & Society"}
+  ]},
+  {"id":"c1-6","icon":"✍️","title":"Writing Style","desc":"Formal letters, emails, essays — written register.","tag":"grammar","lessons":[
+    {"id":"c1-6","title":"Writing Style","desc":"Formal letters, emails, essays — written register.","tag":"grammar","tab":"lessons","lessonTitle":"Writing Style"}
+  ]},
+  {"id":"c1-7","icon":"🔬","title":"Abstract Concepts","desc":"Time, justice, freedom — talk about ideas.","tag":"convo","lessons":[
+    {"id":"c1-7","title":"Abstract Concepts","desc":"Time, justice, freedom — talk about ideas.","tag":"convo","tab":"convo","topic":"Philosophy & Ideas"}
+  ]}
 ]},
 {"level":"C2","label":"Mastery","desc":"Virtually everything — effortless.","nodes":[
-  {"id":"c2-1","icon":"🌊","title":"Spontaneous Free Talk","desc":"Open conversation. No hints. Pure fluency.","tag":"convo","tab":"convo","topic":"Current Events"},
-  {"id":"c2-2","icon":"🎯","title":"Precision Vocabulary","desc":"Fine-tune word choice, native-level accuracy.","tag":"grammar","tab":"verbs","verb":"random"},
-  {"id":"c2-3","icon":"🗞️","title":"News Discussion","desc":"Read and discuss a real article — C2 speed and vocab.","tag":"convo","tab":"convo","topic":"Current Events"},
-  {"id":"c2-4","icon":"🎤","title":"Storytelling","desc":"Tell a story with emotion, pacing, and native flow.","tag":"convo","tab":"lessons","lessonTitle":"Storytelling"},
-  {"id":"c2-5","icon":"🌍","title":"Regional Accents & Slang","desc":"Latin American vs. Spain vs. regional dialects.","tag":"vocab","tab":"lessons","lessonTitle":"Regional Accents & Slang"}
+  {"id":"c2-1","icon":"🌊","title":"Spontaneous Free Talk","desc":"Open conversation. No hints. Pure fluency.","tag":"convo","lessons":[
+    {"id":"c2-1","title":"Spontaneous Free Talk","desc":"Open conversation. No hints. Pure fluency.","tag":"convo","tab":"convo","topic":"Current Events"}
+  ]},
+  {"id":"c2-2","icon":"🎯","title":"Precision Vocabulary","desc":"Fine-tune word choice, native-level accuracy.","tag":"grammar","lessons":[
+    {"id":"c2-2","title":"Precision Vocabulary","desc":"Fine-tune word choice, native-level accuracy.","tag":"grammar","tab":"verbs","verb":"random"}
+  ]},
+  {"id":"c2-3","icon":"🗞️","title":"News Discussion","desc":"Read and discuss a real article — C2 speed and vocab.","tag":"convo","lessons":[
+    {"id":"c2-3","title":"News Discussion","desc":"Read and discuss a real article — C2 speed and vocab.","tag":"convo","tab":"convo","topic":"Current Events"}
+  ]},
+  {"id":"c2-4","icon":"🎤","title":"Storytelling","desc":"Tell a story with emotion, pacing, and native flow.","tag":"convo","lessons":[
+    {"id":"c2-4","title":"Storytelling","desc":"Tell a story with emotion, pacing, and native flow.","tag":"convo","tab":"lessons","lessonTitle":"Storytelling"}
+  ]},
+  {"id":"c2-5","icon":"🌍","title":"Regional Accents & Slang","desc":"Latin American vs. Spain vs. regional dialects.","tag":"vocab","lessons":[
+    {"id":"c2-5","title":"Regional Accents & Slang","desc":"Latin American vs. Spain vs. regional dialects.","tag":"vocab","tab":"lessons","lessonTitle":"Regional Accents & Slang"}
+  ]}
 ]}
 ];
 
@@ -1125,7 +1222,7 @@ function initOrb(){
 
 function setAriaImage(state){
   const src=ARIA_IMGS[state]||ARIA_IMGS.idle;
-  ['ariaImg','avAriaImg'].forEach(id=>{
+  ['avAriaImg'].forEach(id=>{
     const el=document.getElementById(id);
     if(!el)return;
     if(el.src.endsWith(src.split('/').pop()))return; // already correct
@@ -1251,6 +1348,10 @@ function launchTodayConvo(){
 // ════════════════════════════════
 // PATH
 // ════════════════════════════════
+// An "objective" (block.nodes entry) groups one or more leaf "lessons".
+// allLessons() flattens a block's objectives into their leaf lesson list.
+const allLessons=block=>block.nodes.flatMap(o=>o.lessons);
+
 function renderPath(){
   const track=$('pathTrack');if(!track)return;
   track.innerHTML='';
@@ -1258,27 +1359,31 @@ function renderPath(){
   PATH_DATA.forEach((block,i)=>{
     if(i===0)return;
     const prev=PATH_DATA[i-1];
-    const done=prev.nodes.filter(n=>completedNodes.includes(n.id)).length;
-    if(done>=Math.ceil(prev.nodes.length*.6))unlockedLevels.add(block.level);
+    const lessons=allLessons(prev);
+    const done=lessons.filter(n=>completedNodes.includes(n.id)).length;
+    if(done>=Math.ceil(lessons.length*.6))unlockedLevels.add(block.level);
   });
-  PATH_DATA.forEach(b=>{if(b.nodes.some(n=>n.sug))unlockedLevels.add(b.level);});
+  PATH_DATA.forEach(b=>{if(b.nodes.some(o=>o.sug))unlockedLevels.add(b.level);});
 
   PATH_DATA.forEach((block,bi)=>{
     const unlocked=unlockedLevels.has(block.level);
-    const done=block.nodes.filter(n=>completedNodes.includes(n.id)).length;
-    const pct=block.nodes.length?Math.round(done/block.nodes.length*100):0;
+    const allL=allLessons(block);
+    const done=allL.filter(n=>completedNodes.includes(n.id)).length;
+    const pct=allL.length?Math.round(done/allL.length*100):0;
     const div=document.createElement('div');
-    const nodes=block.nodes.map((n,ni)=>{
-      const isDone=completedNodes.includes(n.id);
-      const cls=isDone?'done':!unlocked?'locked':n.sug?'sug':'';
+    const nodes=block.nodes.map((o,ni)=>{
+      const oDone=o.lessons.filter(l=>completedNodes.includes(l.id)).length;
+      const isDone=oDone===o.lessons.length;
+      const cls=isDone?'done':!unlocked?'locked':o.sug?'sug':'';
       const lock=!unlocked?'<div class="pnode-lock">🔒</div>':'';
       const check=isDone?'<div style="position:absolute;top:7px;right:9px;width:18px;height:18px;background:var(--grn);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;color:#000">✓</div>':'';
-      return `<div class="pnode ${cls}" data-bi="${bi}" data-ni="${ni}" onclick="nodeClick(this)">
+      const countBadge=o.lessons.length>1?`<span class="ntag" style="background:var(--s2);color:var(--mut);margin-left:4px">${oDone}/${o.lessons.length} lessons</span>`:'';
+      return `<div class="pnode ${cls}" data-bi="${bi}" data-ni="${ni}" onclick="objClick(this)">
         ${lock}${check}
-        <div class="ni" style="opacity:${unlocked?1:.4}">${n.icon}</div>
-        <div class="nt" style="opacity:${unlocked?1:.5}">${n.title}</div>
-        <div class="nd" style="opacity:${unlocked?1:.4}">${n.desc}</div>
-        ${unlocked?`<span class="ntag tag-${n.tag}">${n.tag}</span>`:''}
+        <div class="ni" style="opacity:${unlocked?1:.4}">${o.icon}</div>
+        <div class="nt" style="opacity:${unlocked?1:.5}">${o.title}</div>
+        <div class="nd" style="opacity:${unlocked?1:.4}">${o.desc}</div>
+        ${unlocked?`<span class="ntag tag-${o.tag}">${o.tag}</span>${countBadge}`:''}
       </div>`;
     }).join('');
     div.innerHTML=`<div class="clvl-hdr">
@@ -1286,22 +1391,43 @@ function renderPath(){
       <div class="clvl-desc">${block.label} — ${block.desc}</div>
       <div class="clvl-div"></div>
       <button class="btn btn-a" style="font-size:.68rem;padding:3px 9px;flex-shrink:0" onclick="openLevelTest(${bi})">⚡ Test Out</button>
-      ${unlocked?`<div class="lvl-prog"><div class="lvl-prog-track"><div class="lvl-prog-fill" style="width:${pct}%"></div></div><span class="lvl-prog-lbl">${done}/${block.nodes.length}</span></div>`:`<span style="font-size:.68rem;color:var(--mut)">🔒 locked</span>`}
+      ${unlocked?`<div class="lvl-prog"><div class="lvl-prog-track"><div class="lvl-prog-fill" style="width:${pct}%"></div></div><span class="lvl-prog-lbl">${done}/${allL.length}</span></div>`:`<span style="font-size:.68rem;color:var(--mut)">🔒 locked</span>`}
     </div><div class="path-nodes">${nodes}</div>`;
     track.appendChild(div);
   });
 }
 
-function nodeClick(el){
+function objClick(el){
   const bi=parseInt(el.dataset.bi),ni=parseInt(el.dataset.ni);
   const block=PATH_DATA[bi];if(!block)return;
-  const n=block.nodes[ni];if(!n)return;
+  const o=block.nodes[ni];if(!o)return;
   if(el.classList.contains('locked')){
     const t=document.createElement('div');
     t.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--s2);border:1px solid var(--bdr);border-radius:10px;padding:14px 20px;font-size:.83rem;color:var(--txt);z-index:999;text-align:center;box-shadow:0 8px 28px rgba(0,0,0,.5)';
     t.innerHTML='🔒 <strong>Locked</strong><br><span style="color:var(--mut);font-size:.76rem">Complete 60% of the previous level to unlock.</span>';
     document.body.appendChild(t);setTimeout(()=>t.remove(),2000);return;
   }
+  if(o.lessons.length===1){openLessonModal(o.lessons[0],bi);return;}
+  openObjectiveModal(o,bi);
+}
+
+function openObjectiveModal(o,bi){
+  $('oIcon').textContent=o.icon;$('oTitle').textContent=o.title;$('oDesc').textContent=o.desc;
+  const done=o.lessons.filter(l=>completedNodes.includes(l.id)).length;
+  $('oProg').textContent=`${done}/${o.lessons.length} lessons complete`;
+  const list=$('oLessonList');list.innerHTML='';
+  o.lessons.forEach((l,li)=>{
+    const isDone=completedNodes.includes(l.id);
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--s2);border-radius:8px;cursor:pointer';
+    row.innerHTML=`<span style="font-size:1rem">${isDone?'✅':'⬜'}</span><div style="flex:1"><div style="font-weight:600;font-size:.82rem">${l.title}</div><div style="font-size:.7rem;color:var(--mut)">${l.desc}</div></div>`;
+    row.onclick=()=>openLessonModal(l,bi);
+    list.appendChild(row);
+  });
+  openModal('objModal');
+}
+
+function openLessonModal(n,bi){
   currentNode={...n,blockIdx:bi};
   $('nIcon').textContent=n.icon;$('nTitle').textContent=n.title;$('nDesc').textContent=n.desc;
   $('nMarkBtn').textContent=completedNodes.includes(n.id)?'↩ Unmark':'✓ Mark Done';
@@ -1329,8 +1455,16 @@ function launchNode(){
 // ════════════════════════════════
 // GUIDED LESSON
 // ════════════════════════════════
-let glHistory=[],glNode=null,glVerbs=[],glStartTime=null,glMR=null,glTypeVisible=false,glEndTimer=null;
+let glHistory=[],glNode=null,glVerbs=[],glStartTime=null,glMR=null,glTypeVisible=false,glEndTimer=null,glCountdownTimer=null;
 const GL_MAX_MS=10*60*1000;
+
+function updateGlCountdown(){
+  const el=$('glCountdown');if(!el||!glStartTime)return;
+  const remain=Math.max(0,GL_MAX_MS-(Date.now()-glStartTime));
+  const m=Math.floor(remain/60000),s=Math.floor((remain%60000)/1000);
+  el.textContent=`${m}:${String(s).padStart(2,'0')}`;
+  el.style.color=remain<60000?'#ffb4b4':'rgba(255,255,255,0.75)';
+}
 
 function startWordLesson(idx){
   const w=wordStore[idx];if(!w)return;
@@ -1352,6 +1486,9 @@ async function startGuidedLesson(n){
   glNode=n;glHistory=[];glVerbs=[];glStartTime=Date.now();glTypeVisible=false;
   if(glEndTimer)clearTimeout(glEndTimer);
   glEndTimer=setTimeout(forceEndLesson,GL_MAX_MS);
+  if(glCountdownTimer)clearInterval(glCountdownTimer);
+  updateGlCountdown();
+  glCountdownTimer=setInterval(updateGlCountdown,1000);
   $('glTitle').textContent=n.title;
   $('glChat').innerHTML='';
   if($('glInput'))$('glInput').value='';
@@ -1368,7 +1505,7 @@ async function startGuidedLesson(n){
 
 LESSON STRUCTURE — follow this exactly:
 1. Greet briefly and introduce the topic in ONE sentence.
-2. Pick 2-3 key verbs relevant to "${n.title}" and state them at the start like: "Our verbs today: [verb1] (meaning), [verb2] (meaning), [verb3] (meaning)."
+2. Pick exactly 3 key verbs relevant to "${n.title}" and state them at the start like: "Our verbs today: [verb1] (meaning), [verb2] (meaning), [verb3] (meaning)." Always exactly 3 verbs, regardless of the topic.
 3. Teach ONE concept at a time — short sentences only (1-2 sentences per response max).
 4. After teaching something, ask the student to repeat a phrase or answer a question.
 5. Validate their response warmly, correct gently if needed, then move to the next concept.
@@ -1520,13 +1657,14 @@ function forceEndLesson(){
 
 function completeLesson(){
   if(glEndTimer){clearTimeout(glEndTimer);glEndTimer=null;}
+  if(glCountdownTimer){clearInterval(glCountdownTimer);glCountdownTimer=null;}
   if(currentAudioEl){try{currentAudioEl.pause();currentAudioEl.src='';}catch(e){}currentAudioEl=null;}
   if(glHoldMR&&glHoldMR.state==='recording')glHoldMR.stop();
   // Mark node done — vocab/grammar topics require passing Test Out to count as mastered;
   // a finished chat alone isn't proof of retention. Convo topics still auto-complete.
   let needsTestOut=false;
   if(glNode?.id){
-    PATH_DATA.forEach(block=>block.nodes.forEach(n=>{
+    PATH_DATA.forEach(block=>allLessons(block).forEach(n=>{
       if(n.id===glNode.id||(n.lessonTitle&&n.lessonTitle===glNode.title)||(n.title===glNode.title)){
         if(n.tag==='vocab'||n.tag==='grammar'){
           needsTestOut=!completedNodes.includes(n.id);
@@ -1564,7 +1702,7 @@ function continueToNextLesson(){
   if(!glNode?.id)return;
   let found=false,nextNode=null;
   outer:for(const block of PATH_DATA){
-    for(const n of block.nodes){
+    for(const n of allLessons(block)){
       if(found&&!completedNodes.includes(n.id)){nextNode=n;break outer;}
       if(n.id===glNode.id)found=true;
     }
@@ -1718,7 +1856,7 @@ function showTestResults(d){
 }
 
 function applyPass(){
-  if(testCtx.type==='level'){const block=PATH_DATA[testCtx.bi];if(block)block.nodes.forEach(n=>{if(!completedNodes.includes(n.id))completedNodes.push(n.id);});}
+  if(testCtx.type==='level'){const block=PATH_DATA[testCtx.bi];if(block)allLessons(block).forEach(n=>{if(!completedNodes.includes(n.id))completedNodes.push(n.id);});}
   else{if(testCtx.nodeId&&!completedNodes.includes(testCtx.nodeId))completedNodes.push(testCtx.nodeId);}
   localStorage.setItem(getLangKey('lf_nodes'),JSON.stringify(completedNodes));
   logActivity();closeTestModal();renderPath();
@@ -1913,10 +2051,11 @@ function renderProgress(){
   const bars=$('pBars');bars.innerHTML='';
   const cols={A1:'var(--grn)',A2:'#8bf0b8',B1:'#a89fff',B2:'var(--acc)',C1:'var(--amb)',C2:'var(--acc2)'};
   PATH_DATA.forEach(block=>{
-    const done=block.nodes.filter(n=>completedNodes.includes(n.id)).length;
-    const pct=block.nodes.length?Math.round(done/block.nodes.length*100):0;
+    const allL=allLessons(block);
+    const done=allL.filter(n=>completedNodes.includes(n.id)).length;
+    const pct=allL.length?Math.round(done/allL.length*100):0;
     const r=document.createElement('div');r.className='cbar-row';
-    r.innerHTML=`<div class="cbar-labels"><span style="font-weight:700;color:${cols[block.level]}">${block.level}</span><span style="color:var(--mut)">${done}/${block.nodes.length} · ${pct}%</span></div><div class="cbar-track"><div class="cbar-fill" style="width:${pct}%;background:${cols[block.level]}"></div></div>`;
+    r.innerHTML=`<div class="cbar-labels"><span style="font-weight:700;color:${cols[block.level]}">${block.level}</span><span style="color:var(--mut)">${done}/${allL.length} · ${pct}%</span></div><div class="cbar-track"><div class="cbar-fill" style="width:${pct}%;background:${cols[block.level]}"></div></div>`;
     bars.appendChild(r);
   });
   const heat=$('pHeat');heat.innerHTML='';
@@ -1934,7 +2073,7 @@ function renderProgress(){
   list.innerHTML='';
   completedNodes.forEach(id=>{
     let found=null;
-    PATH_DATA.forEach(block=>{const n=block.nodes.find(n=>n.id===id);if(n)found={node:n,level:block.level};});
+    PATH_DATA.forEach(block=>{const n=allLessons(block).find(n=>n.id===id);if(n)found={node:n,level:block.level};});
     if(!found)return;
     const item=document.createElement('div');item.className='ci-item';
     item.innerHTML=`<span style="font-size:1rem">${found.node.icon}</span><div><div style="font-weight:500">${found.node.title}</div><div style="font-size:.7rem;color:var(--mut)">${found.level} · ${found.node.tag}</div></div><div style="color:var(--grn);font-weight:700">✓</div>`;
