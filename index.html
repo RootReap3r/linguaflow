@@ -415,7 +415,7 @@ input[type=text]:focus{border-color:var(--acc)}
 </div>
 </main>
 <div class="overlay" id="nodeModal"><div class="mbox"><button class="mclose" onclick="closeModal('nodeModal')">✕</button><div style="font-size:1.5rem;margin-bottom:6px" id="nIcon"></div><h3 id="nTitle"></h3><p id="nDesc"></p><div class="mactions"><button class="btn btn-p" onclick="launchNode()">▶ Start</button><button class="btn btn-g" id="nMarkBtn" onclick="markNodeDone()">✓ Mark Done</button><button class="btn btn-a" onclick="openNodeTest()">⚡ Test Out</button><button class="btn btn-g" onclick="closeModal('nodeModal')">Close</button></div></div></div>
-<div class="overlay" id="settingsModal"><div class="mbox" style="max-width:500px"><button class="mclose" onclick="closeModal('settingsModal')">✕</button><h3>⚙️ Settings &amp; API Keys</h3><p>Keys saved to your device only — never in the code, never on GitHub.</p><div id="keyBlocks"></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">🔊 Voice engine</label><select id="ttsEngineSel"><option value="openai">OpenAI TTS (tts-1-hd) — cheap, good Spanish</option><option value="elevenlabs">ElevenLabs — most natural, higher cost</option><option value="browser">Browser built-in — free, robotic</option></select></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">Voice style (ElevenLabs only)</label><select id="voiceStyleSel"><option value="natural">Natural &amp; warm</option><option value="clear">Clear &amp; precise</option><option value="slow">Slow &amp; deliberate</option></select></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">ElevenLabs Voice ID <span style="color:var(--acc);font-size:.7rem">(optional — overrides default voices)</span></label><input type="text" id="ki-el_voice_id" placeholder="e.g. pNInz6obpgDQGcFmaJgB" autocomplete="off" style="font-family:monospace;font-size:.8rem"><div class="mnote">Find your Voice ID at <a href="https://elevenlabs.io/voice-lab" target="_blank">elevenlabs.io/voice-lab</a> → click a voice → copy ID</div></div><div class="mactions"><button class="btn btn-p" onclick="saveKeys()">💾 Save</button><button class="btn btn-g" onclick="testKeys()">🧪 Test Keys</button><button class="btn btn-g" onclick="closeModal('settingsModal')">Cancel</button></div><div id="keyTestOut" style="margin-top:10px"></div></div></div>
+<div class="overlay" id="settingsModal"><div class="mbox" style="max-width:500px"><button class="mclose" onclick="closeModal('settingsModal')">✕</button><h3>⚙️ Settings &amp; API Keys</h3><p>Keys saved to your device only — never in the code, never on GitHub.</p><div id="keyBlocks"></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">🔊 Voice engine</label><select id="ttsEngineSel"><option value="openai">OpenAI TTS (tts-1-hd) — cheap, good Spanish</option><option value="elevenlabs">ElevenLabs — most natural, higher cost</option><option value="azure">Azure TTS — neural, many languages</option><option value="browser">Browser built-in — free, robotic</option></select></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">Voice style (ElevenLabs only)</label><select id="voiceStyleSel"><option value="natural">Natural &amp; warm</option><option value="clear">Clear &amp; precise</option><option value="slow">Slow &amp; deliberate</option></select></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">ElevenLabs Voice ID <span style="color:var(--acc);font-size:.7rem">(optional — overrides default voices)</span></label><input type="text" id="ki-el_voice_id" placeholder="e.g. pNInz6obpgDQGcFmaJgB" autocomplete="off" style="font-family:monospace;font-size:.8rem"><div class="mnote">Find your Voice ID at <a href="https://elevenlabs.io/voice-lab" target="_blank">elevenlabs.io/voice-lab</a> → click a voice → copy ID</div></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">Azure Region <span style="color:var(--acc);font-size:.7rem">(required for Azure TTS)</span></label><input type="text" id="ki-azure_region" placeholder="e.g. eastus" autocomplete="off" style="font-family:monospace;font-size:.8rem"><div class="mnote">Found on your Azure Speech resource page, e.g. <code>eastus</code>, <code>westeurope</code></div></div><div class="mactions"><button class="btn btn-p" onclick="saveKeys()">💾 Save</button><button class="btn btn-g" onclick="testKeys()">🧪 Test Keys</button><button class="btn btn-g" onclick="closeModal('settingsModal')">Cancel</button></div><div id="keyTestOut" style="margin-top:10px"></div></div></div>
 <div class="overlay" id="stModal"><div class="mbox"><button class="mclose" onclick="closeModal('stModal')">✕</button><h3>🧪 System Diagnostics</h3><div id="stOut" style="margin:12px 0"></div><button class="btn btn-g" onclick="closeModal('stModal')">Close</button></div></div>
 <div class="overlay" id="guidedLessonModal" style="padding:0;align-items:stretch;justify-content:stretch">
 <div style="width:100%;height:100%;max-width:600px;margin:0 auto;display:flex;flex-direction:column;background:#fff;position:relative">
@@ -598,6 +598,7 @@ const KEY_DEFS=[
   {id:'qwen',      label:'🟣 Qwen',       sub:'Daily lessons, cultural content',          url:'dashscope.aliyuncs.com', uses:'Daily content'},
   {id:'elevenlabs',label:'✨ ElevenLabs', sub:'Natural multilingual voice (fallback)',   url:'elevenlabs.io',          uses:'Voice fallback'},
   {id:'openai',    label:'🎙 OpenAI',     sub:'Voice output (TTS) + mic recognition',    url:'platform.openai.com',    uses:'Voice + STT'},
+  {id:'azure',     label:'☁️ Azure',      sub:'Neural multilingual voice (TTS)',         url:'portal.azure.com',       uses:'Voice (Azure TTS)'},
 ];
 const PAST_TENSE={Spanish:'Preterite',French:'Passé Composé',Russian:'Past Tense',German:'Perfekt',Portuguese:'Pretérito Perfeito'};
 const FUT_TENSE={Spanish:'Futuro Simple',French:'Futur Simple',Russian:'Future Tense',German:'Futur I',Portuguese:'Futuro do Indicativo'};
@@ -625,6 +626,7 @@ const glInspirationStore=[];
 let KEYS={};
 KEY_DEFS.forEach(k=>{KEYS[k.id]=localStorage.getItem('lf_key_'+k.id)||'';});
 KEYS.el_voice_id=localStorage.getItem('lf_el_voice_id')||'';
+KEYS.azure_region=localStorage.getItem('lf_azure_region')||'';
 let voiceStyle=localStorage.getItem('lf_voice_style')||'natural';
 let ttsEngine=localStorage.getItem('lf_tts_engine')||'openai';
 let ptVar='BR';
@@ -758,6 +760,7 @@ function openSettings(){
   $('voiceStyleSel').value=voiceStyle;
   $('ttsEngineSel').value=ttsEngine;
   const vid=$('ki-el_voice_id');if(vid)vid.value=KEYS.el_voice_id||'';
+  const azr=$('ki-azure_region');if(azr)azr.value=KEYS.azure_region||'';
   openModal('settingsModal');
 }
 
@@ -771,6 +774,9 @@ function saveKeys(){
   const elv=$('ki-el_voice_id')?.value?.trim();
   if(elv){KEYS.el_voice_id=elv;localStorage.setItem('lf_el_voice_id',elv);}
   else{KEYS.el_voice_id='';localStorage.removeItem('lf_el_voice_id');}
+  const azr=$('ki-azure_region')?.value?.trim();
+  if(azr){KEYS.azure_region=azr;localStorage.setItem('lf_azure_region',azr);}
+  else{KEYS.azure_region='';localStorage.removeItem('lf_azure_region');}
   updateVoiceBadge();
   $('keyTestOut').innerHTML='<div style="color:var(--grn);font-size:.8rem">✓ Saved.</div>';
   setTimeout(()=>closeModal('settingsModal'),700);
@@ -780,6 +786,7 @@ function updateVoiceBadge(){
   const btn=$('voiceBtn');
   if(ttsEngine==='elevenlabs'&&KEYS.elevenlabs){btn.textContent='✨';btn.className='icon-btn el-on';}
   else if(ttsEngine==='openai'&&KEYS.openai){btn.textContent='🎙';btn.className='icon-btn el-on';}
+  else if(ttsEngine==='azure'&&KEYS.azure&&KEYS.azure_region){btn.textContent='☁️';btn.className='icon-btn el-on';}
   else{btn.textContent='🔊';btn.className='icon-btn';}
 }
 
@@ -795,6 +802,11 @@ async function testKeys(){
       else if(k.id==='qwen'){const r=await fetch('/api/qwen/compatible-mode/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'qwen-max',max_tokens:5,messages:[{role:'user',content:'OK'}]})});ok=r.ok;}
       else if(k.id==='elevenlabs'){const r=await fetch('https://api.elevenlabs.io/v1/user',{headers:{'xi-api-key':key}});if(r.ok){const d=await r.json();const u=d.subscription?.character_count||0,l=d.subscription?.character_limit||0;extra=` — ${u.toLocaleString()}/${l.toLocaleString()} chars`;}ok=r.ok;}
       else if(k.id==='openai'){const r=await fetch('https://api.openai.com/v1/models',{headers:{'Authorization':'Bearer '+key}});ok=r.ok;if(ok)extra=' — TTS (primary voice) + Whisper STT';}
+      else if(k.id==='azure'){
+        if(!KEYS.azure_region){results.push(`${k.label} ✗ — set Azure region in Settings`);continue;}
+        const r=await fetch(`https://${KEYS.azure_region}.tts.speech.microsoft.com/cognitiveservices/voices/list`,{headers:{'Ocp-Apim-Subscription-Key':key}});
+        ok=r.ok;if(ok)extra=' — region '+KEYS.azure_region;
+      }
       results.push(`${k.label} ${ok?'✓'+extra:'✗ — check key'}`);
     }catch(e){results.push(`${k.label} ✗ — ${e.message}`);}
   }
@@ -939,8 +951,38 @@ async function speakOpenAI(text,lang,onEnd,streamEl){
   }catch(e){console.error('OpenAI TTS failed:',e);const t=document.createElement('div');t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#c0392b;color:#fff;padding:8px 16px;border-radius:8px;font-size:.8rem;z-index:9999';t.textContent='⚠️ TTS error: '+e.message;document.body.appendChild(t);setTimeout(()=>t.remove(),4000);if(KEYS.elevenlabs)await speakEL(text,lang,onEnd,streamEl);else{speakBrowser(text,lang,.9,onEnd);if(streamEl)streamEl.textContent=text;}}
 }
 
+const AZURE_TTS_VOICES={Spanish:'es-ES-ElviraNeural',French:'fr-FR-DeniseNeural',Italian:'it-IT-ElsaNeural',Russian:'ru-RU-SvetlanaNeural',German:'de-DE-KatjaNeural',Portuguese:'pt-PT-RaquelNeural',Japanese:'ja-JP-NanamiNeural',Korean:'ko-KR-SunHiNeural',Chinese:'zh-CN-XiaoxiaoNeural',English:'en-US-JennyNeural'};
+
+function escSSML(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+async function speakAzure(text,lang,onEnd,streamEl){
+  if(currentAudioEl){try{currentAudioEl.pause();currentAudioEl.src='';}catch(e){}currentAudioEl=null;}
+  setStatus('speaking');
+  try{
+    if(!KEYS.azure_region)throw new Error('No Azure region set — add it in Settings');
+    const voice=AZURE_TTS_VOICES[lang]||AZURE_TTS_VOICES.Spanish;
+    const langCode=getLangCode(lang);
+    const ssml=`<speak version="1.0" xml:lang="${langCode}"><voice name="${voice}">${escSSML(text)}</voice></speak>`;
+    const res=await fetch(`https://${KEYS.azure_region}.tts.speech.microsoft.com/cognitiveservices/v1`,{
+      method:'POST',
+      headers:{'Ocp-Apim-Subscription-Key':KEYS.azure,'Content-Type':'application/ssml+xml','X-Microsoft-OutputFormat':'audio-24khz-48kbitrate-mono-mp3'},
+      body:ssml
+    });
+    if(!res.ok)throw new Error('Azure TTS '+res.status);
+    const blob=await res.blob();
+    const url=URL.createObjectURL(blob);
+    const audio=new Audio(url);
+    currentAudioEl=audio;
+    audio.onloadedmetadata=()=>{if(streamEl)revealWords(streamEl,text,audio.duration*1000);audio.play();};
+    audio.onended=()=>{currentAudioEl=null;setStatus('ready');URL.revokeObjectURL(url);if(onEnd)onEnd();};
+    audio.onerror=()=>{currentAudioEl=null;setStatus('ready');URL.revokeObjectURL(url);if(streamEl)streamEl.textContent=text;if(onEnd)onEnd();};
+    audio.load();
+  }catch(e){console.error('Azure TTS failed:',e);const t=document.createElement('div');t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#c0392b;color:#fff;padding:8px 16px;border-radius:8px;font-size:.8rem;z-index:9999';t.textContent='⚠️ Azure TTS error: '+e.message;document.body.appendChild(t);setTimeout(()=>t.remove(),4000);if(KEYS.openai)await speakOpenAI(text,lang,onEnd,streamEl);else if(KEYS.elevenlabs)await speakEL(text,lang,onEnd,streamEl);else{speakBrowser(text,lang,.9,onEnd);if(streamEl)streamEl.textContent=text;}}
+}
+
 async function speak(text,lang,rate=.9,onEnd=null,streamEl=undefined){
   if(ttsEngine==='elevenlabs'&&KEYS.elevenlabs){await speakEL(text,lang,onEnd,streamEl);}
+  else if(ttsEngine==='azure'&&KEYS.azure&&KEYS.azure_region){await speakAzure(text,lang,onEnd,streamEl);}
   else if(ttsEngine==='browser'){speakBrowser(text,lang,rate,onEnd);if(streamEl)streamEl.textContent=text;}
   else if(KEYS.openai){await speakOpenAI(text,lang,onEnd,streamEl);}
   else if(KEYS.elevenlabs){await speakEL(text,lang,onEnd,streamEl);}
