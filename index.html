@@ -797,17 +797,17 @@ async function testKeys(){
     const key=KEYS[k.id];
     if(!key){results.push(`${k.label} — no key set`);continue;}
     try{
-      let ok=false,extra='';
-      if(k.id==='deepseek'){const r=await fetch('https://api.deepseek.com/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'deepseek-chat',max_tokens:5,messages:[{role:'user',content:'OK'}]})});ok=r.ok;}
-      else if(k.id==='qwen'){const r=await fetch('/api/qwen/compatible-mode/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'qwen-max',max_tokens:5,messages:[{role:'user',content:'OK'}]})});ok=r.ok;}
-      else if(k.id==='elevenlabs'){const r=await fetch('https://api.elevenlabs.io/v1/user',{headers:{'xi-api-key':key}});if(r.ok){const d=await r.json();const u=d.subscription?.character_count||0,l=d.subscription?.character_limit||0;extra=` — ${u.toLocaleString()}/${l.toLocaleString()} chars`;}ok=r.ok;}
-      else if(k.id==='openai'){const r=await fetch('https://api.openai.com/v1/models',{headers:{'Authorization':'Bearer '+key}});ok=r.ok;if(ok)extra=' — TTS (primary voice) + Whisper STT';}
+      let ok=false,extra='',status='';
+      if(k.id==='deepseek'){const r=await fetch('https://api.deepseek.com/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'deepseek-chat',max_tokens:5,messages:[{role:'user',content:'OK'}]})});ok=r.ok;status=r.status;}
+      else if(k.id==='qwen'){const r=await fetch('/api/qwen/compatible-mode/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'qwen-max',max_tokens:5,messages:[{role:'user',content:'OK'}]})});ok=r.ok;status=r.status;}
+      else if(k.id==='elevenlabs'){const r=await fetch('https://api.elevenlabs.io/v1/user',{headers:{'xi-api-key':key}});if(r.ok){const d=await r.json();const u=d.subscription?.character_count||0,l=d.subscription?.character_limit||0;extra=` — ${u.toLocaleString()}/${l.toLocaleString()} chars`;}ok=r.ok;status=r.status;}
+      else if(k.id==='openai'){const r=await fetch('https://api.openai.com/v1/models',{headers:{'Authorization':'Bearer '+key}});ok=r.ok;status=r.status;if(ok)extra=' — TTS (primary voice) + Whisper STT';}
       else if(k.id==='azure'){
         if(!KEYS.azure_region){results.push(`${k.label} ✗ — set Azure region in Settings`);continue;}
         const r=await fetch(`https://${KEYS.azure_region}.tts.speech.microsoft.com/cognitiveservices/voices/list`,{headers:{'Ocp-Apim-Subscription-Key':key}});
-        ok=r.ok;if(ok)extra=' — region '+KEYS.azure_region;
+        ok=r.ok;status=r.status;if(ok)extra=' — region '+KEYS.azure_region;
       }
-      results.push(`${k.label} ${ok?'✓'+extra:'✗ — check key'}`);
+      results.push(`${k.label} ${ok?'✓'+extra:'✗ — HTTP '+status+(status===401||status===403?' (bad key)':status===404?' (bad region/endpoint)':'')}`);
     }catch(e){results.push(`${k.label} ✗ — ${e.message}`);}
   }
   out.innerHTML=results.map(r=>{
