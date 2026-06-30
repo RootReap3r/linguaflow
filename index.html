@@ -243,8 +243,8 @@ input[type=text]:focus{border-color:var(--acc)}
   <div class="lang-pill"><span id="langFlag">🇪🇸</span><span id="langCode">ES</span>
     <select id="langSel" onchange="onLangChange()">
       <option value="Spanish">🇪🇸 Spanish</option><option value="French">🇫🇷 French</option>
-      <option value="Russian">🇷🇺 Russian</option><option value="German">🇩🇪 German</option>
-      <option value="Portuguese">🇧🇷 Portuguese</option>
+      <option value="Italian">🇮🇹 Italian</option><option value="English">🇬🇧 English</option><option value="Japanese">🇯🇵 Japanese</option><option value="Korean">🇰🇷 Korean</option><option value="Chinese">🇨🇳 Chinese</option><option value="Russian">🇷🇺 Russian</option>
+      <option value="German">🇩🇪 German</option><option value="Portuguese">🇧🇷 Portuguese</option>
     </select>
   </div>
   <div class="topbar-right">
@@ -497,30 +497,44 @@ input[type=text]:focus{border-color:var(--acc)}
     <div style="font-size:.72rem;font-weight:700;color:var(--mut);margin-bottom:6px">VERBS PRACTICED</div>
     <div id="lcVerbList" style="font-size:.84rem;color:var(--txt);line-height:1.7"></div>
   </div>
+  <div id="lcTestNote" style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);border-radius:10px;padding:10px 14px;margin-bottom:18px;text-align:left;font-size:.8rem;color:#b45309;display:none">⚡ This topic isn't marked complete yet — pass the <strong>Test Out</strong> quiz to officially finish it.</div>
   <button onclick="continueToNextLesson()" class="btn btn-p" style="width:100%;margin-bottom:10px;font-size:.9rem;padding:13px">Continue to Next Lesson</button>
   <button onclick="closeModal('lessonCompleteModal')" class="btn btn-g" style="width:100%;font-size:.88rem">Go to Home</button>
 </div>
 </div>
 <div class="overlay" id="testModal"><div class="mbox"><button class="mclose" onclick="closeTestModal()">✕</button><div style="font-size:1.3rem;margin-bottom:5px" id="tIcon"></div><h3 id="tTitle"></h3><p id="tDesc" style="margin-bottom:10px"></p><div id="tProgRow" style="display:none;align-items:center;gap:8px;margin-bottom:10px"><div class="test-prog-track"><div class="test-prog-fill" id="tProgFill" style="width:0%"></div></div><span id="tProgLbl" style="font-size:.72rem;color:var(--mut);white-space:nowrap">0/4</span></div><div class="chat-box" id="tChatBox" style="height:210px;display:none"></div><div class="vbar" id="tVbar" style="display:none;margin-bottom:10px"><div class="sdot" id="tDot"></div><span style="font-size:.74rem;color:var(--mut);flex:1" id="tStatus">Ready</span><button class="btn btn-d" id="tListenBtn" onclick="testListen()">🎙 Speak</button><button class="btn btn-g" onclick="testSkip()" style="font-size:.76rem">Skip</button></div><div id="tResults" style="display:none"><div style="text-align:center;margin-bottom:14px"><div style="font-size:2.6rem;font-weight:700;font-family:'Space Grotesk',sans-serif" id="tScore"></div><div style="font-size:.8rem;color:var(--mut);margin-top:3px" id="tScoreLbl"></div></div><div class="stat-grid" style="margin-bottom:12px"><div class="stat-card"><div class="stat-num" id="tAcc">-</div><div class="stat-lbl">Accuracy</div></div><div class="stat-card"><div class="stat-num" id="tVoc">-</div><div class="stat-lbl">Vocabulary</div></div><div class="stat-card"><div class="stat-num" id="tFlu">-</div><div class="stat-lbl">Fluency</div></div></div><div style="background:var(--s2);border-radius:8px;padding:10px 12px;font-size:.8rem;line-height:1.65;margin-bottom:12px" id="tFeedback"></div><div id="tPassAct" style="display:none"><div style="background:rgba(62,232,138,.08);border:1px solid rgba(62,232,138,.25);border-radius:8px;padding:9px 12px;font-size:.8rem;color:var(--grn);margin-bottom:10px">🎉 <strong>Passed!</strong> <span id="tPassMsg"></span></div><div class="mactions"><button class="btn btn-gr" onclick="applyPass()">✓ Unlock</button><button class="btn btn-g" onclick="closeTestModal()">Close</button></div></div><div id="tFailAct" style="display:none"><div style="background:rgba(255,107,138,.08);border:1px solid rgba(255,107,138,.25);border-radius:8px;padding:9px 12px;font-size:.8rem;color:var(--acc2);margin-bottom:10px" id="tFailMsg"></div><div class="mactions"><button class="btn btn-p" onclick="startTest()">↺ Retry</button><button class="btn btn-g" onclick="closeTestModal()">Close</button></div></div></div><div id="tStart"><div class="mactions"><button class="btn btn-p" onclick="startTest()">▶ Begin Test</button><button class="btn btn-g" onclick="closeTestModal()">Cancel</button></div></div></div></div>
 <script>
-const WL_DATA = {"Spanish": {"pronouns": ["yo — I", "tú — you (inf.)", "él — he", "ella — she", "nosotros — we", "vosotros — you all (Spain)", "ellos/ellas — they", "usted — you (formal)", "ustedes — you all (LA)", "me — me", "te — you", "le — him/her", "nos — us", "se — himself/herself", "con — with (prep.)"], "conjunctions": ["y — and", "o — or", "pero — but", "porque — because", "que — that", "si — if", "aunque — although", "cuando — when", "mientras — while", "sino — but rather", "como — as", "pues — so", "ni — neither/nor", "ya que — since", "a menos que — unless"], "adverbs": ["muy — very", "bien — well", "mal — badly", "también — also", "ya — already", "aquí — here", "allí — there", "siempre — always", "nunca — never", "hoy — today", "mañana — tomorrow", "ayer — yesterday", "mucho — a lot", "poco — a little", "casi — almost"], "prepositions": ["de — of/from", "a — to", "en — in/on", "con — with", "por — by/for", "para — for/to", "sin — without", "sobre — on/about", "entre — between", "hasta — until", "desde — since", "hacia — towards", "ante — before", "bajo — under", "según — according to"], "question_words": ["¿qué? — what", "¿quién? — who", "¿dónde? — where", "¿cuándo? — when", "¿por qué? — why", "¿cómo? — how", "¿cuánto? — how much", "¿cuántos? — how many", "¿cuál? — which", "¿adónde? — where to"], "numbers": ["uno — 1", "dos — 2", "tres — 3", "cuatro — 4", "cinco — 5", "seis — 6", "siete — 7", "ocho — 8", "nueve — 9", "diez — 10", "veinte — 20", "treinta — 30", "cien — 100", "mil — 1000", "primero — 1st"], "adjectives": ["bueno — good", "malo — bad", "grande — big", "pequeño — small", "nuevo — new", "viejo — old", "mucho — much", "poco — little", "mismo — same", "otro — other", "todo — all", "cada — each", "último — last", "propio — own", "diferente — different"], "connectors": ["primero — first", "luego — then", "después — after", "finalmente — finally", "además — moreover", "sin embargo — however", "por lo tanto — therefore", "en cambio — on the other hand", "es decir — that is", "por ejemplo — for example", "sobre todo — above all", "a pesar de — despite", "en cuanto a — regarding", "tanto…como — both…and", "no solo…sino — not only…but"]}, "French": {"pronouns": ["je — I", "tu — you (inf.)", "il — he", "elle — she", "nous — we", "vous — you (pl./formal)", "ils/elles — they", "me — me", "te — you", "lui — him/her", "nous — us", "se — himself/herself", "y — there", "en — of it", "avec — with (prep.)"], "conjunctions": ["et — and", "ou — or", "mais — but", "parce que — because", "que — that", "si — if", "bien que — although", "quand — when", "pendant que — while", "ni — neither/nor", "donc — so", "car — because", "or — now/yet", "puisque — since", "comme — as"], "adverbs": ["très — very", "bien — well", "mal — badly", "aussi — also", "déjà — already", "ici — here", "là — there", "toujours — always", "jamais — never", "aujourd'hui — today", "demain — tomorrow", "hier — yesterday", "beaucoup — a lot", "peu — a little", "presque — almost"], "prepositions": ["de — of/from", "à — to/at", "en — in", "avec — with", "pour — for", "sans — without", "sur — on", "entre — between", "jusqu'à — until", "depuis — since", "vers — towards", "devant — in front of", "derrière — behind", "sous — under", "selon — according to"], "question_words": ["quoi/que — what", "qui — who", "où — where", "quand — when", "pourquoi — why", "comment — how", "combien — how much", "quel/quelle — which", "lequel — which one", "d'où — from where"], "numbers": ["un — 1", "deux — 2", "trois — 3", "quatre — 4", "cinq — 5", "six — 6", "sept — 7", "huit — 8", "neuf — 9", "dix — 10", "vingt — 20", "trente — 30", "cent — 100", "mille — 1000", "premier — 1st"], "adjectives": ["bon — good", "mauvais — bad", "grand — big", "petit — small", "nouveau — new", "vieux — old", "même — same", "autre — other", "tout — all", "chaque — each", "dernier — last", "propre — own", "différent — different", "vrai — true", "seul — alone/only"], "connectors": ["d'abord — first", "puis — then", "ensuite — next", "enfin — finally", "de plus — moreover", "cependant — however", "donc — therefore", "en revanche — on the other hand", "c'est-à-dire — that is", "par exemple — for example", "surtout — above all", "malgré — despite", "quant à — regarding", "non seulement…mais — not only…but", "à cause de — because of"]}, "Russian": {"pronouns": ["я — I", "ты — you (inf.)", "он — he", "она — she", "мы — we", "вы — you (pl./formal)", "они — they", "мне — to me", "тебе — to you", "ему — to him", "ей — to her", "нам — to us", "себя — oneself", "с — with (prep.)", "кто — who"], "conjunctions": ["и — and", "или — or", "но — but", "потому что — because", "что — that", "если — if", "хотя — although", "когда — when", "пока — while", "ни…ни — neither…nor", "поэтому — so", "так как — since", "а — and/but", "однако — however", "либо — either/or"], "adverbs": ["очень — very", "хорошо — well", "плохо — badly", "тоже — also", "уже — already", "здесь — here", "там — there", "всегда — always", "никогда — never", "сегодня — today", "завтра — tomorrow", "вчера — yesterday", "много — a lot", "мало — a little", "почти — almost"], "prepositions": ["в — in/into", "на — on/onto", "с — with/from", "по — along/by", "о — about", "у — by/at", "к — towards", "от — from", "до — until/to", "из — from/out of", "за — behind/for", "над — above", "под — under", "перед — in front of", "между — between"], "question_words": ["что? — what", "кто? — who", "где? — where", "когда? — when", "почему? — why", "как? — how", "сколько? — how much", "какой? — which", "куда? — where to", "откуда? — from where"], "numbers": ["один — 1", "два — 2", "три — 3", "четыре — 4", "пять — 5", "шесть — 6", "семь — 7", "восемь — 8", "девять — 9", "десять — 10", "двадцать — 20", "тридцать — 30", "сто — 100", "тысяча — 1000", "первый — 1st"], "adjectives": ["хороший — good", "плохой — bad", "большой — big", "маленький — small", "новый — new", "старый — old", "такой — such", "другой — other", "весь — all", "каждый — each", "последний — last", "сам — oneself", "разный — different", "настоящий — real", "один — one/alone"], "connectors": ["во-первых — first", "потом — then", "затем — next", "наконец — finally", "кроме того — moreover", "однако — however", "поэтому — therefore", "с другой стороны — on the other hand", "то есть — that is", "например — for example", "прежде всего — above all", "несмотря на — despite", "что касается — regarding", "не только…но и — not only…but", "из-за — because of"]}, "German": {"pronouns": ["ich — I", "du — you (inf.)", "er — he", "sie — she", "wir — we", "ihr — you (pl.)", "sie/Sie — they/you (formal)", "mir — to me", "dir — to you", "ihm — to him", "ihr — to her", "uns — to us", "sich — himself/herself", "mich — me (acc.)", "mit — with (prep.)"], "conjunctions": ["und — and", "oder — or", "aber — but", "weil — because", "dass — that", "wenn — if/when", "obwohl — although", "während — while", "weder…noch — neither…nor", "denn — because", "also — so", "sondern — but rather", "als — than/when", "bevor — before", "nachdem — after"], "adverbs": ["sehr — very", "gut — well", "schlecht — badly", "auch — also", "schon — already", "hier — here", "dort — there", "immer — always", "nie — never", "heute — today", "morgen — tomorrow", "gestern — yesterday", "viel — a lot", "wenig — a little", "fast — almost"], "prepositions": ["von — from/of", "zu — to/at", "in — in", "mit — with", "für — for", "auf — on", "an — at/on", "über — over/about", "unter — under", "zwischen — between", "nach — after/to", "seit — since", "bis — until", "durch — through", "gegen — against"], "question_words": ["was? — what", "wer? — who", "wo? — where", "wann? — when", "warum? — why", "wie? — how", "wie viel? — how much", "welche? — which", "wohin? — where to", "woher? — from where"], "numbers": ["eins — 1", "zwei — 2", "drei — 3", "vier — 4", "fünf — 5", "sechs — 6", "sieben — 7", "acht — 8", "neun — 9", "zehn — 10", "zwanzig — 20", "dreißig — 30", "hundert — 100", "tausend — 1000", "erste — 1st"], "adjectives": ["gut — good", "schlecht — bad", "groß — big", "klein — small", "neu — new", "alt — old", "gleich — same", "andere — other", "ganz — all/whole", "jede — each", "letzte — last", "eigen — own", "verschieden — different", "wahr — true", "allein — alone"], "connectors": ["erstens — first", "dann — then", "danach — after that", "schließlich — finally", "außerdem — moreover", "jedoch — however", "daher — therefore", "andererseits — on the other hand", "das heißt — that is", "zum Beispiel — for example", "vor allem — above all", "trotz — despite", "bezüglich — regarding", "nicht nur…sondern — not only…but", "wegen — because of"]}, "Portuguese": {"pronouns": ["eu — I", "tu/você — you", "ele — he", "ela — she", "nós — we", "vocês — you (pl.)", "eles/elas — they", "me — me", "te/lhe — you", "lhe — him/her", "nos — us", "se — himself/herself", "mim — me (prep.)", "com — with (prep.)", "si — oneself"], "conjunctions": ["e — and", "ou — or", "mas — but", "porque — because", "que — that", "se — if", "embora — although", "quando — when", "enquanto — while", "nem — neither/nor", "portanto — so", "pois — because", "porém — however", "já que — since", "como — as"], "adverbs": ["muito — very", "bem — well", "mal — badly", "também — also", "já — already", "aqui — here", "lá — there", "sempre — always", "nunca — never", "hoje — today", "amanhã — tomorrow", "ontem — yesterday", "bastante — quite", "pouco — a little", "quase — almost"], "prepositions": ["de — of/from", "a — to", "em — in", "com — with", "por — by/for", "para — for/to", "sem — without", "sobre — on/about", "entre — between", "até — until", "desde — since", "após — after", "antes de — before", "dentro de — inside", "fora de — outside"], "question_words": ["o que? — what", "quem? — who", "onde? — where", "quando? — when", "por que? — why", "como? — how", "quanto? — how much", "qual? — which", "aonde? — where to", "de onde? — from where"], "numbers": ["um — 1", "dois — 2", "três — 3", "quatro — 4", "cinco — 5", "seis — 6", "sete — 7", "oito — 8", "nove — 9", "dez — 10", "vinte — 20", "trinta — 30", "cem — 100", "mil — 1000", "primeiro — 1st"], "adjectives": ["bom — good", "mau/ruim — bad", "grande — big", "pequeno — small", "novo — new", "velho — old", "mesmo — same", "outro — other", "todo — all", "cada — each", "último — last", "próprio — own", "diferente — different", "verdadeiro — true", "sozinho — alone"], "connectors": ["primeiro — first", "depois — then", "em seguida — next", "finalmente — finally", "além disso — moreover", "no entanto — however", "portanto — therefore", "por outro lado — on the other hand", "ou seja — that is", "por exemplo — for example", "sobretudo — above all", "apesar de — despite", "quanto a — regarding", "não só…mas — not only…but", "por causa de — because of"]}};
-const TOP_VERBS = {"Spanish": ["ser", "estar", "tener", "hacer", "poder", "decir", "ir", "ver", "dar", "saber", "querer", "llegar", "pasar", "deber", "poner", "parecer", "quedar", "creer", "hablar", "llevar", "dejar", "seguir", "encontrar", "llamar", "venir", "pensar", "salir", "volver", "tomar", "conocer", "vivir", "sentir", "tratar", "mirar", "contar", "empezar", "esperar", "buscar", "existir", "entrar"], "French": ["être", "avoir", "faire", "dire", "aller", "voir", "savoir", "pouvoir", "vouloir", "venir", "prendre", "parler", "partir", "mettre", "donner", "croire", "trouver", "aimer", "penser", "rester", "arriver", "finir", "entendre", "attendre", "répondre", "commencer", "entrer", "tenir", "sortir", "connaître", "lire", "écrire", "ouvrir", "suivre", "choisir", "comprendre", "perdre", "dormir", "conduire", "tomber"], "Russian": ["быть", "стать", "говорить", "знать", "мочь", "сказать", "хотеть", "видеть", "идти", "думать", "делать", "смотреть", "любить", "жить", "работать", "понимать", "помнить", "давать", "брать", "считать", "находить", "спросить", "ответить", "начать", "писать", "читать", "слышать", "чувствовать", "иметь", "играть", "учить", "помочь", "решить", "встретить", "ждать", "сидеть", "стоять", "прийти", "оставаться", "называть"], "German": ["sein", "haben", "werden", "können", "müssen", "sagen", "machen", "gehen", "wissen", "sehen", "kommen", "lassen", "geben", "nehmen", "sprechen", "denken", "fragen", "bleiben", "stehen", "heißen", "halten", "finden", "mögen", "wollen", "sollen", "dürfen", "zeigen", "führen", "brauchen", "verstehen", "versuchen", "beginnen", "bringen", "helfen", "arbeiten", "spielen", "lernen", "schreiben", "lesen", "hören"], "Portuguese": ["ser", "estar", "ter", "fazer", "poder", "dizer", "ir", "ver", "dar", "saber", "querer", "chegar", "passar", "dever", "pôr", "parecer", "ficar", "crer", "falar", "levar", "deixar", "seguir", "encontrar", "chamar", "vir", "pensar", "sair", "voltar", "tomar", "conhecer", "viver", "sentir", "tratar", "olhar", "contar", "começar", "esperar", "buscar", "existir", "entrar"]};
+const WL_DATA = {"Spanish": {"pronouns": ["yo — I", "tú — you (inf.)", "él — he", "ella — she", "nosotros — we", "vosotros — you all (Spain)", "ellos/ellas — they", "usted — you (formal)", "ustedes — you all (LA)", "me — me", "te — you", "le — him/her", "nos — us", "se — himself/herself", "con — with (prep.)"], "conjunctions": ["y — and", "o — or", "pero — but", "porque — because", "que — that", "si — if", "aunque — although", "cuando — when", "mientras — while", "sino — but rather", "como — as", "pues — so", "ni — neither/nor", "ya que — since", "a menos que — unless"], "adverbs": ["muy — very", "bien — well", "mal — badly", "también — also", "ya — already", "aquí — here", "allí — there", "siempre — always", "nunca — never", "hoy — today", "mañana — tomorrow", "ayer — yesterday", "mucho — a lot", "poco — a little", "casi — almost"], "prepositions": ["de — of/from", "a — to", "en — in/on", "con — with", "por — by/for", "para — for/to", "sin — without", "sobre — on/about", "entre — between", "hasta — until", "desde — since", "hacia — towards", "ante — before", "bajo — under", "según — according to"], "question_words": ["¿qué? — what", "¿quién? — who", "¿dónde? — where", "¿cuándo? — when", "¿por qué? — why", "¿cómo? — how", "¿cuánto? — how much", "¿cuántos? — how many", "¿cuál? — which", "¿adónde? — where to"], "numbers": ["uno — 1", "dos — 2", "tres — 3", "cuatro — 4", "cinco — 5", "seis — 6", "siete — 7", "ocho — 8", "nueve — 9", "diez — 10", "veinte — 20", "treinta — 30", "cien — 100", "mil — 1000", "primero — 1st"], "adjectives": ["bueno — good", "malo — bad", "grande — big", "pequeño — small", "nuevo — new", "viejo — old", "mucho — much", "poco — little", "mismo — same", "otro — other", "todo — all", "cada — each", "último — last", "propio — own", "diferente — different"], "connectors": ["primero — first", "luego — then", "después — after", "finalmente — finally", "además — moreover", "sin embargo — however", "por lo tanto — therefore", "en cambio — on the other hand", "es decir — that is", "por ejemplo — for example", "sobre todo — above all", "a pesar de — despite", "en cuanto a — regarding", "tanto…como — both…and", "no solo…sino — not only…but"]}, "Italian": {"pronouns": ["io — I", "tu — you (inf.)", "lui — he", "lei — she", "noi — we", "voi — you (pl.)", "loro — they", "mi — me", "ti — you", "gli/le — him/her", "ci — us", "si — himself/herself", "me — me (prep.)", "con — with (prep.)", "Lei — you (formal)"], "conjunctions": ["e — and", "o — or", "ma — but", "perché — because", "che — that", "se — if", "benché — although", "quando — when", "mentre — while", "né…né — neither…nor", "quindi — so", "poiché — since", "però — however", "oppure — or else", "come — as"], "adverbs": ["molto — very", "bene — well", "male — badly", "anche — also", "già — already", "qui — here", "lì — there", "sempre — always", "mai — never", "oggi — today", "domani — tomorrow", "ieri — yesterday", "tanto — a lot", "poco — a little", "quasi — almost"], "prepositions": ["di — of/from", "a — to/at", "in — in", "con — with", "per — for", "su — on", "tra/fra — between", "da — from/since", "fino a — until", "verso — towards", "davanti a — in front of", "dietro — behind", "sotto — under", "sopra — above", "secondo — according to"], "question_words": ["che/cosa? — what", "chi? — who", "dove? — where", "quando? — when", "perché? — why", "come? — how", "quanto? — how much", "quale? — which", "dove vai? — where to", "da dove? — from where"], "numbers": ["uno — 1", "due — 2", "tre — 3", "quattro — 4", "cinque — 5", "sei — 6", "sette — 7", "otto — 8", "nove — 9", "dieci — 10", "venti — 20", "trenta — 30", "cento — 100", "mille — 1000", "primo — 1st"], "adjectives": ["buono — good", "cattivo — bad", "grande — big", "piccolo — small", "nuovo — new", "vecchio — old", "stesso — same", "altro — other", "tutto — all", "ogni — each", "ultimo — last", "proprio — own", "diverso — different", "vero — true", "solo — alone/only"], "connectors": ["prima — first", "poi — then", "dopo — after", "infine — finally", "inoltre — moreover", "tuttavia — however", "quindi — therefore", "d'altra parte — on the other hand", "cioè — that is", "per esempio — for example", "soprattutto — above all", "nonostante — despite", "riguardo a — regarding", "non solo…ma — not only…but", "a causa di — because of"]}, "French": {"pronouns": ["je — I", "tu — you (inf.)", "il — he", "elle — she", "nous — we", "vous — you (pl./formal)", "ils/elles — they", "me — me", "te — you", "lui — him/her", "nous — us", "se — himself/herself", "y — there", "en — of it", "avec — with (prep.)"], "conjunctions": ["et — and", "ou — or", "mais — but", "parce que — because", "que — that", "si — if", "bien que — although", "quand — when", "pendant que — while", "ni — neither/nor", "donc — so", "car — because", "or — now/yet", "puisque — since", "comme — as"], "adverbs": ["très — very", "bien — well", "mal — badly", "aussi — also", "déjà — already", "ici — here", "là — there", "toujours — always", "jamais — never", "aujourd'hui — today", "demain — tomorrow", "hier — yesterday", "beaucoup — a lot", "peu — a little", "presque — almost"], "prepositions": ["de — of/from", "à — to/at", "en — in", "avec — with", "pour — for", "sans — without", "sur — on", "entre — between", "jusqu'à — until", "depuis — since", "vers — towards", "devant — in front of", "derrière — behind", "sous — under", "selon — according to"], "question_words": ["quoi/que — what", "qui — who", "où — where", "quand — when", "pourquoi — why", "comment — how", "combien — how much", "quel/quelle — which", "lequel — which one", "d'où — from where"], "numbers": ["un — 1", "deux — 2", "trois — 3", "quatre — 4", "cinq — 5", "six — 6", "sept — 7", "huit — 8", "neuf — 9", "dix — 10", "vingt — 20", "trente — 30", "cent — 100", "mille — 1000", "premier — 1st"], "adjectives": ["bon — good", "mauvais — bad", "grand — big", "petit — small", "nouveau — new", "vieux — old", "même — same", "autre — other", "tout — all", "chaque — each", "dernier — last", "propre — own", "différent — different", "vrai — true", "seul — alone/only"], "connectors": ["d'abord — first", "puis — then", "ensuite — next", "enfin — finally", "de plus — moreover", "cependant — however", "donc — therefore", "en revanche — on the other hand", "c'est-à-dire — that is", "par exemple — for example", "surtout — above all", "malgré — despite", "quant à — regarding", "non seulement…mais — not only…but", "à cause de — because of"]}, "Russian": {"pronouns": ["я — I", "ты — you (inf.)", "он — he", "она — she", "мы — we", "вы — you (pl./formal)", "они — they", "мне — to me", "тебе — to you", "ему — to him", "ей — to her", "нам — to us", "себя — oneself", "с — with (prep.)", "кто — who"], "conjunctions": ["и — and", "или — or", "но — but", "потому что — because", "что — that", "если — if", "хотя — although", "когда — when", "пока — while", "ни…ни — neither…nor", "поэтому — so", "так как — since", "а — and/but", "однако — however", "либо — either/or"], "adverbs": ["очень — very", "хорошо — well", "плохо — badly", "тоже — also", "уже — already", "здесь — here", "там — there", "всегда — always", "никогда — never", "сегодня — today", "завтра — tomorrow", "вчера — yesterday", "много — a lot", "мало — a little", "почти — almost"], "prepositions": ["в — in/into", "на — on/onto", "с — with/from", "по — along/by", "о — about", "у — by/at", "к — towards", "от — from", "до — until/to", "из — from/out of", "за — behind/for", "над — above", "под — under", "перед — in front of", "между — between"], "question_words": ["что? — what", "кто? — who", "где? — where", "когда? — when", "почему? — why", "как? — how", "сколько? — how much", "какой? — which", "куда? — where to", "откуда? — from where"], "numbers": ["один — 1", "два — 2", "три — 3", "четыре — 4", "пять — 5", "шесть — 6", "семь — 7", "восемь — 8", "девять — 9", "десять — 10", "двадцать — 20", "тридцать — 30", "сто — 100", "тысяча — 1000", "первый — 1st"], "adjectives": ["хороший — good", "плохой — bad", "большой — big", "маленький — small", "новый — new", "старый — old", "такой — such", "другой — other", "весь — all", "каждый — each", "последний — last", "сам — oneself", "разный — different", "настоящий — real", "один — one/alone"], "connectors": ["во-первых — first", "потом — then", "затем — next", "наконец — finally", "кроме того — moreover", "однако — however", "поэтому — therefore", "с другой стороны — on the other hand", "то есть — that is", "например — for example", "прежде всего — above all", "несмотря на — despite", "что касается — regarding", "не только…но и — not only…but", "из-за — because of"]}, "German": {"pronouns": ["ich — I", "du — you (inf.)", "er — he", "sie — she", "wir — we", "ihr — you (pl.)", "sie/Sie — they/you (formal)", "mir — to me", "dir — to you", "ihm — to him", "ihr — to her", "uns — to us", "sich — himself/herself", "mich — me (acc.)", "mit — with (prep.)"], "conjunctions": ["und — and", "oder — or", "aber — but", "weil — because", "dass — that", "wenn — if/when", "obwohl — although", "während — while", "weder…noch — neither…nor", "denn — because", "also — so", "sondern — but rather", "als — than/when", "bevor — before", "nachdem — after"], "adverbs": ["sehr — very", "gut — well", "schlecht — badly", "auch — also", "schon — already", "hier — here", "dort — there", "immer — always", "nie — never", "heute — today", "morgen — tomorrow", "gestern — yesterday", "viel — a lot", "wenig — a little", "fast — almost"], "prepositions": ["von — from/of", "zu — to/at", "in — in", "mit — with", "für — for", "auf — on", "an — at/on", "über — over/about", "unter — under", "zwischen — between", "nach — after/to", "seit — since", "bis — until", "durch — through", "gegen — against"], "question_words": ["was? — what", "wer? — who", "wo? — where", "wann? — when", "warum? — why", "wie? — how", "wie viel? — how much", "welche? — which", "wohin? — where to", "woher? — from where"], "numbers": ["eins — 1", "zwei — 2", "drei — 3", "vier — 4", "fünf — 5", "sechs — 6", "sieben — 7", "acht — 8", "neun — 9", "zehn — 10", "zwanzig — 20", "dreißig — 30", "hundert — 100", "tausend — 1000", "erste — 1st"], "adjectives": ["gut — good", "schlecht — bad", "groß — big", "klein — small", "neu — new", "alt — old", "gleich — same", "andere — other", "ganz — all/whole", "jede — each", "letzte — last", "eigen — own", "verschieden — different", "wahr — true", "allein — alone"], "connectors": ["erstens — first", "dann — then", "danach — after that", "schließlich — finally", "außerdem — moreover", "jedoch — however", "daher — therefore", "andererseits — on the other hand", "das heißt — that is", "zum Beispiel — for example", "vor allem — above all", "trotz — despite", "bezüglich — regarding", "nicht nur…sondern — not only…but", "wegen — because of"]}, "Portuguese": {"pronouns": ["eu — I", "tu/você — you", "ele — he", "ela — she", "nós — we", "vocês — you (pl.)", "eles/elas — they", "me — me", "te/lhe — you", "lhe — him/her", "nos — us", "se — himself/herself", "mim — me (prep.)", "com — with (prep.)", "si — oneself"], "conjunctions": ["e — and", "ou — or", "mas — but", "porque — because", "que — that", "se — if", "embora — although", "quando — when", "enquanto — while", "nem — neither/nor", "portanto — so", "pois — because", "porém — however", "já que — since", "como — as"], "adverbs": ["muito — very", "bem — well", "mal — badly", "também — also", "já — already", "aqui — here", "lá — there", "sempre — always", "nunca — never", "hoje — today", "amanhã — tomorrow", "ontem — yesterday", "bastante — quite", "pouco — a little", "quase — almost"], "prepositions": ["de — of/from", "a — to", "em — in", "com — with", "por — by/for", "para — for/to", "sem — without", "sobre — on/about", "entre — between", "até — until", "desde — since", "após — after", "antes de — before", "dentro de — inside", "fora de — outside"], "question_words": ["o que? — what", "quem? — who", "onde? — where", "quando? — when", "por que? — why", "como? — how", "quanto? — how much", "qual? — which", "aonde? — where to", "de onde? — from where"], "numbers": ["um — 1", "dois — 2", "três — 3", "quatro — 4", "cinco — 5", "seis — 6", "sete — 7", "oito — 8", "nove — 9", "dez — 10", "vinte — 20", "trinta — 30", "cem — 100", "mil — 1000", "primeiro — 1st"], "adjectives": ["bom — good", "mau/ruim — bad", "grande — big", "pequeno — small", "novo — new", "velho — old", "mesmo — same", "outro — other", "todo — all", "cada — each", "último — last", "próprio — own", "diferente — different", "verdadeiro — true", "sozinho — alone"], "connectors": ["primeiro — first", "depois — then", "em seguida — next", "finalmente — finally", "além disso — moreover", "no entanto — however", "portanto — therefore", "por outro lado — on the other hand", "ou seja — that is", "por exemplo — for example", "sobretudo — above all", "apesar de — despite", "quanto a — regarding", "não só…mas — not only…but", "por causa de — because of"]}
+,"English": {"pronouns": ["I — first person singular", "you — second person", "he — third person (m)", "she — third person (f)", "we — first person plural", "they — third person plural", "it — neutral/thing", "me — object form (I)", "him — object (he)", "her — object (she)", "us — object (we)", "them — object (they)", "my — possessive (I)", "your — possessive (you)", "their — possessive (they)"], "conjunctions": ["and — joins words", "or — alternative", "but — contrast", "because — reason", "that — introduces clause", "if — condition", "although — concession", "when — time", "while — simultaneous", "neither…nor — both negative", "so — result", "since — reason/time", "however — contrast", "either…or — choice", "as — comparison/time"], "adverbs": ["very — intensifier", "well — manner", "badly — manner", "also — addition", "already — prior", "here — place", "there — place", "always — frequency", "never — frequency", "today — time", "tomorrow — time", "yesterday — time", "often — frequency", "sometimes — frequency", "almost — approximation"], "prepositions": ["of — possession", "to — direction", "in — inside", "with — accompaniment", "for — purpose", "on — surface", "at — location/time", "by — agent/means", "from — origin", "about — topic", "between — middle", "through — passage", "over — above", "under — below", "since — starting point"], "question_words": ["what? — thing", "who? — person", "where? — place", "when? — time", "why? — reason", "how? — manner", "how much? — quantity", "which? — choice", "whose? — possession", "how many? — count"], "numbers": ["one — 1", "two — 2", "three — 3", "four — 4", "five — 5", "six — 6", "seven — 7", "eight — 8", "nine — 9", "ten — 10", "twenty — 20", "thirty — 30", "hundred — 100", "thousand — 1000", "first — 1st"], "adjectives": ["good — positive", "bad — negative", "big — size", "small — size", "new — recency", "old — age", "same — identical", "other — different", "all — total", "each — individual", "last — final", "own — possession", "different — varied", "true — factual", "only — sole"], "connectors": ["first — order", "then — sequence", "after — sequence", "finally — conclusion", "moreover — addition", "however — contrast", "therefore — result", "on the other hand — alternative", "that is — clarification", "for example — illustration", "above all — emphasis", "despite — concession", "regarding — topic", "not only…but — expansion", "because of — cause"]}
+,"Japanese": {"pronouns": ["私(わたし) — I (formal)", "あなた — you", "彼(かれ) — he", "彼女(かのじょ) — she", "私たち — we", "あなたたち — you all", "彼ら — they", "私に — to me", "あなたに — to you", "彼に — to him", "彼女に — to her", "私たちに — to us", "私の — my", "あなたの — your", "自分 — oneself"], "conjunctions": ["そして — and", "または — or", "でも/しかし — but", "なぜなら — because", "〜ので — so/because", "もし〜なら — if", "〜けれど — although", "〜とき — when", "〜ながら — while", "でも — but", "だから — therefore", "〜から — because/from", "〜のに — despite", "〜たり〜たり — doing things like", "〜し — and also"], "adverbs": ["とても — very", "よく — well/often", "あまり — not very (neg)", "も — also", "もう — already", "ここ — here", "そこ — there", "いつも — always", "全然 — never/at all (neg)", "今日 — today", "明日 — tomorrow", "昨日 — yesterday", "たくさん — a lot", "少し — a little", "だいたい — roughly"], "prepositions": ["〜に — to/at/in", "〜で — at/by/with", "〜から — from", "〜まで — until/to", "〜と — with/and", "〜へ — towards", "〜の — of/possessive", "〜より — than/from", "〜について — about", "〜の上に — on top of", "〜の下に — under", "〜の中に — inside", "〜の前に — in front of", "〜の後ろに — behind", "〜の間に — between"], "question_words": ["何(なに)? — what", "誰(だれ)? — who", "どこ? — where", "いつ? — when", "なぜ/どうして? — why", "どうやって? — how", "いくら? — how much", "どれ? — which", "どちら? — which (of two)", "いくつ? — how many"], "numbers": ["一(いち) — 1", "二(に) — 2", "三(さん) — 3", "四(し/よん) — 4", "五(ご) — 5", "六(ろく) — 6", "七(しち/なな) — 7", "八(はち) — 8", "九(く/きゅう) — 9", "十(じゅう) — 10", "二十 — 20", "三十 — 30", "百(ひゃく) — 100", "千(せん) — 1000", "一番目 — 1st"], "adjectives": ["良い(よい) — good", "悪い(わるい) — bad", "大きい — big", "小さい — small", "新しい — new", "古い — old", "同じ — same", "別の — other", "全ての — all", "それぞれの — each", "最後の — last", "自分の — own", "違う — different", "本当の — true", "一人で — alone"], "connectors": ["まず — first", "それから — then", "その後 — after that", "最後に — finally", "さらに — moreover", "しかし — however", "だから — therefore", "一方 — on the other hand", "つまり — that is", "例えば — for example", "特に — especially", "〜にもかかわらず — despite", "〜について — regarding", "〜だけでなく — not only", "〜のせいで — because of"]}
+,"Korean": {"pronouns": ["저/나 — I (formal/informal)", "당신/너 — you (formal/informal)", "그 — he", "그녀 — she", "우리 — we", "당신들/너희 — you all", "그들 — they", "저에게 — to me", "당신에게 — to you", "그에게 — to him", "그녀에게 — to her", "우리에게 — to us", "제/나의 — my", "당신의 — your", "자신 — oneself"], "conjunctions": ["그리고 — and", "또는 — or", "하지만 — but", "왜냐하면 — because", "〜아서/어서 — so/because", "만약 — if", "비록 — although", "〜때 — when", "〜면서 — while", "그래도 — still/but", "그래서 — therefore", "〜때문에 — because of", "〜는데 — but/and", "〜거나 — or/either", "〜고 — and (verb)"], "adverbs": ["매우/아주 — very", "잘 — well", "나쁘게 — badly", "也/도 — also", "이미 — already", "여기 — here", "거기 — there", "항상 — always", "절대 — never", "오늘 — today", "내일 — tomorrow", "어제 — yesterday", "많이 — a lot", "조금 — a little", "거의 — almost"], "prepositions": ["〜에 — to/at/in", "〜에서 — at/from", "〜로/으로 — to/by", "〜와/과 — with/and", "〜의 — of/possessive", "〜까지 — until/to", "〜부터 — from", "〜에 대해 — about", "〜위에 — on top of", "〜아래에 — under", "〜안에 — inside", "〜앞에 — in front of", "〜뒤에 — behind", "〜사이에 — between", "〜를 통해 — through"], "question_words": ["뭐/무엇? — what", "누구? — who", "어디? — where", "언제? — when", "왜? — why", "어떻게? — how", "얼마? — how much", "어느? — which", "누구의? — whose", "몇 개? — how many"], "numbers": ["일/하나 — 1", "이/둘 — 2", "삼/셋 — 3", "사/넷 — 4", "오/다섯 — 5", "육/여섯 — 6", "칠/일곱 — 7", "팔/여덟 — 8", "구/아홉 — 9", "십/열 — 10", "이십 — 20", "삼십 — 30", "백 — 100", "천 — 1000", "첫 번째 — 1st"], "adjectives": ["좋은 — good", "나쁜 — bad", "큰 — big", "작은 — small", "새로운 — new", "오래된 — old", "같은 — same", "다른 — other", "모든 — all", "각각의 — each", "마지막 — last", "자신의 — own", "다양한 — different", "진짜 — true/real", "혼자 — alone"], "connectors": ["먼저 — first", "그 다음 — then", "그 후에 — after that", "마지막으로 — finally", "게다가 — moreover", "하지만 — however", "따라서 — therefore", "반면에 — on the other hand", "즉 — that is", "예를 들어 — for example", "특히 — especially", "〜에도 불구하고 — despite", "〜에 관해 — regarding", "〜뿐만 아니라 — not only", "〜때문에 — because of"]}
+,"Chinese": {"pronouns": ["我 wǒ — I", "你 nǐ — you", "他 tā — he", "她 tā — she", "我们 wǒmen — we", "你们 nǐmen — you all", "他们 tāmen — they", "我 — me", "你 — you (obj)", "他/她 — him/her", "我们 — us", "自己 zìjǐ — oneself", "我的 — my", "你的 — your", "它 tā — it"], "conjunctions": ["和/跟 — and", "或者 — or", "但是 — but", "因为 — because", "所以 — so/therefore", "如果 — if", "虽然 — although", "当 — when", "一边…一边 — while", "而且 — moreover/and", "因此 — therefore", "既然 — since", "不过 — however", "要么…要么 — either…or", "不但…而且 — not only…but"], "adverbs": ["很 hěn — very", "好 hǎo — well", "也 yě — also", "已经 — already", "这里 — here", "那里 — there", "总是 — always", "从不 — never", "今天 — today", "明天 — tomorrow", "昨天 — yesterday", "很多 — a lot", "一点 — a little", "几乎 — almost", "常常 — often"], "prepositions": ["的 — possessive particle", "在 — at/in/on", "到 — to/until", "从 — from", "给 — to/for", "用 — with/using", "对 — towards/for", "为 — for", "跟 — with", "比 — than", "关于 — about", "上面 — on top", "下面 — below", "里面 — inside", "之间 — between"], "question_words": ["什么? — what", "谁? — who", "哪里? — where", "什么时候? — when", "为什么? — why", "怎么? — how", "多少? — how much", "哪个? — which", "谁的? — whose", "几个? — how many"], "numbers": ["一 yī — 1", "二 èr — 2", "三 sān — 3", "四 sì — 4", "五 wǔ — 5", "六 liù — 6", "七 qī — 7", "八 bā — 8", "九 jiǔ — 9", "十 shí — 10", "二十 — 20", "三十 — 30", "百 bǎi — 100", "千 qiān — 1000", "第一 — 1st"], "adjectives": ["好 hǎo — good", "坏 huài — bad", "大 dà — big", "小 xiǎo — small", "新 xīn — new", "旧 jiù — old", "一样 — same", "别的 — other", "所有 — all", "每个 — each", "最后 — last", "自己的 — own", "不同 — different", "真实 — true", "单独 — alone"], "connectors": ["首先 — first", "然后 — then", "之后 — after that", "最后 — finally", "此外 — moreover", "但是 — however", "因此 — therefore", "另一方面 — on the other hand", "也就是说 — that is", "例如 — for example", "尤其 — especially", "尽管 — despite", "关于 — regarding", "不仅…而且 — not only…but", "因为 — because of"]}};
+const TOP_VERBS = {"Spanish": ["ser", "estar", "tener", "hacer", "poder", "decir", "ir", "ver", "dar", "saber", "querer", "llegar", "pasar", "deber", "poner", "parecer", "quedar", "creer", "hablar", "llevar", "dejar", "seguir", "encontrar", "llamar", "venir", "pensar", "salir", "volver", "tomar", "conocer", "vivir", "sentir", "tratar", "mirar", "contar", "empezar", "esperar", "buscar", "existir", "entrar"], "Italian": ["essere", "avere", "fare", "dire", "andare", "vedere", "sapere", "potere", "volere", "venire", "stare", "dare", "parlare", "partire", "mettere", "credere", "trovare", "amare", "pensare", "restare", "arrivare", "finire", "sentire", "aspettare", "rispondere", "cominciare", "entrare", "tenere", "uscire", "conoscere", "leggere", "scrivere", "aprire", "seguire", "scegliere", "capire", "perdere", "dormire", "portare", "tornare"], "French": ["être", "avoir", "faire", "dire", "aller", "voir", "savoir", "pouvoir", "vouloir", "venir", "prendre", "parler", "partir", "mettre", "donner", "croire", "trouver", "aimer", "penser", "rester", "arriver", "finir", "entendre", "attendre", "répondre", "commencer", "entrer", "tenir", "sortir", "connaître", "lire", "écrire", "ouvrir", "suivre", "choisir", "comprendre", "perdre", "dormir", "conduire", "tomber"], "Russian": ["быть", "стать", "говорить", "знать", "мочь", "сказать", "хотеть", "видеть", "идти", "думать", "делать", "смотреть", "любить", "жить", "работать", "понимать", "помнить", "давать", "брать", "считать", "находить", "спросить", "ответить", "начать", "писать", "читать", "слышать", "чувствовать", "иметь", "играть", "учить", "помочь", "решить", "встретить", "ждать", "сидеть", "стоять", "прийти", "оставаться", "называть"], "German": ["sein", "haben", "werden", "können", "müssen", "sagen", "machen", "gehen", "wissen", "sehen", "kommen", "lassen", "geben", "nehmen", "sprechen", "denken", "fragen", "bleiben", "stehen", "heißen", "halten", "finden", "mögen", "wollen", "sollen", "dürfen", "zeigen", "führen", "brauchen", "verstehen", "versuchen", "beginnen", "bringen", "helfen", "arbeiten", "spielen", "lernen", "schreiben", "lesen", "hören"], "Portuguese": ["ser", "estar", "ter", "fazer", "poder", "dizer", "ir", "ver", "dar", "saber", "querer", "chegar", "passar", "dever", "pôr", "parecer", "ficar", "crer", "falar", "levar", "deixar", "seguir", "encontrar", "chamar", "vir", "pensar", "sair", "voltar", "tomar", "conhecer", "viver", "sentir", "tratar", "olhar", "contar", "começar", "esperar", "buscar", "existir", "entrar"],
+"English": ["be","have","do","say","go","get","make","know","think","take","see","come","want","look","use","find","give","tell","work","call","try","ask","need","feel","become","leave","put","mean","keep","let","begin","show","hear","play","run","move","live","believe","hold","bring"],
+"Japanese": ["する","ある","いる","行く","来る","見る","言う","食べる","飲む","買う","読む","書く","聞く","話す","思う","知る","使う","作る","帰る","起きる","寝る","待つ","会う","開ける","閉める","教える","学ぶ","働く","歩く","走る","乗る","降りる","入る","出る","持つ","取る","遊ぶ","歌う","泳ぐ","旅する"],
+"Korean": ["하다","있다","없다","가다","오다","보다","먹다","마시다","사다","읽다","쓰다","듣다","말하다","생각하다","알다","모르다","사용하다","만들다","돌아가다","일어나다","자다","기다리다","만나다","열다","닫다","가르치다","배우다","일하다","걷다","달리다","타다","내리다","들어가다","나가다","가지다","놀다","노래하다","수영하다","여행하다","사랑하다"],
+"Chinese": ["是","有","做","说","去","来","看","知道","想","吃","喝","买","读","写","听","用","工作","学习","回来","起床","睡觉","等待","见面","打开","关闭","教","走","跑","骑","进入","出去","拿","玩","唱歌","游泳","旅行","爱","帮助","找","需要"]};
 const PATH_DATA = [
 {"level":"A1","label":"Beginner","desc":"Everyday expressions and basic phrases.","nodes":[
   {"id":"a1-1","icon":"👋","title":"Greetings & Introductions","desc":"Hello, goodbye, my name is, where are you from.","tag":"vocab","tab":"lessons","lessonTitle":"Greetings & Introductions","sug":true},
-  {"id":"a1-2","icon":"🔢","title":"Numbers & Days","desc":"Count to 100, days of the week, months.","tag":"vocab","tab":"words","wordCat":"numbers"},
+  {"id":"a1-2a","icon":"🔢","title":"Numbers 1-100","desc":"Count, do basic math out loud, give your phone number.","tag":"vocab","tab":"words","wordCat":"numbers"},
+  {"id":"a1-2b","icon":"📅","title":"Days, Months & Dates","desc":"Days of the week, months, saying today's date.","tag":"vocab","tab":"lessons","lessonTitle":"Days, Months & Dates"},
   {"id":"a1-3","icon":"👤","title":"Pronouns & To Be","desc":"I, you, he, she + the verb to be conjugated.","tag":"grammar","tab":"words","wordCat":"pronouns"},
   {"id":"a1-4","icon":"❓","title":"Question Words","desc":"Who, what, where, when, why, how.","tag":"vocab","tab":"words","wordCat":"question_words"},
   {"id":"a1-5","icon":"🎨","title":"Colors & Descriptions","desc":"Basic colors and how to describe things around you.","tag":"vocab","tab":"lessons","lessonTitle":"Colors & Descriptions"},
-  {"id":"a1-6","icon":"👨‍👩‍👧","title":"Family Members","desc":"Mom, dad, brother, sister — family vocabulary.","tag":"vocab","tab":"lessons","lessonTitle":"Family Members"},
-  {"id":"a1-7","icon":"🏠","title":"Around the House","desc":"Rooms, furniture, and objects at home.","tag":"vocab","tab":"lessons","lessonTitle":"Around the House"},
+  {"id":"a1-6a","icon":"👨‍👩‍👧","title":"Family — Immediate","desc":"Mom, dad, brother, sister, parents, son, daughter.","tag":"vocab","tab":"lessons","lessonTitle":"Family Members — Immediate Family"},
+  {"id":"a1-6b","icon":"👵","title":"Family — Extended & In-Laws","desc":"Grandparents, aunts, uncles, cousins, in-laws, step-family.","tag":"vocab","tab":"lessons","lessonTitle":"Family Members — Extended Family & In-Laws"},
+  {"id":"a1-6c","icon":"💬","title":"Family — Talking About Them","desc":"Possessives (my sister, his mom) and describing relationships in sentences.","tag":"vocab","tab":"lessons","lessonTitle":"Family Members — Possessives & Describing Relationships"},
+  {"id":"a1-7a","icon":"🏠","title":"House — Rooms & Spaces","desc":"Kitchen, bedroom, bathroom, living room — naming rooms and saying where things are.","tag":"vocab","tab":"lessons","lessonTitle":"Around the House — Rooms & Spaces"},
+  {"id":"a1-7b","icon":"🛋️","title":"House — Furniture & Objects","desc":"Bed, table, chair, fridge, TV — everyday household objects.","tag":"vocab","tab":"lessons","lessonTitle":"Around the House — Furniture & Objects"},
   {"id":"a1-8","icon":"💬","title":"First Conversation","desc":"Short chat about yourself — name, country, hobby.","tag":"convo","tab":"convo","topic":"Daily Routine"}
 ]},
 {"level":"A2","label":"Elementary","desc":"Routine tasks and familiar topics.","nodes":[
   {"id":"a2-1","icon":"📍","title":"Prepositions — with, in, on…","desc":"In, on, at, with, from, to — the glue words.","tag":"grammar","tab":"words","wordCat":"prepositions"},
   {"id":"a2-2","icon":"🔗","title":"Conjunctions & Connectors","desc":"And, but, because, although — chain ideas together.","tag":"grammar","tab":"words","wordCat":"conjunctions"},
   {"id":"a2-3","icon":"⚡","title":"Core Verbs — To Have & To Go","desc":"Conjugate tener/avoir/haben and ir/aller/gehen.","tag":"grammar","tab":"verbs","verb":"random"},
-  {"id":"a2-4","icon":"🍽️","title":"Food & Ordering","desc":"Ordering in a café. Practical vocabulary.","tag":"vocab","tab":"lessons","lessonTitle":"Ordering Food"},
+  {"id":"a2-4a","icon":"🍽️","title":"Food — Names & Meals","desc":"Common foods, drinks, breakfast/lunch/dinner vocabulary.","tag":"vocab","tab":"lessons","lessonTitle":"Food Vocabulary — Names & Meals"},
+  {"id":"a2-4b","icon":"🧾","title":"Ordering at a Restaurant","desc":"Café and restaurant phrases — ordering, paying, asking for the bill.","tag":"vocab","tab":"lessons","lessonTitle":"Ordering at a Restaurant"},
   {"id":"a2-5","icon":"🛒","title":"Shopping & Money","desc":"Prices, paying, sizes, I'd like to buy…","tag":"vocab","tab":"lessons","lessonTitle":"Shopping"},
   {"id":"a2-6","icon":"🗺️","title":"Asking for Directions","desc":"Where is, turn left, straight ahead, how far.","tag":"vocab","tab":"lessons","lessonTitle":"Asking for Directions"},
   {"id":"a2-7","icon":"⏰","title":"Telling the Time","desc":"What time is it? Morning, afternoon, half past.","tag":"vocab","tab":"lessons","lessonTitle":"Telling the Time"},
@@ -574,9 +588,9 @@ const PATH_DATA = [
 // ════════════════════════════════
 // WL_DATA, TOP_VERBS, PATH_DATA injected below
 
-const LANG_META={Spanish:{flag:'🇪🇸',code:'ES'},French:{flag:'🇫🇷',code:'FR'},Russian:{flag:'🇷🇺',code:'RU'},German:{flag:'🇩🇪',code:'DE'},Portuguese:{flag:'🇧🇷',code:'PT'}};
+const LANG_META={Spanish:{flag:'🇪🇸',code:'ES'},French:{flag:'🇫🇷',code:'FR'},Italian:{flag:'🇮🇹',code:'IT'},Russian:{flag:'🇷🇺',code:'RU'},German:{flag:'🇩🇪',code:'DE'},Portuguese:{flag:'🇧🇷',code:'PT'},English:{flag:'🇬🇧',code:'EN'},Japanese:{flag:'🇯🇵',code:'JA'},Korean:{flag:'🇰🇷',code:'KO'},Chinese:{flag:'🇨🇳',code:'ZH'}};
 const LANG_INFO={Spanish:{country:'Spain and Latin America',news:'Spanish-speaking world'},French:{country:'France',news:'France'},Russian:{country:'Russia',news:'Russia'},German:{country:'Germany',news:'Germany'},Portuguese:{country:'Brazil or Portugal',news:'Brazil'}};
-const LANG_CODES={Spanish:'es-ES',French:'fr-FR',Russian:'ru-RU',German:'de-DE',Portuguese:'pt-BR'};
+const LANG_CODES={Spanish:'es-ES',French:'fr-FR',Italian:'it-IT',Russian:'ru-RU',German:'de-DE',Portuguese:'pt-BR',English:'en-US',Japanese:'ja-JP',Korean:'ko-KR',Chinese:'zh-CN'};
 const EL_VOICES={Spanish:'pNInz6obpgDQGcFmaJgB',French:'jBpfuIE2acCO8z3wKNLl',Russian:'AZnzlk1XvdvUeBnXmlld',German:'GBv7mTt0atIp3Br8iCZE',Portuguese:'pNInz6obpgDQGcFmaJgB'};
 const EL_STYLES={natural:{stability:.52,similarity_boost:.82,style:.35,use_speaker_boost:true},clear:{stability:.75,similarity_boost:.75,style:.1,use_speaker_boost:false},slow:{stability:.65,similarity_boost:.8,style:.2,use_speaker_boost:true}};
 const KEY_DEFS=[
@@ -593,12 +607,28 @@ const FUT_TENSE={Spanish:'Futuro Simple',French:'Futur Simple',Russian:'Future T
 // ════════════════════════════════
 const msgStore=[];
 const wordStore=[];
+const verbStore=[];
+const MIC_CONSTRAINTS={audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true,channelCount:1,sampleRate:48000}};
+// Allowlist-based HTML sanitizer — strips everything except safe formatting tags
+function sanitizeHTML(html){
+  const allowed=['h3','p','ul','ol','li','strong','em','br','div','span'];
+  const tmp=document.createElement('div');
+  tmp.innerHTML=html;
+  tmp.querySelectorAll('*').forEach(el=>{
+    if(!allowed.includes(el.tagName.toLowerCase())){el.replaceWith(document.createTextNode(el.textContent));}
+    else{[...el.attributes].forEach(a=>el.removeAttribute(a.name));}
+  });
+  return tmp.innerHTML;
+}
+function escHTML(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+const glInspirationStore=[];
 let KEYS={};
 KEY_DEFS.forEach(k=>{KEYS[k.id]=localStorage.getItem('lf_key_'+k.id)||'';});
 KEYS.el_voice_id=localStorage.getItem('lf_el_voice_id')||'';
 let voiceStyle=localStorage.getItem('lf_voice_style')||'natural';
 let ttsEngine=localStorage.getItem('lf_tts_engine')||'openai';
-let completedNodes=JSON.parse(localStorage.getItem('lf_nodes')||'[]');
+const getLangKey=k=>`${k}_${getLang()}`;
+let completedNodes=JSON.parse(localStorage.getItem(getLangKey('lf_nodes'))||'[]');
 let ptVar='BR';
 let convoActive=false,convoTopic='World Cup 2026',convoSys='';
 let chatHistory=[],userResponses=[];
@@ -633,6 +663,12 @@ function onLangChange(){
   $('langFlag').textContent=m.flag;$('langCode').textContent=m.code;
   if(lang==='Portuguese')$('ptToggle')&&($('ptToggle').style.display='flex');
   else $('ptToggle')&&($('ptToggle').style.display='none');
+  // Reload per-language progress
+  completedNodes=JSON.parse(localStorage.getItem(getLangKey('lf_nodes'))||'[]');
+  const s=parseInt(localStorage.getItem(getLangKey('lf_streak'))||'0');
+  $('streakNum').textContent=s;
+  $('immersionPct').textContent=getImmersionPct();
+  renderPath();
   loadToday();
 }
 
@@ -659,23 +695,23 @@ function goFreeTalk(){switchTab('talk',$('bn-talk'));setTimeout(startConvo,150);
 // ════════════════════════════════
 function updateStreak(){
   const today=new Date().toISOString().split('T')[0];
-  const last=localStorage.getItem('lf_last')||'';
-  let s=parseInt(localStorage.getItem('lf_streak')||'0');
+  const last=localStorage.getItem(getLangKey('lf_last'))||'';
+  let s=parseInt(localStorage.getItem(getLangKey('lf_streak'))||'0');
   const yest=new Date(Date.now()-86400000).toISOString().split('T')[0];
   if(last===today){}
   else if(last===yest){s++;}
   else{s=1;}
-  localStorage.setItem('lf_streak',s);localStorage.setItem('lf_last',today);
+  localStorage.setItem(getLangKey('lf_streak'),s);localStorage.setItem(getLangKey('lf_last'),today);
   $('streakNum').textContent=s;
-  // Track total unique days practiced (never resets) for immersion
+  // Track total unique days practiced per language for immersion
   if(last!==today){
-    const td=parseInt(localStorage.getItem('lf_total_days')||'0')+1;
-    localStorage.setItem('lf_total_days',td);
+    const td=parseInt(localStorage.getItem(getLangKey('lf_total_days'))||'0')+1;
+    localStorage.setItem(getLangKey('lf_total_days'),td);
   }
   $('immersionPct').textContent=getImmersionPct();
 }
 function getImmersionPct(){
-  return Math.min(95,parseInt(localStorage.getItem('lf_total_days')||'0'));
+  return Math.min(95,parseInt(localStorage.getItem(getLangKey('lf_total_days'))||'0'));
 }
 function getImmersionPrompt(lang){
   const pct=getImmersionPct();
@@ -697,12 +733,12 @@ function getLessonImmersionPrompt(lang){
 }
 function logActivity(){
   const today=new Date().toISOString().split('T')[0];
-  const log=JSON.parse(localStorage.getItem('lf_activity')||'{}');
-  log[today]=(log[today]||0)+1;localStorage.setItem('lf_activity',JSON.stringify(log));
+  const log=JSON.parse(localStorage.getItem(getLangKey('lf_activity'))||'{}');
+  log[today]=(log[today]||0)+1;localStorage.setItem(getLangKey('lf_activity'),JSON.stringify(log));
 }
 function logSession(){
-  const s=parseInt(localStorage.getItem('lf_sessions')||'0')+1;
-  localStorage.setItem('lf_sessions',s);logActivity();
+  const s=parseInt(localStorage.getItem(getLangKey('lf_sessions'))||'0')+1;
+  localStorage.setItem(getLangKey('lf_sessions'),s);logActivity();
 }
 
 // ════════════════════════════════
@@ -880,7 +916,7 @@ function speakBrowser(text,lang,rate=.9,onEnd=null){
   synth.speak(u);
 }
 
-const OPENAI_TTS_VOICES={Spanish:'nova',French:'nova',Russian:'alloy',German:'alloy',Portuguese:'nova',Japanese:'shimmer',Korean:'shimmer',Chinese:'shimmer'};
+const OPENAI_TTS_VOICES={Spanish:'nova',French:'nova',Italian:'nova',Russian:'alloy',German:'alloy',Portuguese:'nova',Japanese:'shimmer',Korean:'shimmer',Chinese:'shimmer',English:'alloy'};
 
 async function speakOpenAI(text,lang,onEnd,streamEl){
   if(currentAudioEl){try{currentAudioEl.pause();currentAudioEl.src='';}catch(e){}currentAudioEl=null;}
@@ -915,10 +951,18 @@ async function whisperSTT(blob){
   const key=KEYS.openai;if(!key)throw new Error('No OpenAI key');
   const form=new FormData();
   form.append('file',blob,'audio.webm');
-  form.append('model','whisper-1');
+  form.append('model','gpt-4o-mini-transcribe');
   form.append('language',getLangCode(getLang()).split('-')[0]);
   const res=await fetch('https://api.openai.com/v1/audio/transcriptions',{method:'POST',headers:{'Authorization':'Bearer '+key},body:form});
-  const d=await res.json();return d.text||'';
+  const d=await res.json();
+  if(d.text)return d.text;
+  // Fallback to whisper-1 if the newer model errors (e.g. unsupported on account)
+  const form2=new FormData();
+  form2.append('file',blob,'audio.webm');
+  form2.append('model','whisper-1');
+  form2.append('language',getLangCode(getLang()).split('-')[0]);
+  const res2=await fetch('https://api.openai.com/v1/audio/transcriptions',{method:'POST',headers:{'Authorization':'Bearer '+key},body:form2});
+  const d2=await res2.json();return d2.text||'';
 }
 
 let holdMR=null,holdStream=null,holdChunks=[];
@@ -931,7 +975,7 @@ function startHoldListen(e){
   holdChunks=[];
   $('listenBtn').textContent='🔴 Listening…';$('listenBtn').style.background='var(--acc2)';
   setStatus('listening');
-  navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+  navigator.mediaDevices.getUserMedia(MIC_CONSTRAINTS).then(stream=>{
     holdStream=stream;
     holdMR=new MediaRecorder(stream,{mimeType:MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':'audio/mp4'});
     holdMR.ondataavailable=e=>{if(e.data.size>0)holdChunks.push(e.data);};
@@ -1243,15 +1287,29 @@ function launchNode(){
 // ════════════════════════════════
 // GUIDED LESSON
 // ════════════════════════════════
-let glHistory=[],glNode=null,glVerbs=[],glStartTime=null,glMR=null,glTypeVisible=false;
+let glHistory=[],glNode=null,glVerbs=[],glStartTime=null,glMR=null,glTypeVisible=false,glEndTimer=null;
+const GL_MAX_MS=10*60*1000;
 
 function startWordLesson(idx){
   const w=wordStore[idx];if(!w)return;
   startGuidedLesson({icon:'📖',title:w.word+' ('+w.tr+')',desc:'Teach how to use "'+w.word+'" in context.',tab:'lessons',id:'word-'+idx});
 }
 
+function getScriptNote(lang){
+  const scripts={
+    Russian:'Russian uses the Cyrillic alphabet (А Б В Г Д Е Ё Ж З И Й К Л М Н О П Р С Т У Ф Х Ц Ч Ш Щ Ъ Ы Ь Э Ю Я). Always show Russian words in Cyrillic script, followed by transliteration in parentheses for beginners. Gradually reduce transliteration as the student advances.',
+    Japanese:'Japanese uses three scripts: Hiragana (basic phonetic — あいうえお), Katakana (foreign words — アイウエオ), and Kanji (Chinese-origin characters). Always show the Japanese word with furigana (reading) in parentheses for new words. Introduce one hiragana character per lesson when appropriate.',
+    Korean:'Korean uses Hangul, a phonetic alphabet of 14 consonants and 10 vowels combined into syllable blocks (e.g. 한글). Always show Korean in Hangul script with romanization (Revised Romanization) in parentheses for new words.',
+    Chinese:'Mandarin Chinese uses Chinese characters (汉字 Hànzì). Always show characters with Pinyin (romanized pronunciation with tone marks) in parentheses, e.g. 你好 (nǐ hǎo). Introduce stroke order concepts for simple characters.',
+    English:'English uses the Latin alphabet. Focus on natural pronunciation, idioms, and common phrases rather than script.',
+  };
+  return scripts[lang]||'';
+}
+
 async function startGuidedLesson(n){
   glNode=n;glHistory=[];glVerbs=[];glStartTime=Date.now();glTypeVisible=false;
+  if(glEndTimer)clearTimeout(glEndTimer);
+  glEndTimer=setTimeout(forceEndLesson,GL_MAX_MS);
   $('glTitle').textContent=n.title;
   $('glChat').innerHTML='';
   if($('glInput'))$('glInput').value='';
@@ -1276,7 +1334,7 @@ LESSON STRUCTURE — follow this exactly:
 7. End each turn with exactly ONE question or prompt for the student — never multiple questions.
 
 STYLE: Short, natural, encouraging. Like a real tutor in a session — not a lecture.
-${getLessonImmersionPrompt(lang)}`;
+${getLessonImmersionPrompt(lang)}${getScriptNote(lang)?'\n\nSCRIPT/WRITING: '+getScriptNote(lang):''}`;
   const opening=await callDeepSeek(sys,`Start the lesson on "${n.title}". Greet, state the 2-3 verbs for today, then teach the first concept.`);
   glHistory=[{role:'assistant',content:opening}];
   $('glChat').lastChild.remove();
@@ -1287,7 +1345,7 @@ ${getLessonImmersionPrompt(lang)}`;
   if(verbMatch){
     const pills=verbMatch[1].split(/[,;]/).slice(0,3).map(v=>v.trim().split('(')[0].trim()).filter(Boolean);
     glVerbs=pills;
-    $('glVerbPills').innerHTML=pills.map(v=>`<div style="background:rgba(255,255,255,0.2);color:#fff;font-size:.68rem;font-weight:600;padding:3px 9px;border-radius:12px;border:1px solid rgba(255,255,255,0.35)">${v}</div>`).join('');
+    $('glVerbPills').innerHTML=pills.map(v=>`<div style="background:rgba(255,255,255,0.2);color:#fff;font-size:.68rem;font-weight:600;padding:3px 9px;border-radius:12px;border:1px solid rgba(255,255,255,0.35)">${escHTML(v)}</div>`).join('');
   }
 }
 
@@ -1327,6 +1385,9 @@ function glAppend(role,text){
 
 async function glSend(){
   const txt=$('glInput').value.trim();if(!txt)return;
+  // Auto-wind-down after 8 minutes
+  const elapsed=Date.now()-(glStartTime||Date.now());
+  const winding=elapsed>8*60*1000;
   $('glInput').value='';
   glHistory.push({role:'user',content:txt});
   glAppend('user',txt);
@@ -1335,7 +1396,7 @@ async function glSend(){
   dot.style.cssText='align-self:flex-start;color:var(--mut);font-size:.85rem;padding:8px 4px';
   dot.textContent='…';$('glChat').appendChild(dot);$('glChat').scrollTop=$('glChat').scrollHeight;
   const sys=`You are Aria, a warm ${lang} tutor. Lesson: "${glNode?.title}". Verbs being practiced: ${glVerbs.join(', ')||'relevant verbs'}.
-If the student made an error, correct gently and give the right form. Then move forward — teach the next concept or ask the next question. Keep it to 1-2 sentences max. End with exactly one prompt for the student. ${getLessonImmersionPrompt(lang)}`;
+If the student made an error, correct gently and give the right form. Then move forward — teach the next concept or ask the next question. Keep it to 1-2 sentences max. End with exactly one prompt for the student. ${getLessonImmersionPrompt(lang)}${getScriptNote(lang)?'\nSCRIPT: '+getScriptNote(lang):''}${winding?'\n\nTIMER: You have been teaching for 8+ minutes. Warmly wrap up this lesson — summarize the key verbs practiced, praise the student, and say you\'ll pick up next time. End with: "Great work today! 🎉 Tap Complete Lesson when you\'re ready."':''}`;
   const reply=await callDeepSeek(sys,txt,glHistory.slice(-8));
   dot.remove();
   glHistory.push({role:'assistant',content:reply});
@@ -1356,7 +1417,7 @@ function glHoldStart(e){
   $('glMicCircle').style.transform='scale(0.92)';
   $('glMicCircle').style.background='linear-gradient(135deg,#ff6b8a,#e0002b)';
   let chunks=[];
-  navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+  navigator.mediaDevices.getUserMedia(MIC_CONSTRAINTS).then(stream=>{
     glHoldMR=new MediaRecorder(stream,{mimeType:MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':'audio/mp4'});
     glHoldMR.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data);};
     glHoldMR.onstop=async()=>{
@@ -1381,10 +1442,19 @@ async function glGetInspiration(){
   if(!lines.length)return;
   const box=document.createElement('div');
   box.style.cssText='padding:8px 12px;background:#fff;border-top:1px solid var(--bdr)';
-  box.innerHTML='<div style="font-size:.68rem;color:var(--mut);margin-bottom:5px;font-weight:600">💡 Choose a response:</div>'+
-    lines.map(l=>{const t=l.replace(/^\d\.\s*/,'');
-      return `<button onclick="$('glInput').value=${JSON.stringify(t)};glSend();this.parentElement.remove()" style="display:block;width:100%;text-align:left;background:#f5f7fb;border:1px solid var(--bdr);border-radius:10px;padding:7px 11px;margin-bottom:5px;font-size:.83rem;cursor:pointer;color:var(--txt)">${t}</button>`;
-    }).join('');
+  const header=document.createElement('div');
+  header.style.cssText='font-size:.68rem;color:var(--mut);margin-bottom:5px;font-weight:600';
+  header.textContent='💡 Choose a response:';
+  box.appendChild(header);
+  lines.forEach(l=>{
+    const t=l.replace(/^\d\.\s*/,'');
+    const idx=glInspirationStore.push(t)-1;
+    const btn=document.createElement('button');
+    btn.style.cssText='display:block;width:100%;text-align:left;background:#f5f7fb;border:1px solid var(--bdr);border-radius:10px;padding:7px 11px;margin-bottom:5px;font-size:.83rem;cursor:pointer;color:var(--txt)';
+    btn.textContent=t;
+    btn.onclick=()=>{$('glInput').value=glInspirationStore[idx];glSend();box.remove();};
+    box.appendChild(btn);
+  });
   const bar=$('glTypeBar').parentElement;
   const existing=bar.querySelector('.inspire-box');if(existing)existing.remove();
   box.className='inspire-box';
@@ -1393,24 +1463,40 @@ async function glGetInspiration(){
 }
 
 function closeGuidedLesson(){
+  if(glEndTimer){clearTimeout(glEndTimer);glEndTimer=null;}
   if(currentAudioEl){try{currentAudioEl.pause();currentAudioEl.src='';}catch(e){}currentAudioEl=null;}
   if(glHoldMR&&glHoldMR.state==='recording')glHoldMR.stop();
   closeModal('guidedLessonModal');
 }
 
+// Hard cutoff — fires GL_MAX_MS after lesson start regardless of activity
+function forceEndLesson(){
+  if(!$('guidedLessonModal').classList.contains('open'))return;
+  glAppend('ai',"Time's up for today — great session! 🎉 Tap Complete Lesson to save your progress.");
+  completeLesson();
+}
+
 function completeLesson(){
+  if(glEndTimer){clearTimeout(glEndTimer);glEndTimer=null;}
   if(currentAudioEl){try{currentAudioEl.pause();currentAudioEl.src='';}catch(e){}currentAudioEl=null;}
   if(glHoldMR&&glHoldMR.state==='recording')glHoldMR.stop();
-  // Mark node done
+  // Mark node done — vocab/grammar topics require passing Test Out to count as mastered;
+  // a finished chat alone isn't proof of retention. Convo topics still auto-complete.
+  let needsTestOut=false;
   if(glNode?.id){
     PATH_DATA.forEach(block=>block.nodes.forEach(n=>{
       if(n.id===glNode.id||(n.lessonTitle&&n.lessonTitle===glNode.title)||(n.title===glNode.title)){
-        if(!completedNodes.includes(n.id))completedNodes.push(n.id);
+        if(n.tag==='vocab'||n.tag==='grammar'){
+          needsTestOut=!completedNodes.includes(n.id);
+        }else if(!completedNodes.includes(n.id)){
+          completedNodes.push(n.id);
+        }
       }
     }));
-    localStorage.setItem('lf_nodes',JSON.stringify(completedNodes));
+    localStorage.setItem(getLangKey('lf_nodes'),JSON.stringify(completedNodes));
     logActivity();
   }
+  $('lcTestNote').style.display=needsTestOut?'block':'none';
   closeModal('guidedLessonModal');
   // Build stats
   const exchanges=glHistory.filter(m=>m.role==='user').length;
@@ -1448,7 +1534,7 @@ function markNodeDone(){
   if(!currentNode)return;
   const idx=completedNodes.indexOf(currentNode.id);
   if(idx===-1)completedNodes.push(currentNode.id);else completedNodes.splice(idx,1);
-  localStorage.setItem('lf_nodes',JSON.stringify(completedNodes));
+  localStorage.setItem(getLangKey('lf_nodes'),JSON.stringify(completedNodes));
   logActivity();closeModal('nodeModal');renderPath();
 }
 
@@ -1511,7 +1597,7 @@ function testListen(){if(KEYS.openai)testListenWhisper();else testListenWS();}
 function testListenWhisper(){
   setTestSt('listening');$('tListenBtn').disabled=true;
   let chunks=[];
-  navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+  navigator.mediaDevices.getUserMedia(MIC_CONSTRAINTS).then(stream=>{
     const mr=new MediaRecorder(stream,{mimeType:MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':'audio/mp4'});
     mr.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data);};
     mr.onstop=async()=>{
@@ -1592,7 +1678,7 @@ function showTestResults(d){
 function applyPass(){
   if(testCtx.type==='level'){const block=PATH_DATA[testCtx.bi];if(block)block.nodes.forEach(n=>{if(!completedNodes.includes(n.id))completedNodes.push(n.id);});}
   else{if(testCtx.nodeId&&!completedNodes.includes(testCtx.nodeId))completedNodes.push(testCtx.nodeId);}
-  localStorage.setItem('lf_nodes',JSON.stringify(completedNodes));
+  localStorage.setItem(getLangKey('lf_nodes'),JSON.stringify(completedNodes));
   logActivity();closeTestModal();renderPath();
   if($('tab-progress').classList.contains('active'))renderProgress();
 }
@@ -1613,12 +1699,12 @@ All persons. Level ${cefr}. Natural sentences.`;
   try{
     const raw=await callDeepSeek(sys,prompt);
     const d=JSON.parse(raw.replace(/```json|```/g,'').trim());
-    const cH=d.conjugations.map(c=>`<div class="crow"><span class="cp">${c.pronoun}</span><span class="cf">${c.form}</span><button class="sbtn" style="font-size:.65rem;padding:1px 6px;margin-left:4px" onclick="speak('${c.form.replace(/'/g,"\\'")}','${getLang()}')">🔊</button></div>`).join('');
-    const eH=d.examples.map(e=>`<div class="ex">${e.target}<div class="en">${e.english}</div></div>`).join('');
+    const cH=d.conjugations.map(c=>{const fi=verbStore.push(c.form)-1;return `<div class="crow"><span class="cp">${escHTML(c.pronoun)}</span><span class="cf">${escHTML(c.form)}</span><button class="sbtn" style="font-size:.65rem;padding:1px 6px;margin-left:4px" onclick="speak(verbStore[${fi}],'${getLang()}')">🔊</button></div>`;}).join('');
+    const eH=d.examples.map(e=>`<div class="ex">${escHTML(e.target)}<div class="en">${escHTML(e.english)}</div></div>`).join('');
     const eT=JSON.stringify(d.examples.map(e=>e.target));
     const past=PAST_TENSE[lang];const fut=FUT_TENSE[lang];
     $('verbOut').innerHTML=`<div class="verb-card">
-      <div class="verb-root">${d.verb}</div><div class="verb-meta">${d.meaning} · ${d.tense}</div>
+      <div class="verb-root">${escHTML(d.verb)}</div><div class="verb-meta">${escHTML(d.meaning)} · ${escHTML(d.tense)}</div>
       <div class="cgrid">${cH}</div><div class="exlist">${eH}</div>
       <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
         <button class="btn btn-g" style="font-size:.76rem" onclick='spkExamples(${eT})'>🔊 Hear</button>
@@ -1720,7 +1806,7 @@ async function loadLesson(){
   const prompt=`Create a tight ${cefr}-level ${lang} lesson on: "${currentLesson.title}".
 Use: <h3>Key Vocabulary</h3> (5 words+English), <h3>Example Sentences</h3> (3 sentences), <h3>Mini Dialogue</h3> (4-6 lines A/B+translations), <h3>Your Turn</h3> (practice prompt). Accurate ${lang}, no filler.`;
   const html=await callDeepSeek(sys,prompt);
-  $('lessonContent').innerHTML=html;lessonTxt=$('lessonContent').innerText;
+  $('lessonContent').innerHTML=sanitizeHTML(html);lessonTxt=$('lessonContent').innerText;
 }
 
 function speakLesson(){if(!lessonTxt){alert('Load a lesson first.');return;}speak(lessonTxt.substring(0,600),getLang(),.88);}
@@ -1779,8 +1865,8 @@ function renderToday(d){
 // PROGRESS
 // ════════════════════════════════
 function renderProgress(){
-  const streak=parseInt(localStorage.getItem('lf_streak')||'0');
-  const sessions=parseInt(localStorage.getItem('lf_sessions')||'0');
+  const streak=parseInt(localStorage.getItem(getLangKey('lf_streak'))||'0');
+  const sessions=parseInt(localStorage.getItem(getLangKey('lf_sessions'))||'0');
   $('pStreak').textContent=streak;$('pNodes').textContent=completedNodes.length;$('pSessions').textContent=sessions;$('pImmersion').textContent=getImmersionPct()+'%';
   const bars=$('pBars');bars.innerHTML='';
   const cols={A1:'var(--grn)',A2:'#8bf0b8',B1:'#a89fff',B2:'var(--acc)',C1:'var(--amb)',C2:'var(--acc2)'};
@@ -1792,7 +1878,7 @@ function renderProgress(){
     bars.appendChild(r);
   });
   const heat=$('pHeat');heat.innerHTML='';
-  const act=JSON.parse(localStorage.getItem('lf_activity')||'{}');
+  const act=JSON.parse(localStorage.getItem(getLangKey('lf_activity'))||'{}');
   for(let i=29;i>=0;i--){
     const d=new Date(Date.now()-i*86400000),key=d.toISOString().split('T')[0];
     const cnt=act[key]||0;
@@ -1815,10 +1901,15 @@ function renderProgress(){
 }
 
 function confirmReset(){
-  if(!confirm('Reset all progress?'))return;
+  if(!confirm('Reset all progress for all languages?'))return;
   completedNodes=[];
-  ['lf_nodes','lf_streak','lf_last','lf_activity','lf_sessions'].forEach(k=>localStorage.removeItem(k));
-  $('streakNum').textContent='0';renderPath();renderProgress();
+  const langs=Object.keys(LANG_META);
+  ['lf_nodes','lf_streak','lf_last','lf_total_days','lf_activity','lf_sessions'].forEach(k=>{
+    langs.forEach(l=>localStorage.removeItem(`${k}_${l}`));
+    localStorage.removeItem(k);
+  });
+  $('streakNum').textContent='0';$('immersionPct').textContent='0';
+  renderPath();renderProgress();
 }
 
 // ════════════════════════════════
