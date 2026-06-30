@@ -838,7 +838,7 @@ function onLangChange(){
   completedNodes=JSON.parse(localStorage.getItem(getLangKey('lf_nodes'))||'[]');
   const s=parseInt(localStorage.getItem(getLangKey('lf_streak'))||'0');
   $('streakNum').textContent=s;
-  $('immersionPct').textContent=getImmersionPct();
+  $('immersionPct').textContent=getImmersionPct()+'%';
   renderPath();
   loadToday();
 }
@@ -1190,18 +1190,20 @@ async function whisperSTT(blob){
 
 let holdMR=null,holdStream=null,holdChunks=[];
 
-let listenActive=false;
+let listenActive=false,listenPending=false;
 function toggleListen(){
+  if(listenPending)return; // waiting for getUserMedia — ignore extra taps
   if(listenActive){stopListen();return;}
   if(!convoActive)return;
   if(currentAudioEl){try{currentAudioEl.pause();currentAudioEl.src='';}catch(err){}currentAudioEl=null;}
   synth.cancel();
   if(!KEYS.openai){listenWebSpeech();return;}
-  listenActive=true;
+  listenPending=true;
   holdChunks=[];
   $('listenBtn').textContent='🔴 Stop Recording';$('listenBtn').style.background='var(--acc2)';
   setStatus('listening');
   navigator.mediaDevices.getUserMedia(MIC_CONSTRAINTS).then(stream=>{
+    listenPending=false;listenActive=true;
     holdStream=stream;
     holdMR=new MediaRecorder(stream,{mimeType:MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':'audio/mp4'});
     holdMR.ondataavailable=e=>{if(e.data.size>0)holdChunks.push(e.data);};
@@ -1215,7 +1217,7 @@ function toggleListen(){
       catch(e){listenWebSpeech();}
     };
     holdMR.start();
-  }).catch(()=>{listenActive=false;$('listenBtn').textContent='🎙 Tap to Speak';$('listenBtn').style.background='';setStatus('ready');alert('Mic access denied.');});
+  }).catch(()=>{listenPending=false;$('listenBtn').textContent='🎙 Tap to Speak';$('listenBtn').style.background='';setStatus('ready');alert('Mic access denied.');});
 }
 function stopListen(){
   if(holdMR&&holdMR.state==='recording')holdMR.stop();
@@ -1479,7 +1481,7 @@ function renderPath(){
 
     if(isCompleted&&!isActive){
       // Completed level — collapsed summary row
-      div.innerHTML=`<div class="clvl-hdr" style="cursor:pointer;opacity:.75" onclick="this.parentElement.querySelector('.path-nodes').style.display=this.parentElement.querySelector('.path-nodes').style.display==='none'?'grid':'none'">
+      div.innerHTML=`<div class="clvl-hdr" style="cursor:pointer;opacity:.75" onclick="this.parentElement.querySelector('.path-nodes').style.display=this.parentElement.querySelector('.path-nodes').style.display==='none'?'flex':'none'">
         <div class="clvl-pill clvl-${block.level}">${block.level}</div>
         <div class="clvl-desc" style="color:var(--grn)">✓ ${block.label} Complete — ${done}/${allL.length} lessons</div>
         <div class="clvl-div"></div>
