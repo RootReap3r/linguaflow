@@ -602,6 +602,7 @@ const FUT_TENSE={Spanish:'Futuro Simple',French:'Futur Simple',Russian:'Future T
 const msgStore=[];
 const wordStore=[];
 const verbStore=[];
+const MIC_CONSTRAINTS={audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true,channelCount:1,sampleRate:48000}};
 // Allowlist-based HTML sanitizer — strips everything except safe formatting tags
 function sanitizeHTML(html){
   const allowed=['h3','p','ul','ol','li','strong','em','br','div','span'];
@@ -944,10 +945,18 @@ async function whisperSTT(blob){
   const key=KEYS.openai;if(!key)throw new Error('No OpenAI key');
   const form=new FormData();
   form.append('file',blob,'audio.webm');
-  form.append('model','whisper-1');
+  form.append('model','gpt-4o-mini-transcribe');
   form.append('language',getLangCode(getLang()).split('-')[0]);
   const res=await fetch('https://api.openai.com/v1/audio/transcriptions',{method:'POST',headers:{'Authorization':'Bearer '+key},body:form});
-  const d=await res.json();return d.text||'';
+  const d=await res.json();
+  if(d.text)return d.text;
+  // Fallback to whisper-1 if the newer model errors (e.g. unsupported on account)
+  const form2=new FormData();
+  form2.append('file',blob,'audio.webm');
+  form2.append('model','whisper-1');
+  form2.append('language',getLangCode(getLang()).split('-')[0]);
+  const res2=await fetch('https://api.openai.com/v1/audio/transcriptions',{method:'POST',headers:{'Authorization':'Bearer '+key},body:form2});
+  const d2=await res2.json();return d2.text||'';
 }
 
 let holdMR=null,holdStream=null,holdChunks=[];
@@ -960,7 +969,7 @@ function startHoldListen(e){
   holdChunks=[];
   $('listenBtn').textContent='🔴 Listening…';$('listenBtn').style.background='var(--acc2)';
   setStatus('listening');
-  navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+  navigator.mediaDevices.getUserMedia(MIC_CONSTRAINTS).then(stream=>{
     holdStream=stream;
     holdMR=new MediaRecorder(stream,{mimeType:MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':'audio/mp4'});
     holdMR.ondataavailable=e=>{if(e.data.size>0)holdChunks.push(e.data);};
@@ -1272,7 +1281,8 @@ function launchNode(){
 // ════════════════════════════════
 // GUIDED LESSON
 // ════════════════════════════════
-let glHistory=[],glNode=null,glVerbs=[],glStartTime=null,glMR=null,glTypeVisible=false;
+let glHistory=[],glNode=null,glVerbs=[],glStartTime=null,glMR=null,glTypeVisible=false,glEndTimer=null;
+const GL_MAX_MS=10*60*1000;
 
 function startWordLesson(idx){
   const w=wordStore[idx];if(!w)return;
@@ -1292,6 +1302,8 @@ function getScriptNote(lang){
 
 async function startGuidedLesson(n){
   glNode=n;glHistory=[];glVerbs=[];glStartTime=Date.now();glTypeVisible=false;
+  if(glEndTimer)clearTimeout(glEndTimer);
+  glEndTimer=setTimeout(forceEndLesson,GL_MAX_MS);
   $('glTitle').textContent=n.title;
   $('glChat').innerHTML='';
   if($('glInput'))$('glInput').value='';
@@ -1399,7 +1411,7 @@ function glHoldStart(e){
   $('glMicCircle').style.transform='scale(0.92)';
   $('glMicCircle').style.background='linear-gradient(135deg,#ff6b8a,#e0002b)';
   let chunks=[];
-  navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+  navigator.mediaDevices.getUserMedia(MIC_CONSTRAINTS).then(stream=>{
     glHoldMR=new MediaRecorder(stream,{mimeType:MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':'audio/mp4'});
     glHoldMR.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data);};
     glHoldMR.onstop=async()=>{
@@ -1445,12 +1457,21 @@ async function glGetInspiration(){
 }
 
 function closeGuidedLesson(){
+  if(glEndTimer){clearTimeout(glEndTimer);glEndTimer=null;}
   if(currentAudioEl){try{currentAudioEl.pause();currentAudioEl.src='';}catch(e){}currentAudioEl=null;}
   if(glHoldMR&&glHoldMR.state==='recording')glHoldMR.stop();
   closeModal('guidedLessonModal');
 }
 
+// Hard cutoff — fires GL_MAX_MS after lesson start regardless of activity
+function forceEndLesson(){
+  if(!$('guidedLessonModal').classList.contains('open'))return;
+  glAppend('ai',"Time's up for today — great session! 🎉 Tap Complete Lesson to save your progress.");
+  completeLesson();
+}
+
 function completeLesson(){
+  if(glEndTimer){clearTimeout(glEndTimer);glEndTimer=null;}
   if(currentAudioEl){try{currentAudioEl.pause();currentAudioEl.src='';}catch(e){}currentAudioEl=null;}
   if(glHoldMR&&glHoldMR.state==='recording')glHoldMR.stop();
   // Mark node done
@@ -1563,7 +1584,7 @@ function testListen(){if(KEYS.openai)testListenWhisper();else testListenWS();}
 function testListenWhisper(){
   setTestSt('listening');$('tListenBtn').disabled=true;
   let chunks=[];
-  navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+  navigator.mediaDevices.getUserMedia(MIC_CONSTRAINTS).then(stream=>{
     const mr=new MediaRecorder(stream,{mimeType:MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':'audio/mp4'});
     mr.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data);};
     mr.onstop=async()=>{
