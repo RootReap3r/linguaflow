@@ -431,6 +431,7 @@ input[type=text]:focus{border-color:var(--acc)}
         <button onclick="completeLesson()" style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);color:#fff;font-size:.72rem;font-weight:600;padding:5px 12px;border-radius:20px;cursor:pointer">✓ Done</button>
       </div>
     </div>
+    <img id="glAriaImg" src="assets/aria-idle.jpeg" alt="Aria" style="position:absolute;top:0;right:0;width:90px;height:90px;object-fit:cover;object-position:top center;border-radius:0 0 0 16px;opacity:0.95;transition:opacity .3s ease">
     <div style="position:absolute;bottom:12px;left:16px;right:16px;display:flex;align-items:flex-end;justify-content:space-between">
       <div>
         <div style="font-size:.68rem;color:rgba(255,255,255,0.7);font-weight:600;letter-spacing:.04em;text-transform:uppercase">Aria</div>
@@ -1215,7 +1216,7 @@ function initOrb(){
 
 function setAriaImage(state){
   const src=ARIA_IMGS[state]||ARIA_IMGS.idle;
-  ['avAriaImg'].forEach(id=>{
+  ['avAriaImg','glAriaImg'].forEach(id=>{
     const el=document.getElementById(id);
     if(!el)return;
     if(el.src.endsWith(src.split('/').pop()))return; // already correct
@@ -1490,6 +1491,7 @@ async function startGuidedLesson(n){
   $('glPhaseLabel1').style.color='#fff';
   $('glPhaseLabel2').style.color='rgba(255,255,255,0.5)';
   openModal('guidedLessonModal');
+  setAvatarState('thinking');
   const lang=getLang(),cefr=getCEFR();
   glAppend('ai','…');
   const sys=`You are Aria, a warm and encouraging ${lang} language tutor. You are teaching a ${cefr} student a lesson on: "${n.title}".
@@ -1509,7 +1511,8 @@ ${getLessonImmersionPrompt(lang)}${getScriptNote(lang)?'\n\nSCRIPT/WRITING: '+ge
   glHistory=[{role:'assistant',content:opening}];
   $('glChat').lastChild.remove();
   glAppend('ai',opening);
-  speak(opening.substring(0,400),lang);
+  setAvatarState('speaking');
+  speak(opening.substring(0,400),lang,.9,()=>setAvatarState('idle'));
   // Extract verbs from opening and show as pills
   const verbMatch=opening.match(/verbs? today[:\s]+([^.!\n]+)/i);
   if(verbMatch){
@@ -1561,6 +1564,7 @@ async function glSend(){
   $('glInput').value='';
   glHistory.push({role:'user',content:txt});
   glAppend('user',txt);
+  setAvatarState('thinking');
   const lang=getLang(),cefr=getCEFR();
   const dot=document.createElement('div');
   dot.style.cssText='align-self:flex-start;color:var(--mut);font-size:.85rem;padding:8px 4px';
@@ -1571,7 +1575,8 @@ If the student made an error, correct gently and give the right form. Then move 
   dot.remove();
   glHistory.push({role:'assistant',content:reply});
   glAppend('ai',reply);
-  speak(reply.substring(0,400),lang);
+  setAvatarState('speaking');
+  speak(reply.substring(0,400),lang,.9,()=>setAvatarState('idle'));
 }
 
 function glToggleType(){
