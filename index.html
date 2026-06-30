@@ -497,6 +497,7 @@ input[type=text]:focus{border-color:var(--acc)}
     <div style="font-size:.72rem;font-weight:700;color:var(--mut);margin-bottom:6px">VERBS PRACTICED</div>
     <div id="lcVerbList" style="font-size:.84rem;color:var(--txt);line-height:1.7"></div>
   </div>
+  <div id="lcTestNote" style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);border-radius:10px;padding:10px 14px;margin-bottom:18px;text-align:left;font-size:.8rem;color:#b45309;display:none">⚡ This topic isn't marked complete yet — pass the <strong>Test Out</strong> quiz to officially finish it.</div>
   <button onclick="continueToNextLesson()" class="btn btn-p" style="width:100%;margin-bottom:10px;font-size:.9rem;padding:13px">Continue to Next Lesson</button>
   <button onclick="closeModal('lessonCompleteModal')" class="btn btn-g" style="width:100%;font-size:.88rem">Go to Home</button>
 </div>
@@ -516,19 +517,24 @@ const TOP_VERBS = {"Spanish": ["ser", "estar", "tener", "hacer", "poder", "decir
 const PATH_DATA = [
 {"level":"A1","label":"Beginner","desc":"Everyday expressions and basic phrases.","nodes":[
   {"id":"a1-1","icon":"👋","title":"Greetings & Introductions","desc":"Hello, goodbye, my name is, where are you from.","tag":"vocab","tab":"lessons","lessonTitle":"Greetings & Introductions","sug":true},
-  {"id":"a1-2","icon":"🔢","title":"Numbers & Days","desc":"Count to 100, days of the week, months.","tag":"vocab","tab":"words","wordCat":"numbers"},
+  {"id":"a1-2a","icon":"🔢","title":"Numbers 1-100","desc":"Count, do basic math out loud, give your phone number.","tag":"vocab","tab":"words","wordCat":"numbers"},
+  {"id":"a1-2b","icon":"📅","title":"Days, Months & Dates","desc":"Days of the week, months, saying today's date.","tag":"vocab","tab":"lessons","lessonTitle":"Days, Months & Dates"},
   {"id":"a1-3","icon":"👤","title":"Pronouns & To Be","desc":"I, you, he, she + the verb to be conjugated.","tag":"grammar","tab":"words","wordCat":"pronouns"},
   {"id":"a1-4","icon":"❓","title":"Question Words","desc":"Who, what, where, when, why, how.","tag":"vocab","tab":"words","wordCat":"question_words"},
   {"id":"a1-5","icon":"🎨","title":"Colors & Descriptions","desc":"Basic colors and how to describe things around you.","tag":"vocab","tab":"lessons","lessonTitle":"Colors & Descriptions"},
-  {"id":"a1-6","icon":"👨‍👩‍👧","title":"Family Members","desc":"Mom, dad, brother, sister — family vocabulary.","tag":"vocab","tab":"lessons","lessonTitle":"Family Members"},
-  {"id":"a1-7","icon":"🏠","title":"Around the House","desc":"Rooms, furniture, and objects at home.","tag":"vocab","tab":"lessons","lessonTitle":"Around the House"},
+  {"id":"a1-6a","icon":"👨‍👩‍👧","title":"Family — Immediate","desc":"Mom, dad, brother, sister, parents, son, daughter.","tag":"vocab","tab":"lessons","lessonTitle":"Family Members — Immediate Family"},
+  {"id":"a1-6b","icon":"👵","title":"Family — Extended & In-Laws","desc":"Grandparents, aunts, uncles, cousins, in-laws, step-family.","tag":"vocab","tab":"lessons","lessonTitle":"Family Members — Extended Family & In-Laws"},
+  {"id":"a1-6c","icon":"💬","title":"Family — Talking About Them","desc":"Possessives (my sister, his mom) and describing relationships in sentences.","tag":"vocab","tab":"lessons","lessonTitle":"Family Members — Possessives & Describing Relationships"},
+  {"id":"a1-7a","icon":"🏠","title":"House — Rooms & Spaces","desc":"Kitchen, bedroom, bathroom, living room — naming rooms and saying where things are.","tag":"vocab","tab":"lessons","lessonTitle":"Around the House — Rooms & Spaces"},
+  {"id":"a1-7b","icon":"🛋️","title":"House — Furniture & Objects","desc":"Bed, table, chair, fridge, TV — everyday household objects.","tag":"vocab","tab":"lessons","lessonTitle":"Around the House — Furniture & Objects"},
   {"id":"a1-8","icon":"💬","title":"First Conversation","desc":"Short chat about yourself — name, country, hobby.","tag":"convo","tab":"convo","topic":"Daily Routine"}
 ]},
 {"level":"A2","label":"Elementary","desc":"Routine tasks and familiar topics.","nodes":[
   {"id":"a2-1","icon":"📍","title":"Prepositions — with, in, on…","desc":"In, on, at, with, from, to — the glue words.","tag":"grammar","tab":"words","wordCat":"prepositions"},
   {"id":"a2-2","icon":"🔗","title":"Conjunctions & Connectors","desc":"And, but, because, although — chain ideas together.","tag":"grammar","tab":"words","wordCat":"conjunctions"},
   {"id":"a2-3","icon":"⚡","title":"Core Verbs — To Have & To Go","desc":"Conjugate tener/avoir/haben and ir/aller/gehen.","tag":"grammar","tab":"verbs","verb":"random"},
-  {"id":"a2-4","icon":"🍽️","title":"Food & Ordering","desc":"Ordering in a café. Practical vocabulary.","tag":"vocab","tab":"lessons","lessonTitle":"Ordering Food"},
+  {"id":"a2-4a","icon":"🍽️","title":"Food — Names & Meals","desc":"Common foods, drinks, breakfast/lunch/dinner vocabulary.","tag":"vocab","tab":"lessons","lessonTitle":"Food Vocabulary — Names & Meals"},
+  {"id":"a2-4b","icon":"🧾","title":"Ordering at a Restaurant","desc":"Café and restaurant phrases — ordering, paying, asking for the bill.","tag":"vocab","tab":"lessons","lessonTitle":"Ordering at a Restaurant"},
   {"id":"a2-5","icon":"🛒","title":"Shopping & Money","desc":"Prices, paying, sizes, I'd like to buy…","tag":"vocab","tab":"lessons","lessonTitle":"Shopping"},
   {"id":"a2-6","icon":"🗺️","title":"Asking for Directions","desc":"Where is, turn left, straight ahead, how far.","tag":"vocab","tab":"lessons","lessonTitle":"Asking for Directions"},
   {"id":"a2-7","icon":"⏰","title":"Telling the Time","desc":"What time is it? Morning, afternoon, half past.","tag":"vocab","tab":"lessons","lessonTitle":"Telling the Time"},
@@ -1474,16 +1480,23 @@ function completeLesson(){
   if(glEndTimer){clearTimeout(glEndTimer);glEndTimer=null;}
   if(currentAudioEl){try{currentAudioEl.pause();currentAudioEl.src='';}catch(e){}currentAudioEl=null;}
   if(glHoldMR&&glHoldMR.state==='recording')glHoldMR.stop();
-  // Mark node done
+  // Mark node done — vocab/grammar topics require passing Test Out to count as mastered;
+  // a finished chat alone isn't proof of retention. Convo topics still auto-complete.
+  let needsTestOut=false;
   if(glNode?.id){
     PATH_DATA.forEach(block=>block.nodes.forEach(n=>{
       if(n.id===glNode.id||(n.lessonTitle&&n.lessonTitle===glNode.title)||(n.title===glNode.title)){
-        if(!completedNodes.includes(n.id))completedNodes.push(n.id);
+        if(n.tag==='vocab'||n.tag==='grammar'){
+          needsTestOut=!completedNodes.includes(n.id);
+        }else if(!completedNodes.includes(n.id)){
+          completedNodes.push(n.id);
+        }
       }
     }));
     localStorage.setItem(getLangKey('lf_nodes'),JSON.stringify(completedNodes));
     logActivity();
   }
+  $('lcTestNote').style.display=needsTestOut?'block':'none';
   closeModal('guidedLessonModal');
   // Build stats
   const exchanges=glHistory.filter(m=>m.role==='user').length;
