@@ -252,8 +252,8 @@ input[type=text]:focus{border-color:var(--acc)}
   </div>
   <div class="topbar-right">
     <div class="streak-pill">🔥 <span id="streakNum">0</span></div>
-    <div class="streak-pill" id="immersionPill" title="Immersion level — grows 1% per day you practice" style="cursor:default">🌊 <span id="immersionPct">0</span>%</div>
-    <select id="cefrSel" class="cefr-sel" onchange="document.getElementById('cefrBadge').textContent=this.value">
+    <div class="streak-pill" id="immersionPill" title="Tap to adjust immersion level" style="cursor:pointer" onclick="openImmersionSlider()">🌊 <span id="immersionPct">0</span>%</div>
+    <select id="cefrSel" class="cefr-sel" onchange="onCefrChange()">
       <option value="A1">A1</option><option value="A2">A2</option><option value="B1" selected>B1</option>
       <option value="B2">B2</option><option value="C1">C1</option><option value="C2">C2</option>
     </select>
@@ -333,7 +333,7 @@ input[type=text]:focus{border-color:var(--acc)}
       <div class="vbar">
         <div class="sdot" id="sDot"></div><span class="slabel" id="sLabel">Ready</span>
         <button class="btn btn-p" id="startBtn" onclick="startConvo()">▶ Start</button>
-        <button class="btn btn-d" id="listenBtn" style="display:none;user-select:none" onmousedown="startHoldListen()" onmouseup="stopHoldListen()" ontouchstart="startHoldListen(event)" ontouchend="stopHoldListen()">🎙 Hold to Speak</button>
+        <button class="btn btn-d" id="listenBtn" style="display:none;user-select:none" onclick="toggleListen()">🎙 Tap to Speak</button>
         <button class="btn btn-g" id="inspireBtn" onclick="getInspiration()" style="display:none">💡 Inspire</button>
         <button class="btn btn-a" id="reviewBtn" onclick="endSession()" style="display:none">📋 Review</button>
         <button class="btn btn-g" id="stopBtn" onclick="stopConvo()" style="display:none">■ Stop</button>
@@ -470,9 +470,9 @@ input[type=text]:focus{border-color:var(--acc)}
       <div style="width:44px;height:44px;border-radius:50%;background:#eef2ff;display:flex;align-items:center;justify-content:center;font-size:1.1rem">⌨️</div>
       <span style="font-size:.68rem;font-weight:600;color:var(--acc)">Type</span>
     </button>
-    <button id="glMicBtn" onmousedown="glHoldStart()" onmouseup="glHoldStop()" ontouchstart="glHoldStart(event)" ontouchend="glHoldStop()" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer">
-      <div id="glMicCircle" style="width:66px;height:66px;border-radius:50%;background:linear-gradient(135deg,#5b8dee,#7c6fff);display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:0 4px 16px rgba(91,141,238,0.4);transition:transform .1s">🎙</div>
-      <span style="font-size:.68rem;font-weight:600;color:var(--mut)">Hold</span>
+    <button id="glMicBtn" onclick="glToggleMic()" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer">
+      <div id="glMicCircle" style="width:66px;height:66px;border-radius:50%;background:linear-gradient(135deg,#5b8dee,#7c6fff);display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:0 4px 16px rgba(91,141,238,0.4);transition:transform .1s,background .2s">🎙</div>
+      <span id="glMicLabel" style="font-size:.68rem;font-weight:600;color:var(--mut)">Tap to Speak</span>
     </button>
     <button onclick="glGetInspiration()" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer">
       <div style="width:44px;height:44px;border-radius:50%;background:#fff3e0;display:flex;align-items:center;justify-content:center;font-size:1.1rem">💡</div>
@@ -761,6 +761,66 @@ synth.onvoiceschanged=()=>{voices=synth.getVoices();};
 // ════════════════════════════════
 const getLang=()=>document.getElementById('langSel').value;
 const getCEFR=()=>document.getElementById('cefrSel').value;
+function onCefrChange(){
+  const v=getCEFR();
+  $('cefrBadge').textContent=v;
+  $('immersionPct').textContent=getImmersionPct()+'%';
+}
+function openImmersionSlider(){
+  const existing=$('immSliderPop');if(existing){existing.remove();return;}
+  const cefr=getCEFR();
+  const [start,cap]=IMMERSION_CFG[cefr]||[1,25];
+  const cur=getImmersionPct();
+  const override=localStorage.getItem(getLangKey('lf_imm_override'));
+  const pop=document.createElement('div');
+  pop.id='immSliderPop';
+  pop.style.cssText='position:fixed;top:54px;left:50%;transform:translateX(-50%);background:var(--s1);border:1px solid var(--bdr);border-radius:14px;padding:16px 18px;z-index:9999;width:min(320px,92vw);box-shadow:0 8px 28px rgba(0,0,0,.35)';
+  pop.innerHTML=`<div style="font-weight:700;font-size:.85rem;margin-bottom:8px">🌊 Immersion Level</div>
+    <div style="font-size:.74rem;color:var(--mut);margin-bottom:10px">Your CEFR level (<strong>${cefr}</strong>) suggests <strong>${start}–${cap}%</strong>. Drag to set your target.</div>
+    <input type="range" id="immSlider" min="0" max="100" value="${override!=null?override:cur}" style="width:100%;accent-color:var(--acc);margin-bottom:4px">
+    <div style="display:flex;justify-content:space-between;font-size:.72rem;color:var(--mut)"><span>0% (all English)</span><span id="immSliderVal">${override!=null?override:cur}%</span><span>100% (full immersion)</span></div>
+    <div style="height:6px;margin:8px 0;background:linear-gradient(90deg,#e0e7ff,var(--acc));border-radius:4px;position:relative">
+      <div style="position:absolute;top:-2px;left:${start}%;width:${cap-start}%;height:10px;background:rgba(91,141,238,.25);border:1px solid var(--acc);border-radius:3px" title="Suggested range for ${cefr}"></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button onclick="applyImmersionOverride()" class="btn btn-p" style="flex:1;font-size:.78rem">✓ Apply</button>
+      <button onclick="clearImmersionOverride()" class="btn btn-g" style="flex:1;font-size:.78rem">↺ Auto</button>
+      <button onclick="aiSuggestImmersion()" class="btn btn-a" style="flex:1;font-size:.78rem" id="immAiBtn">🤖 Ask AI</button>
+    </div>
+    <div id="immAiSuggest" style="font-size:.76rem;color:var(--mut);margin-top:8px;display:none"></div>`;
+  document.body.appendChild(pop);
+  pop.querySelector('#immSlider').oninput=function(){pop.querySelector('#immSliderVal').textContent=this.value+'%';};
+  // close on outside tap
+  setTimeout(()=>document.addEventListener('click',function h(e){if(!pop.contains(e.target)&&e.target.id!=='immersionPill'){pop.remove();document.removeEventListener('click',h);}},true),100);
+}
+function applyImmersionOverride(){
+  const v=$('immSlider').value;
+  localStorage.setItem(getLangKey('lf_imm_override'),v);
+  $('immersionPct').textContent=v+'%';
+  $('immSliderPop')?.remove();
+}
+function clearImmersionOverride(){
+  localStorage.removeItem(getLangKey('lf_imm_override'));
+  $('immersionPct').textContent=getImmersionPct()+'%';
+  $('immSliderPop')?.remove();
+}
+async function aiSuggestImmersion(){
+  const btn=$('immAiBtn');btn.disabled=true;btn.textContent='…';
+  const cefr=getCEFR();const lang=getLang();const cur=getImmersionPct();
+  const sessions=parseInt(localStorage.getItem(getLangKey('lf_sessions'))||'0');
+  const nodes=completedNodes.length;
+  try{
+    const sug=await callDeepSeek(
+      `You are a language learning coach. Give a single short recommendation (2 sentences max) on what immersion % this student should aim for right now, and what the specific number should be. Be direct and encouraging.`,
+      `Language: ${lang}, CEFR level: ${cefr}, sessions completed: ${sessions}, lessons done: ${nodes}, current immersion: ${cur}%. What % should they set?`
+    );
+    const box=$('immAiSuggest');box.style.display='block';box.textContent='🤖 '+sug;
+    // Try to extract a number from the suggestion and pre-set the slider
+    const match=sug.match(/(\d+)%/);
+    if(match){const n=Math.min(100,Math.max(0,parseInt(match[1])));if($('immSlider')){$('immSlider').value=n;$('immSliderVal').textContent=n+'%';}}
+  }catch(e){}
+  btn.disabled=false;btn.textContent='🤖 Ask AI';
+}
 const getLangCode=lang=>LANG_CODES[lang]||'en-US';
 const $=id=>document.getElementById(id);
 const getLangKey=k=>`${k}_${getLang()}`;
@@ -828,12 +888,11 @@ function updateStreak(){
 const IMMERSION_CFG={A1:[1,25],A2:[25,50],B1:[50,75],B2:[75,100],C1:[75,100],C2:[75,100]};
 
 function getImmersionPct(cefr){
+  const override=localStorage.getItem(getLangKey('lf_imm_override'));
+  if(override!=null)return parseInt(override);
   const lvl=(cefr||getCEFR());
   const [start,cap]=IMMERSION_CFG[lvl]||[1,25];
-  // Days practiced at this specific level drive growth within the band
   const days=parseInt(localStorage.getItem(getLangKey('lf_imm_'+lvl))||'0');
-  const band=cap-start;
-  // Grow 1% per practice day within the band, hard cap at cap
   return Math.min(cap,start+days);
 }
 function getImmersionPrompt(lang){
@@ -1131,37 +1190,40 @@ async function whisperSTT(blob){
 
 let holdMR=null,holdStream=null,holdChunks=[];
 
-function startHoldListen(e){
-  if(e)e.preventDefault();
+let listenActive=false;
+function toggleListen(){
+  if(listenActive){stopListen();return;}
   if(!convoActive)return;
   if(currentAudioEl){try{currentAudioEl.pause();currentAudioEl.src='';}catch(err){}currentAudioEl=null;}
   synth.cancel();
+  if(!KEYS.openai){listenWebSpeech();return;}
+  listenActive=true;
   holdChunks=[];
-  $('listenBtn').textContent='🔴 Listening…';$('listenBtn').style.background='var(--acc2)';
+  $('listenBtn').textContent='🔴 Stop Recording';$('listenBtn').style.background='var(--acc2)';
   setStatus('listening');
   navigator.mediaDevices.getUserMedia(MIC_CONSTRAINTS).then(stream=>{
     holdStream=stream;
     holdMR=new MediaRecorder(stream,{mimeType:MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':'audio/mp4'});
     holdMR.ondataavailable=e=>{if(e.data.size>0)holdChunks.push(e.data);};
     holdMR.onstop=async()=>{
+      listenActive=false;
       holdStream.getTracks().forEach(t=>t.stop());holdStream=null;
-      $('listenBtn').textContent='🎙 Hold to Speak';$('listenBtn').style.background='';
+      $('listenBtn').textContent='🎙 Tap to Speak';$('listenBtn').style.background='';
       if(!holdChunks.length){setStatus('ready');return;}
       const blob=new Blob(holdChunks,{type:holdMR.mimeType});
-      if(KEYS.openai){
-        try{const txt=await whisperSTT(blob);if(txt.trim())handleUserSpeech(txt.trim());else setStatus('ready');}
-        catch(e){listenWebSpeech();}
-      }else{listenWebSpeech();}
+      try{const txt=await whisperSTT(blob);if(txt.trim())handleUserSpeech(txt.trim());else setStatus('ready');}
+      catch(e){listenWebSpeech();}
     };
     holdMR.start();
-  }).catch(()=>{$('listenBtn').textContent='🎙 Hold to Speak';$('listenBtn').style.background='';setStatus('ready');alert('Mic access denied.');});
+  }).catch(()=>{listenActive=false;$('listenBtn').textContent='🎙 Tap to Speak';$('listenBtn').style.background='';setStatus('ready');alert('Mic access denied.');});
 }
-
-function stopHoldListen(){
+function stopListen(){
   if(holdMR&&holdMR.state==='recording')holdMR.stop();
 }
-
-function doListen(){startHoldListen();}
+// kept for compatibility
+function startHoldListen(e){toggleListen();}
+function stopHoldListen(){}
+function doListen(){toggleListen();}
 
 async function translateMsg(btn,text){
   btn.disabled=true;btn.textContent='…';
@@ -1323,7 +1385,8 @@ HOW TO RESPOND:
 - Reply naturally in 1-3 short sentences. Think friend, not textbook.
 - Ask ONE follow-up question to keep the conversation going.
 - Aim for 30-80 words total. Never more than 100. Never bullet points or lists.
-- NEVER correct grammar mid-conversation — corrections happen at the end.
+- NEVER correct grammar or pronunciation mid-conversation — corrections happen only at the end review.
+- Be forgiving of accent and mispronunciation. If you understand what they meant, treat it as correct. Only flag a pronunciation issue if it would cause genuine miscommunication (e.g., a different word with a different meaning).
 - React genuinely to what the student says.
 
 ${getImmersionPrompt(lang)}`;
@@ -1679,6 +1742,7 @@ PHASE 3 — FREE PRACTICE (last ~20% of the lesson):
 9. Validate their effort, correct gently, wrap up warmly.
 
 RULES: End every turn with exactly ONE question or prompt. Never ask multiple questions at once. Keep responses short and natural — like a real tutor, not a lecture.
+PRONUNCIATION: Be encouraging and forgiving. If you can understand what the student said, treat it as correct and move forward. Only correct pronunciation when it changes the word's meaning entirely. Never nitpick accent — accent is normal and expected.
 ${getLessonImmersionPrompt(lang)}
 
 LANGUAGE GUIDANCE:
@@ -1754,7 +1818,7 @@ async function glSend(){
   dot.style.cssText='align-self:flex-start;color:var(--mut);font-size:.85rem;padding:8px 4px';
   dot.textContent='…';$('glChat').appendChild(dot);$('glChat').scrollTop=$('glChat').scrollHeight;
   const sys=`You are Aria, a warm ${lang} tutor. Lesson: "${glNode?.title}". Verbs/key words being practiced: ${glVerbs.join(', ')||'relevant verbs'}.
-If the student made an error, correct gently and give the right form. Then move forward — teach the next concept or ask the next question. Keep it to 1-2 sentences max. End with exactly one prompt for the student. ${getLessonImmersionPrompt(lang)}
+If the student made a clear grammar error, give the correct form briefly (1 sentence) then move forward immediately. Be generous — if you understand what they meant, move on without correcting. Never correct pronunciation or accent unless it would cause a completely different word. End with exactly one prompt for the student. ${getLessonImmersionPrompt(lang)}
 ${getLangGuidance(lang)}${winding?'\n\nTIMER: You have been teaching for 8+ minutes. Warmly wrap up this lesson — summarize the key verbs practiced, praise the student, and say you\'ll pick up next time. End with: "Great work today! 🎉 Tap Complete Lesson when you\'re ready."':''}`;
   const reply=await callDeepSeek(sys,txt,glHistory.slice(-8));
   dot.remove();
@@ -1771,28 +1835,40 @@ function glToggleType(){
 }
 
 let glHoldMR=null;
-function glHoldStart(e){
-  if(e)e.preventDefault();
+let glMicActive=false,glMicChunks=[];
+function glToggleMic(){
+  if(glMicActive){glStopMic();return;}
   if(!KEYS.openai){$('glInput').focus();glToggleType();return;}
-  $('glMicCircle').style.transform='scale(0.92)';
+  glMicActive=true;glMicChunks=[];
   $('glMicCircle').style.background='linear-gradient(135deg,#ff6b8a,#e0002b)';
-  let chunks=[];
+  $('glMicLabel').textContent='Tap to Stop';
   navigator.mediaDevices.getUserMedia(MIC_CONSTRAINTS).then(stream=>{
     glHoldMR=new MediaRecorder(stream,{mimeType:MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':'audio/mp4'});
-    glHoldMR.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data);};
+    glHoldMR.ondataavailable=e=>{if(e.data.size>0)glMicChunks.push(e.data);};
     glHoldMR.onstop=async()=>{
+      glMicActive=false;
       stream.getTracks().forEach(t=>t.stop());
-      $('glMicCircle').style.transform='';
       $('glMicCircle').style.background='linear-gradient(135deg,#5b8dee,#7c6fff)';
-      const blob=new Blob(chunks,{type:glHoldMR.mimeType});
-      try{const txt=await whisperSTT(blob);if(txt.trim()){$('glInput').value=txt;glSend();}}catch(e){}
+      $('glMicLabel').textContent='Tap to Speak';
+      if(!glMicChunks.length)return;
+      const blob=new Blob(glMicChunks,{type:glHoldMR.mimeType});
+      try{const txt=await whisperSTT(blob);if(txt.trim()){$('glInput').value=txt;glSend();}}
+      catch(err){console.error('STT error',err);}
     };
     glHoldMR.start();
-  }).catch(()=>{$('glMicCircle').style.transform='';$('glMicCircle').style.background='linear-gradient(135deg,#5b8dee,#7c6fff)';});
+  }).catch(()=>{
+    glMicActive=false;
+    $('glMicCircle').style.background='linear-gradient(135deg,#5b8dee,#7c6fff)';
+    $('glMicLabel').textContent='Tap to Speak';
+    alert('Mic access denied.');
+  });
 }
-function glHoldStop(){
+function glStopMic(){
   if(glHoldMR&&glHoldMR.state==='recording')glHoldMR.stop();
 }
+// compatibility shims
+function glHoldStart(e){glToggleMic();}
+function glHoldStop(){}
 
 async function glGetInspiration(){
   const lang=getLang();
