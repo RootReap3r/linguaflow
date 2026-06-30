@@ -814,33 +814,45 @@ function updateStreak(){
   else{s=1;}
   localStorage.setItem(getLangKey('lf_streak'),s);localStorage.setItem(getLangKey('lf_last'),today);
   $('streakNum').textContent=s;
-  // Track total unique days practiced per language for immersion
+  // Track unique practice days per CEFR level for immersion growth
   if(last!==today){
     const td=parseInt(localStorage.getItem(getLangKey('lf_total_days'))||'0')+1;
     localStorage.setItem(getLangKey('lf_total_days'),td);
+    const lvl=getCEFR();
+    const ld=parseInt(localStorage.getItem(getLangKey('lf_imm_'+lvl))||'0')+1;
+    localStorage.setItem(getLangKey('lf_imm_'+lvl),ld);
   }
-  $('immersionPct').textContent=getImmersionPct();
+  $('immersionPct').textContent=getImmersionPct()+'%';
 }
-function getImmersionPct(){
-  return Math.min(95,parseInt(localStorage.getItem(getLangKey('lf_total_days'))||'0'));
+// Immersion config per CEFR level: [startPct, hardCapPct]
+const IMMERSION_CFG={A1:[1,25],A2:[25,50],B1:[50,75],B2:[75,100],C1:[75,100],C2:[75,100]};
+
+function getImmersionPct(cefr){
+  const lvl=(cefr||getCEFR());
+  const [start,cap]=IMMERSION_CFG[lvl]||[1,25];
+  // Days practiced at this specific level drive growth within the band
+  const days=parseInt(localStorage.getItem(getLangKey('lf_imm_'+lvl))||'0');
+  const band=cap-start;
+  // Grow 1% per practice day within the band, hard cap at cap
+  return Math.min(cap,start+days);
 }
 function getImmersionPrompt(lang){
   const pct=getImmersionPct();
-  if(pct<=5)return `LANGUAGE RULE (Day ${pct}, ${pct}% immersion): Speak mostly English. Introduce 1-2 key ${lang} words per message, bolded, with English translation immediately after. Example: "Let's say **hola** (hello)!"`;
-  if(pct<=15)return `LANGUAGE RULE (${pct}% immersion): Use ~${pct}% ${lang}. Short simple ${lang} phrases followed immediately by English translation in parentheses. Build confidence gently.`;
-  if(pct<=30)return `LANGUAGE RULE (${pct}% immersion): About ${pct}% ${lang}, rest English. Lead sentences in ${lang}, translate only the tricky parts. Student is beginning to understand.`;
-  if(pct<=50)return `LANGUAGE RULE (${pct}% immersion): Roughly half ${lang}, half English. Use ${lang} for questions and key points, English for explanations. Student is getting comfortable.`;
-  if(pct<=70)return `LANGUAGE RULE (${pct}% immersion): Mostly ${lang} now (~${pct}%). Only use English for genuinely new vocabulary. Push the student to understand from context.`;
-  if(pct<=90)return `LANGUAGE RULE (${pct}% immersion): Almost entirely ${lang}. Occasional English only for critical misunderstandings. Student is advanced.`;
-  return `LANGUAGE RULE (${pct}% immersion): 100% ${lang} only. No English at all. Native-speed natural conversation. Student has earned full immersion.`;
+  if(pct<=5)return `LANGUAGE RULE (${pct}% immersion): Almost entirely English. Drop in 1-2 ${lang} words per message max, always with translation. Very gentle Spanglish-style intro.`;
+  if(pct<=15)return `LANGUAGE RULE (${pct}% immersion): ~${pct}% ${lang}. Use simple ${lang} phrases, translate immediately after in parentheses.`;
+  if(pct<=30)return `LANGUAGE RULE (${pct}% immersion): About ${pct}% ${lang}. Lead key sentences in ${lang}, translate only tricky parts.`;
+  if(pct<=50)return `LANGUAGE RULE (${pct}% immersion): Roughly half ${lang}, half English. ${lang} for questions and key points, English for explanations.`;
+  if(pct<=75)return `LANGUAGE RULE (${pct}% immersion): Mostly ${lang} (~${pct}%). English only for genuinely new vocabulary.`;
+  if(pct<100)return `LANGUAGE RULE (${pct}% immersion): Almost entirely ${lang}. Occasional English only for critical misunderstandings.`;
+  return `LANGUAGE RULE (100% immersion): Entirely ${lang}. No English at all. Native-speed natural conversation.`;
 }
 function getLessonImmersionPrompt(lang){
   const pct=getImmersionPct();
-  if(pct<=10)return `Teach in English. Introduce ${lang} words one at a time with translations. Keep it welcoming and simple.`;
-  if(pct<=25)return `Teach mostly in English but use ${lang} for all examples and key phrases. Always provide English translation immediately after.`;
-  if(pct<=50)return `Teach in a mix — explain concepts in English, but demonstrate and practice in ${lang}. Provide translations for new words only.`;
-  if(pct<=75)return `Teach mostly in ${lang}. Use English only for grammar explanations of complex rules. Encourage student to respond in ${lang}.`;
-  return `Teach entirely in ${lang}. No English. Correct errors gently in ${lang}. Full immersion lesson.`;
+  if(pct<=5)return `Teach in English. Sprinkle in 1-2 ${lang} words per message with immediate translation — gentle Spanglish-style start.`;
+  if(pct<=25)return `Teach mostly in English. Use ${lang} for all examples, key phrases, and questions. Always translate immediately after.`;
+  if(pct<=50)return `Teach in a mix. Explain concepts in English, demonstrate and practice in ${lang}. Translate new words only.`;
+  if(pct<=75)return `Teach mostly in ${lang}. English only for grammar explanations of complex rules.`;
+  return `Teach entirely in ${lang}. No English at all. Correct errors gently in ${lang}. Full immersion.`;
 }
 function logActivity(){
   const today=new Date().toISOString().split('T')[0];
@@ -1366,6 +1378,8 @@ const allLessons=block=>block.nodes.flatMap(o=>o.lessons);
 function renderPath(){
   const track=$('pathTrack');if(!track)return;
   track.innerHTML='';
+
+  // Build unlocked levels set
   const unlockedLevels=new Set(['A1']);
   PATH_DATA.forEach((block,i)=>{
     if(i===0)return;
@@ -1376,34 +1390,66 @@ function renderPath(){
   });
   PATH_DATA.forEach(b=>{if(b.nodes.some(o=>o.sug))unlockedLevels.add(b.level);});
 
+  // Determine which level is "active" — lowest unlocked with incomplete objectives
+  let activeLevel=null;
+  for(const block of PATH_DATA){
+    if(!unlockedLevels.has(block.level))break;
+    const allL=allLessons(block);
+    const done=allL.filter(n=>completedNodes.includes(n.id)).length;
+    if(done<allL.length){activeLevel=block.level;break;}
+  }
+  // If all unlocked levels complete, active = highest unlocked
+  if(!activeLevel){const ul=[...unlockedLevels];activeLevel=ul[ul.length-1]||'A1';}
+
   PATH_DATA.forEach((block,bi)=>{
     const unlocked=unlockedLevels.has(block.level);
     const allL=allLessons(block);
     const done=allL.filter(n=>completedNodes.includes(n.id)).length;
     const pct=allL.length?Math.round(done/allL.length*100):0;
+    const isCompleted=unlocked&&done>=allL.length;
+    const isActive=block.level===activeLevel;
+
+    // Hide locked future levels
+    if(!unlocked)return;
+
     const div=document.createElement('div');
-    const nodes=block.nodes.map((o,ni)=>{
-      const oDone=o.lessons.filter(l=>completedNodes.includes(l.id)).length;
-      const isDone=oDone===o.lessons.length;
-      const cls=isDone?'done':!unlocked?'locked':o.sug?'sug':'';
-      const lock=!unlocked?'<div class="pnode-lock">🔒</div>':'';
-      const check=isDone?'<div style="position:absolute;top:7px;right:9px;width:18px;height:18px;background:var(--grn);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;color:#000">✓</div>':'';
-      const countBadge=o.lessons.length>1?`<span class="ntag" style="background:var(--s2);color:var(--mut);margin-left:4px">${oDone}/${o.lessons.length} lessons</span>`:'';
-      return `<div class="pnode ${cls}" data-bi="${bi}" data-ni="${ni}" onclick="objClick(this)">
-        ${lock}${check}
-        <div class="ni" style="opacity:${unlocked?1:.4}">${o.icon}</div>
-        <div class="nt" style="opacity:${unlocked?1:.5}">${o.title}</div>
-        <div class="nd" style="opacity:${unlocked?1:.4}">${o.desc}</div>
-        ${unlocked?`<span class="ntag tag-${o.tag}">${o.tag}</span>${countBadge}`:''}
-      </div>`;
-    }).join('');
-    div.innerHTML=`<div class="clvl-hdr">
-      <div class="clvl-pill clvl-${block.level}">${block.level}</div>
-      <div class="clvl-desc">${block.label} — ${block.desc}</div>
-      <div class="clvl-div"></div>
-      <button class="btn btn-a" style="font-size:.68rem;padding:3px 9px;flex-shrink:0" onclick="openLevelTest(${bi})">⚡ Test Out</button>
-      ${unlocked?`<div class="lvl-prog"><div class="lvl-prog-track"><div class="lvl-prog-fill" style="width:${pct}%"></div></div><span class="lvl-prog-lbl">${done}/${allL.length}</span></div>`:`<span style="font-size:.68rem;color:var(--mut)">🔒 locked</span>`}
-    </div><div class="path-nodes">${nodes}</div>`;
+
+    if(isCompleted&&!isActive){
+      // Completed level — collapsed summary row
+      div.innerHTML=`<div class="clvl-hdr" style="cursor:pointer;opacity:.75" onclick="this.parentElement.querySelector('.path-nodes').style.display=this.parentElement.querySelector('.path-nodes').style.display==='none'?'grid':'none'">
+        <div class="clvl-pill clvl-${block.level}">${block.level}</div>
+        <div class="clvl-desc" style="color:var(--grn)">✓ ${block.label} Complete — ${done}/${allL.length} lessons</div>
+        <div class="clvl-div"></div>
+        <span style="font-size:.7rem;color:var(--mut)">▾ expand</span>
+      </div><div class="path-nodes" style="display:none">${block.nodes.map((o,ni)=>{
+        const oDone=o.lessons.filter(l=>completedNodes.includes(l.id)).length;
+        const check='<div style="position:absolute;top:7px;right:9px;width:18px;height:18px;background:var(--grn);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;color:#000">✓</div>';
+        return `<div class="pnode done" data-bi="${bi}" data-ni="${ni}" onclick="objClick(this)">${check}<div class="ni">${o.icon}</div><div class="nt">${o.title}</div><div class="nd">${o.desc}</div><span class="ntag tag-${o.tag}">${o.tag}</span></div>`;
+      }).join('')}</div>`;
+    }else{
+      // Active (or unlocked-incomplete) level — fully expanded
+      const nodes=block.nodes.map((o,ni)=>{
+        const oDone=o.lessons.filter(l=>completedNodes.includes(l.id)).length;
+        const isDone=oDone===o.lessons.length;
+        const cls=isDone?'done':o.sug?'sug':'';
+        const check=isDone?'<div style="position:absolute;top:7px;right:9px;width:18px;height:18px;background:var(--grn);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;color:#000">✓</div>':'';
+        const countBadge=o.lessons.length>1?`<span class="ntag" style="background:var(--s2);color:var(--mut);margin-left:4px">${oDone}/${o.lessons.length} lessons</span>`:'';
+        return `<div class="pnode ${cls}" data-bi="${bi}" data-ni="${ni}" onclick="objClick(this)">
+          ${check}
+          <div class="ni">${o.icon}</div>
+          <div class="nt">${o.title}</div>
+          <div class="nd">${o.desc}</div>
+          <span class="ntag tag-${o.tag}">${o.tag}</span>${countBadge}
+        </div>`;
+      }).join('');
+      div.innerHTML=`<div class="clvl-hdr">
+        <div class="clvl-pill clvl-${block.level}">${block.level}</div>
+        <div class="clvl-desc">${block.label} — ${block.desc}</div>
+        <div class="clvl-div"></div>
+        <button class="btn btn-a" style="font-size:.68rem;padding:3px 9px;flex-shrink:0" onclick="openLevelTest(${bi})">⚡ Test Out</button>
+        <div class="lvl-prog"><div class="lvl-prog-track"><div class="lvl-prog-fill" style="width:${pct}%"></div></div><span class="lvl-prog-lbl">${done}/${allL.length}</span></div>
+      </div><div class="path-nodes">${nodes}</div>`;
+    }
     track.appendChild(div);
   });
 }
@@ -1440,6 +1486,8 @@ function openObjectiveModal(o,bi){
 
 function openLessonModal(n,bi){
   currentNode={...n,blockIdx:bi};
+  // Auto-sync CEFR level to the block being studied
+  if(bi!=null&&PATH_DATA[bi]){const lv=PATH_DATA[bi].level;const s=$('cefrSel');if(s&&s.value!==lv){s.value=lv;$('cefrBadge').textContent=lv;}}
   $('nIcon').textContent=n.icon;$('nTitle').textContent=n.title;$('nDesc').textContent=n.desc;
   $('nMarkBtn').textContent=completedNodes.includes(n.id)?'↩ Unmark':'✓ Mark Done';
   openModal('nodeModal');
