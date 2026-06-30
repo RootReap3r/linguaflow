@@ -491,6 +491,7 @@ input[type=text]:focus{border-color:var(--acc)}
     <div id="lcVerbList" style="font-size:.84rem;color:var(--txt);line-height:1.7"></div>
   </div>
   <div id="lcTestNote" style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);border-radius:10px;padding:10px 14px;margin-bottom:18px;text-align:left;font-size:.8rem;color:#b45309;display:none">⚡ This topic isn't marked complete yet — pass the <strong>Test Out</strong> quiz to officially finish it.</div>
+  <button id="lcResumeBtn" onclick="resumeLastLesson()" class="btn btn-a" style="width:100%;margin-bottom:10px;font-size:.9rem;padding:13px;display:none">↩ Resume This Lesson</button>
   <button onclick="continueToNextLesson()" class="btn btn-p" style="width:100%;margin-bottom:10px;font-size:.9rem;padding:13px">Continue to Next Lesson</button>
   <button onclick="closeModal('lessonCompleteModal')" class="btn btn-g" style="width:100%;font-size:.88rem">Go to Home</button>
 </div>
@@ -713,6 +714,8 @@ function sanitizeHTML(html){
   return tmp.innerHTML;
 }
 function escHTML(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+// Strip markdown formatting (**, *, __, _, `) so TTS and display don't emit literal punctuation
+function stripMd(s){return String(s).replace(/\*\*([^*]+)\*\*/g,'$1').replace(/\*([^*]+)\*/g,'$1').replace(/__([^_]+)__/g,'$1').replace(/_([^_]+)_/g,'$1').replace(/`([^`]+)`/g,'$1');}
 const glInspirationStore=[];
 let KEYS={};
 KEY_DEFS.forEach(k=>{KEYS[k.id]=localStorage.getItem('lf_key_'+k.id)||'';});
@@ -1072,6 +1075,7 @@ async function speakAzure(text,lang,onEnd,streamEl){
 }
 
 async function speak(text,lang,rate=.9,onEnd=null,streamEl=undefined){
+  text=stripMd(text);
   if(ttsEngine==='elevenlabs'&&KEYS.elevenlabs){await speakEL(text,lang,onEnd,streamEl);}
   else if(ttsEngine==='azure'&&KEYS.azure&&KEYS.azure_region){await speakAzure(text,lang,onEnd,streamEl);}
   else if(ttsEngine==='browser'){speakBrowser(text,lang,rate,onEnd);if(streamEl)streamEl.textContent=text;}
@@ -1516,13 +1520,14 @@ ${getLessonImmersionPrompt(lang)}${getScriptNote(lang)?'\n\nSCRIPT/WRITING: '+ge
   // Extract verbs from opening and show as pills
   const verbMatch=opening.match(/verbs? today[:\s]+([^.!\n]+)/i);
   if(verbMatch){
-    const pills=verbMatch[1].split(/[,;]/).slice(0,3).map(v=>v.trim().split('(')[0].trim()).filter(Boolean);
+    const pills=verbMatch[1].split(/[,;]/).slice(0,3).map(v=>stripMd(v).trim().split('(')[0].trim()).filter(Boolean);
     glVerbs=pills;
     $('glVerbPills').innerHTML=pills.map(v=>`<div style="background:rgba(255,255,255,0.2);color:#fff;font-size:.68rem;font-weight:600;padding:3px 9px;border-radius:12px;border:1px solid rgba(255,255,255,0.35)">${escHTML(v)}</div>`).join('');
   }
 }
 
 function glAppend(role,text){
+  text=stripMd(text);
   const box=$('glChat'),d=document.createElement('div');
   d.style.cssText=`max-width:88%;padding:10px 14px;border-radius:18px;font-size:.88rem;line-height:1.55;align-self:${role==='ai'?'flex-start':'flex-end'};background:${role==='ai'?'#fff':'linear-gradient(135deg,#5b8dee,#7c6fff)'};color:${role==='ai'?'var(--txt)':'#fff'};border:${role==='ai'?'1px solid #e8ecf4':'none'};box-shadow:0 1px 6px rgba(0,0,0,0.07)`;
   if(role==='user'){
@@ -1648,12 +1653,18 @@ function closeGuidedLesson(){
 function forceEndLesson(){
   if(!$('guidedLessonModal').classList.contains('open'))return;
   glAppend('ai',"Time's up for today — great session! 🎉 Tap Complete Lesson to save your progress.");
-  completeLesson();
+  completeLesson(true);
 }
 
-function completeLesson(){
+function completeLesson(timedOut=false){
   if(glEndTimer){clearTimeout(glEndTimer);glEndTimer=null;}
   if(glCountdownTimer){clearInterval(glCountdownTimer);glCountdownTimer=null;}
+  // Save resume point so user can restart this lesson if it timed out
+  if(glNode?.id){
+    const resumeData={id:glNode.id,title:glNode.title,icon:glNode.icon,desc:glNode.desc,tag:glNode.tag,tab:glNode.tab,wordCat:glNode.wordCat,blockIdx:glNode.blockIdx,lessonTitle:glNode.lessonTitle};
+    localStorage.setItem(getLangKey('lf_resume'),JSON.stringify(resumeData));
+  }
+  if($('lcResumeBtn'))$('lcResumeBtn').style.display=timedOut&&glNode?.id?'block':'none';
   if(currentAudioEl){try{currentAudioEl.pause();currentAudioEl.src='';}catch(e){}currentAudioEl=null;}
   if(glHoldMR&&glHoldMR.state==='recording')glHoldMR.stop();
   // Mark node done — vocab/grammar topics require passing Test Out to count as mastered;
@@ -1694,7 +1705,6 @@ function completeLesson(){
 
 function continueToNextLesson(){
   closeModal('lessonCompleteModal');
-  // Find next unlocked node after the current one
   if(!glNode?.id)return;
   let found=false,nextNode=null;
   outer:for(const block of PATH_DATA){
@@ -1704,6 +1714,13 @@ function continueToNextLesson(){
     }
   }
   if(nextNode)setTimeout(()=>startGuidedLesson(nextNode),300);
+}
+
+function resumeLastLesson(){
+  closeModal('lessonCompleteModal');
+  const raw=localStorage.getItem(getLangKey('lf_resume'));
+  if(!raw)return;
+  try{const n=JSON.parse(raw);setTimeout(()=>startGuidedLesson(n),300);}catch(e){}
 }
 
 function markNodeDone(){
