@@ -669,8 +669,8 @@ const PATH_DATA = [
   {"id":"c2-4","icon":"🎤","title":"Storytelling","desc":"Tell a story with emotion, pacing, and native flow.","tag":"convo","lessons":[
     {"id":"c2-4","title":"Storytelling","desc":"Tell a story with emotion, pacing, and native flow.","tag":"convo","tab":"lessons","lessonTitle":"Storytelling"}
   ]},
-  {"id":"c2-5","icon":"🌍","title":"Regional Accents & Slang","desc":"Latin American vs. Spain vs. regional dialects.","tag":"vocab","lessons":[
-    {"id":"c2-5","title":"Regional Accents & Slang","desc":"Latin American vs. Spain vs. regional dialects.","tag":"vocab","tab":"lessons","lessonTitle":"Regional Accents & Slang"}
+  {"id":"c2-5","icon":"🌍","title":"Regional Accents & Slang","desc":"Regional dialects, slang, and accent variation across the main speaking regions.","tag":"vocab","lessons":[
+    {"id":"c2-5","title":"Regional Accents & Slang","desc":"Regional dialects, slang, and accent variation across the main speaking regions.","tag":"vocab","tab":"lessons","lessonTitle":"Regional Accents & Slang"}
   ]}
 ]}
 ];
@@ -1467,15 +1467,96 @@ function startWordLesson(idx){
   startGuidedLesson({icon:'📖',title:w.word+' ('+w.tr+')',desc:'Teach how to use "'+w.word+'" in context.',tab:'lessons',id:'word-'+idx});
 }
 
-function getScriptNote(lang){
-  const scripts={
-    Russian:'Russian uses the Cyrillic alphabet (А Б В Г Д Е Ё Ж З И Й К Л М Н О П Р С Т У Ф Х Ц Ч Ш Щ Ъ Ы Ь Э Ю Я). Always show Russian words in Cyrillic script, followed by transliteration in parentheses for beginners. Gradually reduce transliteration as the student advances.',
-    Japanese:'Japanese uses three scripts: Hiragana (basic phonetic — あいうえお), Katakana (foreign words — アイウエオ), and Kanji (Chinese-origin characters). Always show the Japanese word with furigana (reading) in parentheses for new words. Introduce one hiragana character per lesson when appropriate.',
-    Korean:'Korean uses Hangul, a phonetic alphabet of 14 consonants and 10 vowels combined into syllable blocks (e.g. 한글). Always show Korean in Hangul script with romanization (Revised Romanization) in parentheses for new words.',
-    Chinese:'Mandarin Chinese uses Chinese characters (汉字 Hànzì). Always show characters with Pinyin (romanized pronunciation with tone marks) in parentheses, e.g. 你好 (nǐ hǎo). Introduce stroke order concepts for simple characters.',
-    English:'English uses the Latin alphabet. Focus on natural pronunciation, idioms, and common phrases rather than script.',
+function getLangGuidance(lang){
+  const pt=lang==='Portuguese'?(ptVar==='BR'?' Use Brazilian Portuguese (você, obrigado/a, tá, ônibus).':" Use European Portuguese (tu, obrigado/a, autocarro, casa de banho)."):'';
+  const g={
+    Spanish:`SPANISH-SPECIFIC GUIDANCE:
+- Grammar: All nouns have gender (masculine -o, feminine -a as a rule — but memorise exceptions). Always teach the article with the noun (el/la, un/una).
+- Critical distinction: ser (permanent identity/origin) vs estar (temporary state/location) — introduce this early and reinforce constantly.
+- Register: tú (informal) vs usted (formal). In Latin America: ustedes for all plural "you"; in Spain: vosotros for informal plural.
+- Reflexive verbs (me llamo, se llama) appear very early — introduce the concept clearly.
+- At B1+: introduce subjunctive mood (quiero que…, espero que…) — explain it triggers a different verb form.
+- Pronunciation tip: rr vs r, ñ, ll/y — mention these when first words using them appear.`,
+
+    French:`FRENCH-SPECIFIC GUIDANCE:
+- Grammar: All nouns have gender. Always teach noun + article together (le/la/un/une). Plural adds -s but it's usually silent.
+- Liaison & elision: l'ami (not le ami), ils ont (sounds like "ilzont") — flag this so students aren't confused by spoken French.
+- Negation: ne…pas wraps the verb — "Je ne parle pas." Warn that in spoken French "ne" is often dropped.
+- Register: tu (friends/family) vs vous (formal/plural) — this affects all verb conjugations.
+- Past tense: passé composé (what happened) vs imparfait (background/habit) — a major A2 milestone; introduce the distinction clearly.
+- Nasal vowels (an, en, in, on, un) don't exist in English — remind students to nasalize, not say the n.`,
+
+    Italian:`ITALIAN-SPECIFIC GUIDANCE:
+- Grammar: Nouns are gendered (masculine -o, feminine -a mostly). Always teach with the article (il/la/un/una).
+- Essere vs stare: essere for identity/description, stare for health/location (similar to Spanish ser/estar but less strict).
+- Formal address: Lei (3rd person singular) used for formal "you" — the verb matches 3rd person.
+- Pronunciation: c before e/i sounds like "ch" (ciao); g before e/i sounds like "j" (gelato). Flag this early.
+- Double consonants change word meaning (nono vs nonno) — emphasise pronunciation of geminates.
+- At B1+: subjunctive (congiuntivo) and conditional mood become important.`,
+
+    German:`GERMAN-SPECIFIC GUIDANCE:
+- Grammar: THREE genders — der (masc), die (fem), das (neut). Genders must be memorised with every noun. Always say "der/die/das + noun".
+- Cases: 4 cases (Nominative/Accusative/Dative/Genitive) change articles and adjective endings. Introduce Nom vs Acc first, then Dative at A2.
+- Word order: verb is always second in a main clause. In subordinate clauses the verb goes to the END — this surprises English speakers.
+- Separable verbs (aufstehen, anrufen): the prefix splits off — "Ich stehe auf." Warn students about this.
+- ALL nouns are capitalised in German — point this out so students notice it in text.
+- Register: du (informal) vs Sie (formal, always capitalised). Use du in lesson unless topic is formal.
+- Compound nouns: German stacks nouns (Handschuh = Glove, literally "hand-shoe") — fun to highlight.`,
+
+    Portuguese:`PORTUGUESE-SPECIFIC GUIDANCE:${pt}
+- Grammar: Gendered nouns (masc/fem), always teach with article (o/a, um/uma).
+- Ser vs estar: ser for permanent traits, estar for temporary states/location — same as Spanish but with some differences.
+- Contractions are mandatory: de + o = do, de + a = da, a + o = ao, em + um = num — teach these as they appear.
+- Nasal vowels (ão, ã, em, am) are unique — they don't exist in Spanish or English; emphasise them.
+- Brazilian vs European differ in: vocabulary (ônibus vs autocarro), pronouns (você common in BR; tu more common in PT), and pronunciation (EP is much more consonant-heavy/reduced vowels).
+- Personal infinitive (Portuguese exclusive): verbs can be inflected in the infinitive — introduce at B1.`,
+
+    Russian:`RUSSIAN-SPECIFIC GUIDANCE:
+- Script: Always write Russian in Cyrillic. For A1/A2 students, add transliteration in parentheses. Reduce transliteration as they advance.
+- Cases: 6 cases (Nominative, Accusative, Genitive, Dative, Instrumental, Prepositional) — noun/adjective endings change. Introduce Nom first, then Acc/Gen at A2.
+- No articles: Russian has no "a" or "the" — English speakers over-translate; remind them.
+- Verb aspect: Every verb has a pair — imperfective (ongoing) and perfective (completed). This is the hardest concept; introduce it explicitly at A2.
+- Gender: 3 genders (masculine, feminine, neuter) — usually predictable from ending (-а/-я fem, -о/-е neut, consonant masc).
+- Soft sign (ь) changes pronunciation but not gender — flag it when it appears.
+- Animate/inanimate distinction affects Accusative case for masculine nouns.`,
+
+    Japanese:`JAPANESE-SPECIFIC GUIDANCE:
+- Scripts: THREE writing systems. Hiragana (phonetic, 46 chars — teach 5-10 per lesson), Katakana (foreign words), Kanji (Chinese-origin). Always show new words in their native script with furigana (reading) in parentheses.
+- Word order: Subject-Object-Verb (SOV). "I sushi eat" — not SVO like English. Reinforce this constantly.
+- Particles: は (topic), が (subject), を (object), に (direction/time), で (location/means), へ (direction) — introduce one at a time and drill them.
+- Politeness: teach desu/masu (polite) form first. Plain form comes at A2+. Explain that politeness level is not optional.
+- No articles, no plurals (in most cases), no grammatical gender.
+- Counting: numbers alone vs. with counters (一つ/ひとつ vs 一個/いっこ) — introduce basic counters early.
+- Hiragana milestone: aim for student to recognise all hiragana by end of A1.`,
+
+    Korean:`KOREAN-SPECIFIC GUIDANCE:
+- Script: Hangul (한글) — a phonetic alphabet of syllable blocks. Relatively easy to learn. Always show Korean in Hangul with Revised Romanization in parentheses for new words. Teach a few letters per lesson.
+- Word order: SOV — verb always at the end of the sentence.
+- Particles: topic marker 은/는, subject marker 이/가, object marker 을/를, location 에/에서 — these have no English equivalent. Introduce one at a time with examples.
+- Honorifics: Korean has formal (합쇼체), polite (해요체), and informal (해체) speech. Start with 해요체 (polite -아요/어요 endings). Explain that register is fundamental to Korean.
+- No articles, limited plural marker (-들 can be added but often omitted).
+- Consonant clusters: final consonants (받침) — important for pronunciation.
+- At B1+: introduce formal speech and Sino-Korean numbers vs. native Korean numbers.`,
+
+    Chinese:`CHINESE-SPECIFIC GUIDANCE:
+- Script: Always write in Chinese characters (汉字) with Pinyin and tone marks in parentheses, e.g. 你好 (nǐ hǎo). Characters are not phonetic — they must be memorised.
+- Tones: 4 tones + neutral (1st flat ā, 2nd rising á, 3rd dipping ǎ, 4th falling à). TONES CHANGE MEANING — mā/má/mǎ/mà are completely different words. Drill tones on every new word.
+- No verb conjugation, no tenses: time is expressed through time words (今天, 已经, 要) and aspect markers (了 = completed, 过 = experienced, 着 = ongoing). Explain this explicitly.
+- Measure words (量词): every noun class has one (一本书, 一张纸, 一个人) — introduce the most common (个, 本, 张, 条) at A1.
+- No articles, no grammatical gender, minimal plural marking (们 for people).
+- Topic-prominent: the topic comes first — "那本书，我看过了" (That book, I've read it).
+- Simplified (Mainland/Singapore) vs Traditional (Taiwan/HK) characters — use Simplified unless specified.`,
+
+    English:`ENGLISH-SPECIFIC GUIDANCE:
+- Articles: a/an (indefinite) vs the (definite) — no equivalent in many languages; explain the rule clearly.
+- Irregular verbs: go/went, be/was/were, have/had — drill these early and often.
+- Tense variety: English has many tenses (simple/continuous/perfect) — introduce present simple first, then progressive, then perfect at A2.
+- Phrasal verbs (give up, look for, turn on) are idiomatic and can't be guessed — introduce in context.
+- Pronunciation: silent letters (knight, listen), vowel sounds (ship vs sheep, live vs leave) — flag these as they appear.
+- Register: formal (I would like) vs informal (I wanna) — explain when each is appropriate.
+- Articles, auxiliary verbs, and prepositions are the three hardest areas for most learners.`,
   };
-  return scripts[lang]||'';
+  return g[lang]||`Teach ${lang} naturally. Match vocabulary and grammar complexity to the student's CEFR level.`;
 }
 
 async function startGuidedLesson(n){
@@ -1498,20 +1579,26 @@ async function startGuidedLesson(n){
   setAvatarState('thinking');
   const lang=getLang(),cefr=getCEFR();
   glAppend('ai','…');
+  const verbLine=lang==='Chinese'
+    ? `2. Pick exactly 3 key action words or phrases relevant to "${n.title}" and introduce them with Pinyin, e.g. "Key words today: 学 (xué) — to study, 说 (shuō) — to speak, 听 (tīng) — to listen." Always 3 words/phrases.`
+    : `2. Pick exactly 3 key verbs relevant to "${n.title}" and state them at the start like: "Our verbs today: [verb1] (meaning), [verb2] (meaning), [verb3] (meaning)." Always exactly 3 verbs, regardless of the topic.`;
   const sys=`You are Aria, a warm and encouraging ${lang} language tutor. You are teaching a ${cefr} student a lesson on: "${n.title}".
 
 LESSON STRUCTURE — follow this exactly:
 1. Greet briefly and introduce the topic in ONE sentence.
-2. Pick exactly 3 key verbs relevant to "${n.title}" and state them at the start like: "Our verbs today: [verb1] (meaning), [verb2] (meaning), [verb3] (meaning)." Always exactly 3 verbs, regardless of the topic.
+${verbLine}
 3. Teach ONE concept at a time — short sentences only (1-2 sentences per response max).
 4. After teaching something, ask the student to repeat a phrase or answer a question.
 5. Validate their response warmly, correct gently if needed, then move to the next concept.
-6. Weave the chosen verbs into every example sentence throughout the lesson.
+6. Weave the chosen verbs/key words into every example sentence throughout the lesson.
 7. End each turn with exactly ONE question or prompt for the student — never multiple questions.
 
 STYLE: Short, natural, encouraging. Like a real tutor in a session — not a lecture.
-${getLessonImmersionPrompt(lang)}${getScriptNote(lang)?'\n\nSCRIPT/WRITING: '+getScriptNote(lang):''}`;
-  const opening=await callDeepSeek(sys,`Start the lesson on "${n.title}". Greet, state the 2-3 verbs for today, then teach the first concept.`);
+${getLessonImmersionPrompt(lang)}
+
+LANGUAGE GUIDANCE:
+${getLangGuidance(lang)}`;
+  const opening=await callDeepSeek(sys,`Start the lesson on "${n.title}". Greet, state the 3 verbs/key words for today, then teach the first concept.`);
   glHistory=[{role:'assistant',content:opening}];
   $('glChat').lastChild.remove();
   glAppend('ai',opening);
@@ -1574,8 +1661,9 @@ async function glSend(){
   const dot=document.createElement('div');
   dot.style.cssText='align-self:flex-start;color:var(--mut);font-size:.85rem;padding:8px 4px';
   dot.textContent='…';$('glChat').appendChild(dot);$('glChat').scrollTop=$('glChat').scrollHeight;
-  const sys=`You are Aria, a warm ${lang} tutor. Lesson: "${glNode?.title}". Verbs being practiced: ${glVerbs.join(', ')||'relevant verbs'}.
-If the student made an error, correct gently and give the right form. Then move forward — teach the next concept or ask the next question. Keep it to 1-2 sentences max. End with exactly one prompt for the student. ${getLessonImmersionPrompt(lang)}${getScriptNote(lang)?'\nSCRIPT: '+getScriptNote(lang):''}${winding?'\n\nTIMER: You have been teaching for 8+ minutes. Warmly wrap up this lesson — summarize the key verbs practiced, praise the student, and say you\'ll pick up next time. End with: "Great work today! 🎉 Tap Complete Lesson when you\'re ready."':''}`;
+  const sys=`You are Aria, a warm ${lang} tutor. Lesson: "${glNode?.title}". Verbs/key words being practiced: ${glVerbs.join(', ')||'relevant verbs'}.
+If the student made an error, correct gently and give the right form. Then move forward — teach the next concept or ask the next question. Keep it to 1-2 sentences max. End with exactly one prompt for the student. ${getLessonImmersionPrompt(lang)}
+${getLangGuidance(lang)}${winding?'\n\nTIMER: You have been teaching for 8+ minutes. Warmly wrap up this lesson — summarize the key verbs practiced, praise the student, and say you\'ll pick up next time. End with: "Great work today! 🎉 Tap Complete Lesson when you\'re ready."':''}`;
   const reply=await callDeepSeek(sys,txt,glHistory.slice(-8));
   dot.remove();
   glHistory.push({role:'assistant',content:reply});
