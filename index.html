@@ -154,6 +154,9 @@ main{flex:1;padding:16px;padding-bottom:calc(80px + env(safe-area-inset-bottom))
 .mbox h3{font-family:'Space Grotesk',sans-serif;font-size:.98rem;margin-bottom:6px}.mbox p{font-size:.8rem;color:var(--mut);margin-bottom:12px;line-height:1.6}
 .mclose{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--mut);font-size:1rem;cursor:pointer;padding:4px}
 .mactions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.dur-chip{flex:1;min-width:52px;padding:7px 4px;border-radius:10px;border:2px solid var(--bdr);background:var(--s2);color:var(--txt);font-size:.76rem;font-weight:600;cursor:pointer;text-align:center;transition:all .18s}
+.dur-chip.active{border-color:var(--acc);background:rgba(91,141,238,.12);color:var(--acc)}
+.dur-chip:hover{border-color:var(--acc)}
 .key-block{background:var(--s2);border:1px solid var(--bdr);border-radius:8px;padding:12px;margin-bottom:10px}
 .key-block-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
 .key-title{font-weight:700;font-size:.83rem}.key-sub{font-size:.7rem;color:var(--mut)}
@@ -403,7 +406,16 @@ input[type=text]:focus{border-color:var(--acc)}
   <div style="text-align:center"><button class="btn btn-g" style="font-size:.76rem;color:var(--acc2)" onclick="confirmReset()">🗑 Reset Progress</button></div>
 </div>
 </main>
-<div class="overlay" id="nodeModal"><div class="mbox"><button class="mclose" onclick="closeModal('nodeModal')">✕</button><div style="font-size:1.5rem;margin-bottom:6px" id="nIcon"></div><h3 id="nTitle"></h3><p id="nDesc"></p><div class="mactions"><button class="btn btn-p" onclick="launchNode()">▶ Start</button><button class="btn btn-g" id="nMarkBtn" onclick="markNodeDone()">✓ Mark Done</button><button class="btn btn-a" onclick="openNodeTest()">⚡ Test Out</button><button class="btn btn-g" onclick="closeModal('nodeModal')">Close</button></div></div></div>
+<div class="overlay" id="nodeModal"><div class="mbox"><button class="mclose" onclick="closeModal('nodeModal')">✕</button><div style="font-size:1.5rem;margin-bottom:6px" id="nIcon"></div><h3 id="nTitle"></h3><p id="nDesc"></p>
+<div style="margin:12px 0 4px;font-size:.74rem;font-weight:600;color:var(--mut)">⏱ Lesson duration</div>
+<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px" id="durationPicker">
+  <button class="dur-chip" data-min="5" onclick="pickDuration(this)">5 min<span style="display:block;font-size:.6rem;color:var(--mut)">1 verb</span></button>
+  <button class="dur-chip active" data-min="10" onclick="pickDuration(this)">10 min<span style="display:block;font-size:.6rem;color:var(--mut)">2 verbs</span></button>
+  <button class="dur-chip" data-min="15" onclick="pickDuration(this)">15 min<span style="display:block;font-size:.6rem;color:var(--mut)">3 verbs</span></button>
+  <button class="dur-chip" data-min="20" onclick="pickDuration(this)">20 min<span style="display:block;font-size:.6rem;color:var(--mut)">4 verbs</span></button>
+  <button class="dur-chip" data-min="30" onclick="pickDuration(this)">30 min<span style="display:block;font-size:.6rem;color:var(--mut)">6 verbs</span></button>
+</div>
+<div class="mactions"><button class="btn btn-p" onclick="launchNode()">▶ Start</button><button class="btn btn-g" id="nMarkBtn" onclick="markNodeDone()">✓ Mark Done</button><button class="btn btn-a" onclick="openNodeTest()">⚡ Test Out</button><button class="btn btn-g" onclick="closeModal('nodeModal')">Close</button></div></div></div>
 <div class="overlay" id="objModal"><div class="mbox"><button class="mclose" onclick="closeModal('objModal')">✕</button><div style="font-size:1.5rem;margin-bottom:6px" id="oIcon"></div><h3 id="oTitle"></h3><p id="oDesc"></p><div id="oProg" style="font-size:.76rem;color:var(--mut);margin:4px 0 10px"></div><div id="oLessonList" style="display:flex;flex-direction:column;gap:6px;text-align:left"></div><div class="mactions"><button class="btn btn-g" onclick="closeModal('objModal')">Close</button></div></div></div>
 <div class="overlay" id="settingsModal"><div class="mbox" style="max-width:500px"><button class="mclose" onclick="closeModal('settingsModal')">✕</button><h3>⚙️ Settings &amp; API Keys</h3><p>Keys saved to your device only — never in the code, never on GitHub.</p><div id="keyBlocks"></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">🔊 Voice engine</label><select id="ttsEngineSel"><option value="openai">OpenAI TTS (tts-1-hd) — cheap, good Spanish</option><option value="elevenlabs">ElevenLabs — most natural, higher cost</option><option value="azure">Azure TTS — neural, many languages</option><option value="browser">Browser built-in — free, robotic</option></select></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">Voice style (ElevenLabs only)</label><select id="voiceStyleSel"><option value="natural">Natural &amp; warm</option><option value="clear">Clear &amp; precise</option><option value="slow">Slow &amp; deliberate</option></select></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">ElevenLabs Voice ID <span style="color:var(--acc);font-size:.7rem">(optional — overrides default voices)</span></label><input type="text" id="ki-el_voice_id" placeholder="e.g. pNInz6obpgDQGcFmaJgB" autocomplete="off" style="font-family:monospace;font-size:.8rem"><div class="mnote">Find your Voice ID at <a href="https://elevenlabs.io/voice-lab" target="_blank">elevenlabs.io/voice-lab</a> → click a voice → copy ID</div></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">Azure Region <span style="color:var(--acc);font-size:.7rem">(required for Azure TTS)</span></label><input type="text" id="ki-azure_region" placeholder="e.g. eastus" autocomplete="off" style="font-family:monospace;font-size:.8rem"><div class="mnote">Found on your Azure Speech resource page, e.g. <code>eastus</code>, <code>westeurope</code></div></div><div class="mactions"><button class="btn btn-p" onclick="saveKeys()">💾 Save</button><button class="btn btn-g" onclick="testKeys()">🧪 Test Keys</button><button class="btn btn-g" onclick="closeModal('settingsModal')">Cancel</button></div><div id="keyTestOut" style="margin-top:10px"></div></div></div>
 <div class="overlay" id="stModal"><div class="mbox"><button class="mclose" onclick="closeModal('stModal')">✕</button><h3>🧪 System Diagnostics</h3><div id="stOut" style="margin:12px 0"></div><button class="btn btn-g" onclick="closeModal('stModal')">Close</button></div></div>
@@ -417,12 +429,15 @@ input[type=text]:focus{border-color:var(--acc)}
         <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
           <div style="display:flex;align-items:center;gap:6px">
             <div id="glPhaseDot1" style="width:10px;height:10px;border-radius:50%;background:#fff"></div>
-            <div style="width:28px;height:2px;background:rgba(255,255,255,0.4)" id="glPhaseLine"></div>
+            <div style="width:20px;height:2px;background:rgba(255,255,255,0.4)"></div>
             <div id="glPhaseDot2" style="width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.3)"></div>
+            <div style="width:20px;height:2px;background:rgba(255,255,255,0.4)"></div>
+            <div id="glPhaseDot3" style="width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.3)"></div>
           </div>
-          <div style="display:flex;gap:14px">
-            <span id="glPhaseLabel1" style="font-size:.62rem;color:#fff;font-weight:600">Lesson</span>
-            <span id="glPhaseLabel2" style="font-size:.62rem;color:rgba(255,255,255,0.5)">Practice</span>
+          <div style="display:flex;gap:8px">
+            <span id="glPhaseLabel1" style="font-size:.58rem;color:#fff;font-weight:600">Warm-up</span>
+            <span id="glPhaseLabel2" style="font-size:.58rem;color:rgba(255,255,255,0.5)">Lesson</span>
+            <span id="glPhaseLabel3" style="font-size:.58rem;color:rgba(255,255,255,0.5)">Practice</span>
           </div>
         </div>
       </div>
@@ -1452,7 +1467,13 @@ function launchNode(){
 // GUIDED LESSON
 // ════════════════════════════════
 let glHistory=[],glNode=null,glVerbs=[],glStartTime=null,glMR=null,glTypeVisible=false,glEndTimer=null,glCountdownTimer=null;
-const GL_MAX_MS=10*60*1000;
+let GL_MAX_MS=10*60*1000;
+let glVerbCount=2;
+
+function pickDuration(el){
+  document.querySelectorAll('.dur-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+}
 
 function updateGlCountdown(){
   const el=$('glCountdown');if(!el||!glStartTime)return;
@@ -1560,6 +1581,11 @@ function getLangGuidance(lang){
 }
 
 async function startGuidedLesson(n){
+  // Read chosen duration from the picker (default 10 min)
+  const activeDur=document.querySelector('.dur-chip.active');
+  const durationMins=activeDur?parseInt(activeDur.dataset.min):10;
+  GL_MAX_MS=durationMins*60*1000;
+  glVerbCount=Math.max(1,Math.floor(durationMins/5));
   glNode=n;glHistory=[];glVerbs=[];glStartTime=Date.now();glTypeVisible=false;
   if(glEndTimer)clearTimeout(glEndTimer);
   glEndTimer=setTimeout(forceEndLesson,GL_MAX_MS);
@@ -1573,32 +1599,43 @@ async function startGuidedLesson(n){
   $('glVerbPills').innerHTML='';
   $('glPhaseDot1').style.background='#fff';
   $('glPhaseDot2').style.background='rgba(255,255,255,0.3)';
+  $('glPhaseDot3').style.background='rgba(255,255,255,0.3)';
   $('glPhaseLabel1').style.color='#fff';
   $('glPhaseLabel2').style.color='rgba(255,255,255,0.5)';
+  $('glPhaseLabel3').style.color='rgba(255,255,255,0.5)';
   openModal('guidedLessonModal');
   setAvatarState('thinking');
   const lang=getLang(),cefr=getCEFR();
   glAppend('ai','…');
-  const verbLine=lang==='Chinese'
-    ? `2. Pick exactly 3 key action words or phrases relevant to "${n.title}" and introduce them with Pinyin, e.g. "Key words today: 学 (xué) — to study, 说 (shuō) — to speak, 听 (tīng) — to listen." Always 3 words/phrases.`
-    : `2. Pick exactly 3 key verbs relevant to "${n.title}" and state them at the start like: "Our verbs today: [verb1] (meaning), [verb2] (meaning), [verb3] (meaning)." Always exactly 3 verbs, regardless of the topic.`;
-  const sys=`You are Aria, a warm and encouraging ${lang} language tutor. You are teaching a ${cefr} student a lesson on: "${n.title}".
+  const vc=glVerbCount;
+  const verbIntro=lang==='Chinese'
+    ? `Introduce exactly ${vc} key action word${vc>1?'s':''} with Pinyin, e.g. "Key words today: 学 (xué) — to study…" Always exactly ${vc}.`
+    : `State exactly ${vc} key verb${vc>1?'s':''} like: "Our verbs today: [verb1] (meaning)${vc>1?', [verb2] (meaning)':''}${vc>2?'…':''}." Always exactly ${vc} verb${vc>1?'s':''}.`;
+  const sys=`You are Aria, a warm and encouraging ${lang} language tutor. You are teaching a ${cefr} student a ${durationMins}-minute lesson on: "${n.title}".
 
-LESSON STRUCTURE — follow this exactly:
-1. Greet briefly and introduce the topic in ONE sentence.
-${verbLine}
-3. Teach ONE concept at a time — short sentences only (1-2 sentences per response max).
-4. After teaching something, ask the student to repeat a phrase or answer a question.
-5. Validate their response warmly, correct gently if needed, then move to the next concept.
-6. Weave the chosen verbs/key words into every example sentence throughout the lesson.
-7. End each turn with exactly ONE question or prompt for the student — never multiple questions.
+LESSON HAS THREE PHASES — flow through them naturally without announcing transitions:
 
-STYLE: Short, natural, encouraging. Like a real tutor in a session — not a lecture.
+PHASE 1 — CONJUGATION WARM-UP (roughly the first ${Math.max(1,Math.round(vc*1.5))} exchanges):
+1. Greet briefly, introduce the topic in one sentence.
+2. ${verbIntro}
+3. For each verb, drill its most important conjugation forms ONE at a time as a question. E.g. "How do you say 'I speak'?" Wait for the student's answer. Correct warmly if needed.
+4. Once the student has responded to all ${vc} verb${vc>1?'s':''} (even imperfectly), transition naturally into Phase 2 — do NOT announce the transition, just start teaching the topic.
+
+PHASE 2 — TOPIC LESSON:
+5. Teach the actual lesson content one concept at a time (1-2 sentences max per turn).
+6. Ask the student to repeat a phrase or answer a question after each concept.
+7. Weave the conjugated verbs into every example sentence.
+
+PHASE 3 — FREE PRACTICE (last ~20% of the lesson):
+8. Give the student an open prompt to use everything they've learned in a short response.
+9. Validate their effort, correct gently, wrap up warmly.
+
+RULES: End every turn with exactly ONE question or prompt. Never ask multiple questions at once. Keep responses short and natural — like a real tutor, not a lecture.
 ${getLessonImmersionPrompt(lang)}
 
 LANGUAGE GUIDANCE:
 ${getLangGuidance(lang)}`;
-  const opening=await callDeepSeek(sys,`Start the lesson on "${n.title}". Greet, state the 3 verbs/key words for today, then teach the first concept.`);
+  const opening=await callDeepSeek(sys,`Start the lesson on "${n.title}". Greet, introduce the topic, state the ${vc} verb${vc>1?'s':''}/key words, then ask your first conjugation question.`);
   glHistory=[{role:'assistant',content:opening}];
   $('glChat').lastChild.remove();
   glAppend('ai',opening);
@@ -1639,12 +1676,19 @@ function glAppend(role,text){
   spk.onclick=()=>speak(msgStore[tIdx],getLang());
   btns.appendChild(tr);btns.appendChild(spk);d.appendChild(btns);
   box.appendChild(d);box.scrollTop=box.scrollHeight;
-  // Switch to practice phase after 4 exchanges
-  if(glHistory.length>=8){
-    $('glPhaseDot2').style.background='#fff';
-    $('glPhaseLabel2').style.color='#fff';
-    $('glPhaseDot1').style.background='rgba(255,255,255,0.4)';
-    $('glPhaseLabel1').style.color='rgba(255,255,255,0.6)';
+  // Phase 1→2 after warm-up exchanges (roughly 2 per verb), Phase 2→3 at 80%
+  const ph2at=glVerbCount*2+2;
+  const ph3at=Math.round(ph2at*2.5);
+  const exc=glHistory.length;
+  const dim='rgba(255,255,255,0.4)',off='rgba(255,255,255,0.3)',dimLbl='rgba(255,255,255,0.6)',offLbl='rgba(255,255,255,0.5)';
+  if(exc>=ph3at){
+    $('glPhaseDot1').style.background=dim;$('glPhaseLabel1').style.color=dimLbl;
+    $('glPhaseDot2').style.background=dim;$('glPhaseLabel2').style.color=dimLbl;
+    $('glPhaseDot3').style.background='#fff';$('glPhaseLabel3').style.color='#fff';
+  }else if(exc>=ph2at){
+    $('glPhaseDot1').style.background=dim;$('glPhaseLabel1').style.color=dimLbl;
+    $('glPhaseDot2').style.background='#fff';$('glPhaseLabel2').style.color='#fff';
+    $('glPhaseDot3').style.background=off;$('glPhaseLabel3').style.color=offLbl;
   }
 }
 
@@ -1652,7 +1696,7 @@ async function glSend(){
   const txt=$('glInput').value.trim();if(!txt)return;
   // Auto-wind-down after 8 minutes
   const elapsed=Date.now()-(glStartTime||Date.now());
-  const winding=elapsed>8*60*1000;
+  const winding=elapsed>GL_MAX_MS*0.8;
   $('glInput').value='';
   glHistory.push({role:'user',content:txt});
   glAppend('user',txt);
