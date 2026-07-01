@@ -484,31 +484,30 @@ input[type=text]:focus{border-color:var(--acc)}
 <!-- Lesson Complete Screen -->
 <div class="overlay" id="lessonCompleteModal">
 <div class="mbox" style="text-align:center;max-width:360px">
-  <div style="font-size:2.8rem;margin-bottom:8px">🏁</div>
-  <h2 style="font-family:'Space Grotesk',sans-serif;color:var(--acc);margin-bottom:6px">Lesson Complete!</h2>
+  <div style="font-size:3.2rem;margin-bottom:4px">🎉</div>
+  <h2 style="font-family:'Space Grotesk',sans-serif;color:var(--acc);margin-bottom:6px;font-size:1.5rem">Lesson Complete!</h2>
   <p style="font-size:.84rem;color:var(--mut);margin-bottom:20px" id="lcSubtitle">You're crushing it! Fluency is just around the corner.</p>
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:22px">
     <div style="background:#e8f4fd;border:2px solid #5b8dee;border-radius:12px;padding:12px 8px">
-      <div style="font-size:.72rem;color:#5b8dee;font-weight:600;margin-bottom:6px">New Words</div>
-      <div style="font-size:1.5rem;font-weight:700;color:#5b8dee" id="lcWords">0</div>
+      <div style="font-size:.65rem;color:#5b8dee;font-weight:700;margin-bottom:6px;text-transform:uppercase">New Words</div>
+      <div style="font-size:1.6rem;font-weight:700;color:#5b8dee" id="lcWords">0</div>
     </div>
     <div style="background:#e8fdf2;border:2px solid #22c55e;border-radius:12px;padding:12px 8px">
-      <div style="font-size:.72rem;color:#22c55e;font-weight:600;margin-bottom:6px">Exchanges</div>
-      <div style="font-size:1.5rem;font-weight:700;color:#22c55e" id="lcExchanges">0</div>
+      <div style="font-size:.65rem;color:#22c55e;font-weight:700;margin-bottom:6px;text-transform:uppercase">Exchanges</div>
+      <div style="font-size:1.6rem;font-weight:700;color:#22c55e" id="lcExchanges">0</div>
     </div>
     <div style="background:#fff8e1;border:2px solid #f59e0b;border-radius:12px;padding:12px 8px">
-      <div style="font-size:.72rem;color:#f59e0b;font-weight:600;margin-bottom:6px">Duration</div>
-      <div style="font-size:1.5rem;font-weight:700;color:#f59e0b" id="lcDuration">0:00</div>
+      <div style="font-size:.65rem;color:#f59e0b;font-weight:700;margin-bottom:6px;text-transform:uppercase">Duration</div>
+      <div style="font-size:1.6rem;font-weight:700;color:#f59e0b" id="lcDuration">0:00</div>
     </div>
   </div>
   <div id="lcVerbRecap" style="background:#f5f7fb;border-radius:10px;padding:10px 14px;margin-bottom:18px;text-align:left;display:none">
-    <div style="font-size:.72rem;font-weight:700;color:var(--mut);margin-bottom:6px">VERBS PRACTICED</div>
+    <div style="font-size:.65rem;font-weight:700;color:var(--mut);margin-bottom:6px;text-transform:uppercase">Verbs Practiced</div>
     <div id="lcVerbList" style="font-size:.84rem;color:var(--txt);line-height:1.7"></div>
   </div>
   <div id="lcTestNote" style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);border-radius:10px;padding:10px 14px;margin-bottom:18px;text-align:left;font-size:.8rem;color:#b45309;display:none">⚡ This topic isn't marked complete yet — pass the <strong>Test Out</strong> quiz to officially finish it.</div>
-  <button id="lcResumeBtn" onclick="resumeLastLesson()" class="btn btn-a" style="width:100%;margin-bottom:10px;font-size:.9rem;padding:13px;display:none">↩ Resume This Lesson</button>
-  <button onclick="continueToNextLesson()" class="btn btn-p" style="width:100%;margin-bottom:10px;font-size:.9rem;padding:13px">Continue to Next Lesson</button>
-  <button onclick="closeModal('lessonCompleteModal')" class="btn btn-g" style="width:100%;font-size:.88rem">Go to Home</button>
+  <button onclick="continueToNextLesson()" class="btn btn-p" style="width:100%;margin-bottom:10px;font-size:.95rem;padding:14px;font-weight:700">Next Lesson →</button>
+  <button onclick="closeModal('lessonCompleteModal')" class="btn btn-g" style="width:100%;font-size:.88rem">Back to Home</button>
 </div>
 </div>
 <div class="overlay" id="testModal"><div class="mbox"><button class="mclose" onclick="closeTestModal()">✕</button><div style="font-size:1.3rem;margin-bottom:5px" id="tIcon"></div><h3 id="tTitle"></h3><p id="tDesc" style="margin-bottom:10px"></p><div id="tProgRow" style="display:none;align-items:center;gap:8px;margin-bottom:10px"><div class="test-prog-track"><div class="test-prog-fill" id="tProgFill" style="width:0%"></div></div><span id="tProgLbl" style="font-size:.72rem;color:var(--mut);white-space:nowrap">0/4</span></div><div class="chat-box" id="tChatBox" style="height:210px;display:none"></div><div class="vbar" id="tVbar" style="display:none;margin-bottom:10px"><div class="sdot" id="tDot"></div><span style="font-size:.74rem;color:var(--mut);flex:1" id="tStatus">Ready</span><button class="btn btn-d" id="tListenBtn" onclick="testListen()">🎙 Speak</button><button class="btn btn-g" onclick="testSkip()" style="font-size:.76rem">Skip</button></div><div id="tResults" style="display:none"><div style="text-align:center;margin-bottom:14px"><div style="font-size:2.6rem;font-weight:700;font-family:'Space Grotesk',sans-serif" id="tScore"></div><div style="font-size:.8rem;color:var(--mut);margin-top:3px" id="tScoreLbl"></div></div><div class="stat-grid" style="margin-bottom:12px"><div class="stat-card"><div class="stat-num" id="tAcc">-</div><div class="stat-lbl">Accuracy</div></div><div class="stat-card"><div class="stat-num" id="tVoc">-</div><div class="stat-lbl">Vocabulary</div></div><div class="stat-card"><div class="stat-num" id="tFlu">-</div><div class="stat-lbl">Fluency</div></div></div><div style="background:var(--s2);border-radius:8px;padding:10px 12px;font-size:.8rem;line-height:1.65;margin-bottom:12px" id="tFeedback"></div><div id="tPassAct" style="display:none"><div style="background:rgba(62,232,138,.08);border:1px solid rgba(62,232,138,.25);border-radius:8px;padding:9px 12px;font-size:.8rem;color:var(--grn);margin-bottom:10px">🎉 <strong>Passed!</strong> <span id="tPassMsg"></span></div><div class="mactions"><button class="btn btn-gr" onclick="applyPass()">✓ Unlock</button><button class="btn btn-g" onclick="closeTestModal()">Close</button></div></div><div id="tFailAct" style="display:none"><div style="background:rgba(255,107,138,.08);border:1px solid rgba(255,107,138,.25);border-radius:8px;padding:9px 12px;font-size:.8rem;color:var(--acc2);margin-bottom:10px" id="tFailMsg"></div><div class="mactions"><button class="btn btn-p" onclick="startTest()">↺ Retry</button><button class="btn btn-g" onclick="closeTestModal()">Close</button></div></div></div><div id="tStart"><div class="mactions"><button class="btn btn-p" onclick="startTest()">▶ Begin Test</button><button class="btn btn-g" onclick="closeTestModal()">Cancel</button></div></div></div></div>
@@ -1863,9 +1862,12 @@ function openObjectiveModal(o,bi){
   const list=$('oLessonList');list.innerHTML='';
   o.lessons.forEach((l,li)=>{
     const isDone=completedNodes.includes(l.id);
+    const inProgress=!isDone&&!!localStorage.getItem('lf_mid_'+l.id);
     const row=document.createElement('div');
     row.style.cssText='display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--s2);border-radius:8px;cursor:pointer';
-    row.innerHTML=`<span style="font-size:1rem">${isDone?'✅':'⬜'}</span><div style="flex:1"><div style="font-weight:600;font-size:.82rem">${l.title}</div><div style="font-size:.7rem;color:var(--mut)">${l.desc}</div></div>`;
+    const statusIcon=isDone?'✅':inProgress?'🔵':'⬜';
+    const progressBadge=inProgress?`<span style="font-size:.65rem;background:#e8f4fd;color:#5b8dee;border-radius:6px;padding:2px 6px;font-weight:600">In Progress</span>`:'';
+    row.innerHTML=`<span style="font-size:1rem">${statusIcon}</span><div style="flex:1"><div style="font-weight:600;font-size:.82rem;display:flex;align-items:center;gap:6px">${l.title}${progressBadge}</div><div style="font-size:.7rem;color:var(--mut)">${l.desc}</div></div>`;
     row.onclick=()=>openLessonModal(l,bi);
     list.appendChild(row);
   });
@@ -1905,6 +1907,25 @@ function launchNode(){
 let glHistory=[],glNode=null,glVerbs=[],glStartTime=null,glMR=null,glTypeVisible=false,glEndTimer=null,glCountdownTimer=null;
 let GL_MAX_MS=10*60*1000;
 let glVerbCount=2;
+let glLessonEnded=false;
+
+function glLockInput(){
+  glLessonEnded=true;
+  const bar=$('glTypeBar');if(bar)bar.style.display='none';
+  const mic=document.getElementById('glMicCircle');
+  if(mic){mic.style.opacity='0.3';mic.style.pointerEvents='none';}
+  const micWrap=mic&&mic.parentElement;if(micWrap){micWrap.style.opacity='0.3';micWrap.style.pointerEvents='none';}
+}
+
+function glSaveMid(){
+  if(!glNode?.id)return;
+  const data={history:glHistory,verbs:glVerbs,startTime:glStartTime,nodeId:glNode.id};
+  localStorage.setItem('lf_mid_'+glNode.id,JSON.stringify(data));
+}
+
+function glClearMid(){
+  if(glNode?.id)localStorage.removeItem('lf_mid_'+glNode.id);
+}
 
 function pickDuration(el){
   document.querySelectorAll('.dur-chip').forEach(c=>c.classList.remove('active'));
@@ -2016,13 +2037,67 @@ function getLangGuidance(lang){
   return g[lang]||`Teach ${lang} naturally. Match vocabulary and grammar complexity to the student's CEFR level.`;
 }
 
-async function startGuidedLesson(n){
+async function startGuidedLesson(n,forceNew=false){
+  // Check for saved mid-lesson state
+  if(!forceNew){
+    const saved=localStorage.getItem('lf_mid_'+n.id);
+    if(saved){
+      try{
+        const d=JSON.parse(saved);
+        if(d.history&&d.history.length>1){
+          glNode=n;glHistory=d.history;glVerbs=d.verbs||[];glStartTime=d.startTime||Date.now();
+          glLessonEnded=false;glTypeVisible=false;
+          const activeDur=document.querySelector('.dur-chip.active');
+          const durationMins=activeDur?parseInt(activeDur.dataset.min):10;
+          GL_MAX_MS=durationMins*60*1000;
+          glVerbCount=Math.max(1,Math.floor(durationMins/5));
+          if(glEndTimer)clearTimeout(glEndTimer);
+          const elapsed=Date.now()-glStartTime;
+          const remaining=GL_MAX_MS-elapsed;
+          if(remaining>5000)glEndTimer=setTimeout(forceEndLesson,remaining);
+          else{forceEndLesson();return;}
+          if(glCountdownTimer)clearInterval(glCountdownTimer);
+          updateGlCountdown();glCountdownTimer=setInterval(updateGlCountdown,1000);
+          $('glTitle').textContent=n.title;
+          $('glChat').innerHTML='';
+          if($('glInput'))$('glInput').value='';
+          $('glTypeBar').style.display='none';
+          $('glVerbPills').innerHTML='';
+          // Restore phase dots
+          const ph2at=glVerbCount*2+2,ph3at=Math.round(ph2at*2.5),exc=glHistory.length;
+          const dim='rgba(255,255,255,0.4)',off='rgba(255,255,255,0.3)',dimLbl='rgba(255,255,255,0.6)',offLbl='rgba(255,255,255,0.5)';
+          if(exc>=ph3at){$('glPhaseDot1').style.background=dim;$('glPhaseLabel1').style.color=dimLbl;$('glPhaseDot2').style.background=dim;$('glPhaseLabel2').style.color=dimLbl;$('glPhaseDot3').style.background='#fff';$('glPhaseLabel3').style.color='#fff';}
+          else if(exc>=ph2at){$('glPhaseDot1').style.background=dim;$('glPhaseLabel1').style.color=dimLbl;$('glPhaseDot2').style.background='#fff';$('glPhaseLabel2').style.color='#fff';$('glPhaseDot3').style.background=off;$('glPhaseLabel3').style.color=offLbl;}
+          else{$('glPhaseDot1').style.background='#fff';$('glPhaseLabel1').style.color='#fff';$('glPhaseDot2').style.background=off;$('glPhaseLabel2').style.color=offLbl;$('glPhaseDot3').style.background=off;$('glPhaseLabel3').style.color=offLbl;}
+          openModal('guidedLessonModal');
+          // Replay history into chat
+          glHistory.forEach(m=>glAppend(m.role==='user'?'user':'ai',m.content));
+          // Restore verb pills
+          glVerbs.forEach(v=>{
+            const pill=document.createElement('div');
+            pill.style.cssText='background:rgba(255,255,255,0.18);color:#fff;border-radius:12px;padding:3px 10px;font-size:.72rem;font-weight:600;cursor:pointer;backdrop-filter:blur(4px)';
+            pill.textContent=v;pill.onclick=()=>showConjugationTable(v);
+            $('glVerbPills').appendChild(pill);
+          });
+          // AI sends a brief resume message
+          setAvatarState('thinking');
+          const resumeMsg=await callDeepSeek(`You are Aria. The student is resuming a lesson on "${n.title}". Briefly (1-2 sentences) welcome them back and pick up exactly where you left off.`,'Resume the lesson.',glHistory.slice(-4));
+          glHistory.push({role:'assistant',content:resumeMsg});
+          glAppend('ai',resumeMsg);
+          glSaveMid();
+          setAvatarState('speaking');
+          speak(resumeMsg,getLang(),.9,()=>setAvatarState('idle')).catch(()=>setAvatarState('idle'));
+          return;
+        }
+      }catch(e){}
+    }
+  }
   // Read chosen duration from the picker (default 10 min)
   const activeDur=document.querySelector('.dur-chip.active');
   const durationMins=activeDur?parseInt(activeDur.dataset.min):10;
   GL_MAX_MS=durationMins*60*1000;
   glVerbCount=Math.max(1,Math.floor(durationMins/5));
-  glNode=n;glHistory=[];glVerbs=[];glStartTime=Date.now();glTypeVisible=false;
+  glNode=n;glHistory=[];glVerbs=[];glStartTime=Date.now();glTypeVisible=false;glLessonEnded=false;
   if(glEndTimer)clearTimeout(glEndTimer);
   glEndTimer=setTimeout(forceEndLesson,GL_MAX_MS);
   if(glCountdownTimer)clearInterval(glCountdownTimer);
@@ -2064,7 +2139,7 @@ PHASE 2 — TOPIC LESSON:
 
 PHASE 3 — REAL-WORLD ROLEPLAY (last ~20% of the lesson):
 8. Set up a specific real-world scenario using the lesson vocabulary (e.g., a café, restaurant, airport, market, hotel). Announce the scene in the target language with a brief English aside, then stay in character as the other person (waiter, shopkeeper, receptionist, etc.). Use the verbs and phrases from this lesson naturally in the roleplay.
-9. After 2-3 roleplay exchanges, step out of character, summarize what was practiced, praise the student warmly, and close the lesson.
+9. After 2-3 roleplay exchanges, step out of character, summarize what was practiced, praise the student warmly, and close the lesson. On your very last closing message — after the praise — append exactly: [LESSON_COMPLETE] (no space before it, on the same line at the end). This signals the app to show the completion screen. Only use [LESSON_COMPLETE] once, on your absolute final message.
 
 RULES: End every turn with exactly ONE question or prompt. Never ask multiple questions at once. Keep responses short and natural — like a real tutor, not a lecture.
 PRONUNCIATION: Be encouraging and forgiving. If you can understand what the student said, treat it as correct and move forward. Only correct pronunciation when it changes the word's meaning entirely. Never nitpick accent — accent is normal and expected.
@@ -2076,6 +2151,7 @@ ${getLangGuidance(lang)}`;
   glHistory=[{role:'assistant',content:opening}];
   $('glChat').lastChild.remove();
   glAppend('ai',opening);
+  glSaveMid();
   setAvatarState('speaking');
   speak(opening.substring(0,600),lang,.9,()=>setAvatarState('idle')).catch(()=>setAvatarState('idle'));
   // Extract verbs from opening and show as clickable pills
@@ -2188,8 +2264,7 @@ function glAppend(role,text){
 }
 
 async function glSend(){
-  const txt=$('glInput').value.trim();if(!txt)return;
-  // Auto-wind-down after 8 minutes
+  const txt=$('glInput').value.trim();if(!txt||glLessonEnded)return;
   const elapsed=Date.now()-(glStartTime||Date.now());
   const winding=elapsed>GL_MAX_MS*0.8;
   $('glInput').value='';
@@ -2202,11 +2277,23 @@ async function glSend(){
   dot.textContent='…';$('glChat').appendChild(dot);$('glChat').scrollTop=$('glChat').scrollHeight;
   const sys=`You are Aria, a warm ${lang} tutor. Lesson: "${glNode?.title}". Verbs/key words being practiced: ${glVerbs.join(', ')||'relevant verbs'}.
 If the student made a clear grammar error, give the correct form briefly (1 sentence) then move forward immediately. Be generous — if you understand what they meant, move on without correcting. Never correct pronunciation or accent unless it would cause a completely different word. End with exactly one prompt for the student. ${getLessonImmersionPrompt(lang)}
-${getLangGuidance(lang)}${winding?'\n\nTIMER: You have been teaching for 8+ minutes. Warmly wrap up this lesson — summarize the key verbs practiced, praise the student, and say you\'ll pick up next time. End with: "Great work today! 🎉 Tap Done (top right) when you\'re ready."':''}`;
+${getLangGuidance(lang)}${winding?'\n\nTIMER: The lesson time is almost up. If you have not done the roleplay yet, start it NOW — keep it to 1-2 exchanges max. After the roleplay, wrap up warmly, summarize the verbs practiced, praise the student, and end your final message with [LESSON_COMPLETE].':''}`;
   const reply=await callDeepSeek(sys,txt,glHistory.slice(-8));
   dot.remove();
+  // Detect lesson completion signal
+  if(reply.includes('[LESSON_COMPLETE]')){
+    const clean=reply.replace('[LESSON_COMPLETE]','').trim();
+    glHistory.push({role:'assistant',content:clean});
+    glAppend('ai',clean);
+    glLockInput();
+    glClearMid();
+    setAvatarState('speaking');
+    speak(clean.substring(0,600),lang,.9,()=>{setAvatarState('idle');setTimeout(()=>completeLesson(),800);}).catch(()=>{setAvatarState('idle');setTimeout(()=>completeLesson(),800);});
+    return;
+  }
   glHistory.push({role:'assistant',content:reply});
   glAppend('ai',reply);
+  glSaveMid();
   setAvatarState('speaking');
   speak(reply.substring(0,600),lang,.9,()=>setAvatarState('idle')).catch(()=>setAvatarState('idle'));
 }
@@ -2291,38 +2378,31 @@ function closeGuidedLesson(){
 // Hard cutoff — fires GL_MAX_MS after lesson start regardless of activity
 function forceEndLesson(){
   if(!$('guidedLessonModal').classList.contains('open'))return;
-  glAppend('ai',"Time's up for today — great session! 🎉 Tap Done (top right) to save your progress.");
-  completeLesson(true);
+  glLockInput();
+  glClearMid();
+  const msg="Time's up — great session today! 🎉";
+  glAppend('ai',msg);
+  speak(msg,getLang(),.9,()=>setTimeout(()=>completeLesson(true),600)).catch(()=>setTimeout(()=>completeLesson(true),600));
 }
 
 function completeLesson(timedOut=false){
   if(glEndTimer){clearTimeout(glEndTimer);glEndTimer=null;}
   if(glCountdownTimer){clearInterval(glCountdownTimer);glCountdownTimer=null;}
-  // Save resume point so user can restart this lesson if it timed out
-  if(glNode?.id){
-    const resumeData={id:glNode.id,title:glNode.title,icon:glNode.icon,desc:glNode.desc,tag:glNode.tag,tab:glNode.tab,wordCat:glNode.wordCat,blockIdx:glNode.blockIdx,lessonTitle:glNode.lessonTitle};
-    localStorage.setItem(getLangKey('lf_resume'),JSON.stringify(resumeData));
-  }
-  if($('lcResumeBtn'))$('lcResumeBtn').style.display=timedOut&&glNode?.id?'block':'none';
+  glClearMid();
+  glLessonEnded=true;
   if(currentAudioEl){try{currentAudioEl.pause();currentAudioEl.src='';}catch(e){}currentAudioEl=null;}
   if(glHoldMR&&glHoldMR.state==='recording')glHoldMR.stop();
-  // Mark node done — vocab/grammar topics require passing Test Out to count as mastered;
-  // a finished chat alone isn't proof of retention. Convo topics still auto-complete.
-  let needsTestOut=false;
+  // All completed lessons (vocab, grammar, convo) auto-complete when roleplay is done
   if(glNode?.id){
     PATH_DATA.forEach(block=>allLessons(block).forEach(n=>{
       if(n.id===glNode.id||(n.lessonTitle&&n.lessonTitle===glNode.title)||(n.title===glNode.title)){
-        if(n.tag==='vocab'||n.tag==='grammar'){
-          needsTestOut=!completedNodes.includes(n.id);
-        }else if(!completedNodes.includes(n.id)){
-          completedNodes.push(n.id);
-        }
+        if(!completedNodes.includes(n.id))completedNodes.push(n.id);
       }
     }));
     localStorage.setItem(getLangKey('lf_nodes'),JSON.stringify(completedNodes));
     logActivity();
   }
-  $('lcTestNote').style.display=needsTestOut?'block':'none';
+  $('lcTestNote').style.display='none';
   closeModal('guidedLessonModal');
   // Build stats
   const exchanges=glHistory.filter(m=>m.role==='user').length;
