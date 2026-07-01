@@ -266,8 +266,7 @@ input[type=text]:focus{border-color:var(--acc)}
 <nav id="bnav">
   <button class="bn active" id="bn-home" onclick="switchTab('home',this)"><div class="bn-i">🏠</div><div class="bn-l">Home</div></button>
   <button class="bn" id="bn-today" onclick="switchTab('today',this)"><div class="bn-i">📅</div><div class="bn-l">Today</div></button>
-  <button class="bn" id="bn-talk" onclick="switchTab('talk',this)"><div class="bn-i">💬</div><div class="bn-l">Talk</div></button>
-  <button class="bn" id="bn-learn" onclick="switchTab('learn',this)"><div class="bn-i">📚</div><div class="bn-l">Learn</div></button>
+  <button class="bn" id="bn-talk" onclick="switchTab('talk',this)"><div class="bn-i">💬</div><div class="bn-l">Practice</div></button>
   <button class="bn" id="bn-drills" onclick="switchTab('drills',this)"><div class="bn-i">🔀</div><div class="bn-l">Drills</div></button>
   <button class="bn" id="bn-progress" onclick="switchTab('progress',this)"><div class="bn-i">📊</div><div class="bn-l">Progress</div></button>
 </nav>
@@ -302,57 +301,59 @@ input[type=text]:focus{border-color:var(--acc)}
   </div>
 </div>
 <div id="tab-talk" class="panel">
-  <div class="ptitle">Conversation Practice</div>
-  <div class="pills" id="topicPills">
-    <div class="pill active" onclick="setTopic(this,'World Cup 2026')">⚽ World Cup</div>
-    <div class="pill" onclick="setTopic(this,'Daily Routine')">🌅 Daily Life</div>
-    <div class="pill" onclick="setTopic(this,'Food &amp; Restaurants')">🍽️ Food</div>
-    <div class="pill" onclick="setTopic(this,'Travel &amp; Transport')">✈️ Travel</div>
-    <div class="pill" onclick="setTopic(this,'Work &amp; Career')">💼 Work</div>
-    <div class="pill" onclick="setTopic(this,'Weekend Plans')">📅 Weekend</div>
-    <div class="pill" onclick="setTopic(this,'Family &amp; Friends')">👨‍👩‍👧 Family</div>
-    <div class="pill" onclick="setTopic(this,'Technology &amp; AI')">💻 Tech</div>
-    <div class="pill" onclick="setTopic(this,'Health &amp; Fitness')">🏃 Health</div>
-    <div class="pill" onclick="setTopic(this,'Current Events')">📰 News</div>
+  <div class="ptitle">Free Practice</div>
+  <p style="font-size:.82rem;color:var(--mut);margin:-4px 0 14px">No structure, no grades. Just talk with Aria about anything you want.</p>
+
+  <!-- Topic input -->
+  <div style="display:flex;gap:8px;margin-bottom:12px">
+    <input id="practiceTopicInput" type="text" placeholder="What do you want to talk about today?" style="flex:1;padding:10px 14px;border:1.5px solid var(--bdr);border-radius:12px;font-size:.88rem;background:var(--sfc);color:var(--txt);outline:none" onkeydown="if(event.key==='Enter')practiceStart()"/>
+    <button class="btn btn-p" style="padding:10px 16px;font-size:.88rem;white-space:nowrap" onclick="practiceStart()">▶ Start</button>
   </div>
-  <div class="hint">💡 Yuki keeps it short and conversational — you do the talking. Corrections at the end.</div>
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
-    <span style="font-size:.73rem;color:var(--mut);font-weight:600">Model:</span>
-    <div class="model-toggle">
-      <button class="mbtn active" id="mb-deepseek" onclick="setModel('deepseek',this)">🔵 DeepSeek</button>
-      <button class="mbtn" id="mb-qwen" onclick="setModel('qwen',this)">🟣 Qwen</button>
-    </div>
+
+  <!-- Inspiration chips -->
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px" id="practiceChips">
+    <button class="pill" onclick="practiceChip(this,'World Cup 2026')">⚽ World Cup</button>
+    <button class="pill" onclick="practiceChip(this,'Daily Routine')">🌅 Daily Life</button>
+    <button class="pill" onclick="practiceChip(this,'Food &amp; Restaurants')">🍽️ Food</button>
+    <button class="pill" onclick="practiceChip(this,'Travel &amp; Transport')">✈️ Travel</button>
+    <button class="pill" onclick="practiceChip(this,'Work &amp; Career')">💼 Work</button>
+    <button class="pill" onclick="practiceChip(this,'Weekend Plans')">📅 Weekend</button>
+    <button class="pill" onclick="practiceChip(this,'Family &amp; Friends')">👨‍👩‍👧 Family</button>
+    <button class="pill" onclick="practiceChip(this,'Technology &amp; AI')">💻 Tech</button>
+    <button class="pill" onclick="practiceChip(this,'Health &amp; Fitness')">🏃 Health</button>
+    <button class="pill" onclick="practiceChip(this,'Current Events')">📰 News</button>
+    <button class="pill" onclick="practiceChip(this,'Movies &amp; TV Shows')">🎬 Movies</button>
+    <button class="pill" onclick="practiceChip(this,'Music &amp; Artists')">🎵 Music</button>
+    <button class="pill" onclick="practiceChip(this,'Sports &amp; Fitness')">⚽ Sports</button>
+    <button class="pill" onclick="practiceChip(this,'Money &amp; Finance')">💰 Money</button>
+    <button class="pill" onclick="practiceChip(this,'Relationships &amp; Dating')">❤️ Relationships</button>
+    <button class="pill" onclick="practiceChip(this,'Politics &amp; Society')">🏛️ Politics</button>
   </div>
-  <div class="convo-layout">
-    <div class="av-panel" id="avPanel">
-      <img id="avAriaImg" src="assets/aria-idle.jpeg" alt="Aria" class="av-aria-img">
-      <div class="av-state" id="avState">Waiting…</div>
-    </div>
-    <div class="chat-side">
-      <div class="chat-box" id="chatBox"><div style="color:var(--mut);font-size:.78rem;text-align:center;margin:auto">Pick a topic, then tap ▶ Start</div></div>
-      <div class="vbar">
-        <div class="sdot" id="sDot"></div><span class="slabel" id="sLabel">Ready</span>
-        <button class="btn btn-p" id="startBtn" onclick="startConvo()">▶ Start</button>
-        <button class="btn btn-d" id="listenBtn" style="display:none;user-select:none" onclick="toggleListen()">🎙 Tap to Speak</button>
-        <button class="btn btn-g" id="inspireBtn" onclick="getInspiration()" style="display:none">💡 Inspire</button>
-        <button class="btn btn-a" id="reviewBtn" onclick="endSession()" style="display:none">📋 Review</button>
-        <button class="btn btn-g" id="stopBtn" onclick="stopConvo()" style="display:none">■ Stop</button>
+
+  <!-- Conversation area — hidden until started -->
+  <div id="practiceConvoArea" style="display:none">
+    <div class="convo-layout">
+      <div class="av-panel" id="avPanel">
+        <img id="avAriaImg" src="assets/aria-idle.jpeg" alt="Aria" class="av-aria-img">
+        <div class="av-state" id="avState">Waiting…</div>
       </div>
-      <div id="inspireBox" style="display:none;margin-top:8px;display:none"></div>
-      <div class="sumbox" id="sumBox"><h4>📋 Session Review</h4><p id="sumText"></p></div>
+      <div class="chat-side">
+        <div class="chat-box" id="chatBox"></div>
+        <div class="vbar">
+          <div class="sdot" id="sDot"></div><span class="slabel" id="sLabel">Ready</span>
+          <button class="btn btn-d" id="listenBtn" style="display:none;user-select:none" onclick="toggleListen()">🎙 Tap to Speak</button>
+          <button class="btn btn-g" id="inspireBtn" onclick="getInspiration()" style="display:none">💡 Inspire</button>
+          <button class="btn btn-a" id="reviewBtn" onclick="endSession()" style="display:none">📋 Review</button>
+          <button class="btn btn-g" id="stopBtn" onclick="stopConvo()" style="display:none">■ Stop</button>
+        </div>
+        <div id="inspireBox" style="display:none;margin-top:8px"></div>
+        <div class="sumbox" id="sumBox"><h4>📋 Session Review</h4><p id="sumText"></p></div>
+      </div>
     </div>
   </div>
-</div>
-<div id="tab-learn" class="panel">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div class="ptitle" style="margin:0">Topic Lessons</div><button class="btn btn-g" style="font-size:.74rem" onclick="refreshLessonTopics()">🔄 Fresh Topics</button></div>
-  <div style="display:flex;gap:6px;margin-bottom:12px">
-    <input id="customTopicInput" type="text" placeholder="Or type your own topic…" style="flex:1;padding:8px 12px;border:1px solid var(--bdr);border-radius:10px;font-size:.84rem;background:var(--sfc);color:var(--txt);outline:none"/>
-    <button class="btn btn-p" style="white-space:nowrap;font-size:.8rem" onclick="startCustomTopic()">▶ Go</button>
-  </div>
-  <div class="lgrid" id="lessonCardGrid"><div style="color:var(--mut);font-size:.82rem;grid-column:1/-1">Loading topics…</div></div>
-  <div class="lcontent" id="lessonContent"><span style="color:var(--mut)">Tap a topic card to start an AI lesson.</span></div>
-  <div class="spacer"></div>
-  <div class="row"><button class="btn btn-p" onclick="loadLesson()">📖 Study Notes</button><button class="btn btn-g" onclick="speakLesson()">🔊 Read Aloud</button></div>
+
+  <!-- Hidden legacy ids still used by startConvo internals -->
+  <span id="startBtn" style="display:none"></span>
 </div>
 <div id="tab-drills" class="panel">
   <div class="ptitle">Drills</div>
@@ -1112,7 +1113,7 @@ function setDrillTab(t){
   $('dtab-words').className=t==='words'?'btn btn-p':'btn btn-g';
 }
 
-function goFreeTalk(){switchTab('talk',$('bn-talk'));setTimeout(startConvo,150);}
+function goFreeTalk(){switchTab('talk',$('bn-talk'));}
 
 // ════════════════════════════════
 // STREAK + ACTIVITY
@@ -1636,10 +1637,22 @@ function startBlink(){}
 // ════════════════════════════════
 // CONVERSATION
 // ════════════════════════════════
-function setTopic(el,t){
-  document.querySelectorAll('#topicPills .pill').forEach(p=>p.classList.remove('active'));
-  el&&el.classList.add('active');convoTopic=t;
-  if(convoActive)stopConvo();
+function setTopic(el,t){convoTopic=t;}
+
+function practiceChip(el,topic){
+  document.querySelectorAll('#practiceChips .pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  $('practiceTopicInput').value=topic;
+  $('practiceTopicInput').focus();
+}
+
+function practiceStart(){
+  const val=$('practiceTopicInput').value.trim();
+  if(val)convoTopic=val;
+  if(!convoTopic)convoTopic='Daily Routine';
+  $('practiceConvoArea').style.display='block';
+  $('practiceConvoArea').scrollIntoView({behavior:'smooth',block:'nearest'});
+  startConvo(convoTopic);
 }
 
 function setModel(m,el){
@@ -1686,7 +1699,6 @@ async function startConvo(topicOverride,sysOverride){
   const lang=getLang(),cefr=getCEFR();
   convoActive=true;chatHistory=[];userResponses=[];logSession();
   $('chatBox').innerHTML='';
-  $('startBtn').style.display='none';
   $('listenBtn').style.display='inline-block';
   $('inspireBtn').style.display='inline-block';
   $('inspireBox').style.display='none';$('inspireBox').innerHTML='';
@@ -1731,12 +1743,14 @@ function stopConvo(){
   convoActive=false;synth.cancel();
   if(currentAudioEl){try{currentAudioEl.pause();currentAudioEl.src='';}catch(e){}currentAudioEl=null;}
   if(recognition)recognition.abort();
-  $('startBtn').style.display='inline-block';
   $('listenBtn').style.display='none';
   $('inspireBtn').style.display='none';
   $('inspireBox').style.display='none';$('inspireBox').innerHTML='';
   $('reviewBtn').style.display='none';
   $('stopBtn').style.display='none';
+  if($('practiceConvoArea'))$('practiceConvoArea').style.display='none';
+  if($('practiceTopicInput'))$('practiceTopicInput').value='';
+  document.querySelectorAll('#practiceChips .pill').forEach(p=>p.classList.remove('active'));
   setStatus('ready');
 }
 
@@ -2613,7 +2627,7 @@ function loadWords(cat,el){
 }
 
 // ════════════════════════════════
-// LESSONS
+// LESSONS (legacy defaults kept for startWordLesson)
 // ════════════════════════════════
 const DEFAULT_LESSONS=[
   {em:'🌅',title:'Morning Routine',desc:'Daily life vocabulary'},
@@ -2629,49 +2643,6 @@ const DEFAULT_LESSONS=[
   {em:'🎉',title:'Celebrations & Holidays',desc:'Festivals, greetings'},
   {em:'🧭',title:'Asking for Directions',desc:'Streets, landmarks'},
 ];
-function renderLessonCards(topics){
-  const grid=$('lessonCardGrid');
-  grid.innerHTML=topics.map((t,i)=>{
-    const tj=JSON.stringify(t.title),dj=JSON.stringify(t.desc),ej=JSON.stringify(t.em||'📚');
-    return `<div class="lcard" onclick="selLesson(this,${tj},${dj});startGuidedLesson({icon:${ej},title:${tj},desc:${dj},tab:'lessons',id:'topic-${i}'})"><div class="em">${t.em}</div><div class="lt">${t.title}</div><div class="ld">${t.desc}</div></div>`;
-  }).join('');
-  if(topics[0])currentLesson={title:topics[0].title,desc:topics[0].desc};
-}
-function startCustomTopic(){
-  const val=$('customTopicInput').value.trim();
-  if(!val)return;
-  startGuidedLesson({icon:'✏️',title:val,desc:'Custom topic',tab:'lessons',id:'custom-'+Date.now()});
-  $('customTopicInput').value='';
-}
-async function refreshLessonTopics(){
-  const lang=getLang(),cefr=getCEFR(),btn=event.target;
-  btn.disabled=true;btn.textContent='🔄 Loading…';
-  try{
-    const raw=await callDeepSeek(`You are a ${lang} language teacher.`,
-      `Give 6 engaging ${lang} lesson topics for a ${cefr} student right now in ${new Date().toLocaleDateString('en',{month:'long',year:'numeric'})}. Mix practical and cultural topics. Include current events where relevant. Return ONLY a JSON array like: [{"em":"emoji","title":"Topic Name","desc":"one short phrase"}]. No markdown.`);
-    const clean=raw.replace(/```json|```/g,'').trim();
-    const topics=JSON.parse(clean.substring(clean.indexOf('['),clean.lastIndexOf(']')+1));
-    renderLessonCards(topics);
-  }catch(e){renderLessonCards(DEFAULT_LESSONS);}
-  btn.disabled=false;btn.textContent='🔄 Fresh Topics';
-}
-function selLesson(el,title,desc){
-  document.querySelectorAll('.lcard').forEach(c=>c.classList.remove('sel'));
-  if(el)el.classList.add('sel');currentLesson={title,desc};
-}
-
-async function loadLesson(){
-  const lang=getLang(),cefr=getCEFR();
-  $('lessonContent').innerHTML=dots()+' Building lesson…';
-  const ptNote=lang==='Portuguese'?` Use ${ptVar==='BR'?'Brazilian':'European'} Portuguese.`:'';
-  const sys=`You are a ${lang} language teacher. Format output as HTML using only h3,p,ul,li,strong,em. No markdown.${ptNote}`;
-  const prompt=`Create a tight ${cefr}-level ${lang} lesson on: "${currentLesson.title}".
-Use: <h3>Key Vocabulary</h3> (5 words+English), <h3>Example Sentences</h3> (3 sentences), <h3>Mini Dialogue</h3> (4-6 lines A/B+translations), <h3>Your Turn</h3> (practice prompt). Accurate ${lang}, no filler.`;
-  const html=await callDeepSeek(sys,prompt);
-  $('lessonContent').innerHTML=sanitizeHTML(html);lessonTxt=$('lessonContent').innerText;
-}
-
-function speakLesson(){if(!lessonTxt){alert('Load a lesson first.');return;}speak(lessonTxt.substring(0,600),getLang(),.88);}
 
 // ════════════════════════════════
 // DAILY CONTENT
