@@ -1346,12 +1346,24 @@ function setModel(m,el){
   el.classList.add('active');
 }
 
+function toggleMsgPlay(btn,idx){
+  if(btn.dataset.playing==='1'){
+    if(currentAudioEl){try{currentAudioEl.pause();currentAudioEl.src='';}catch(e){}currentAudioEl=null;}
+    synth.cancel();btn.textContent='🔊';btn.dataset.playing='';return;
+  }
+  if(currentAudioEl){try{currentAudioEl.pause();currentAudioEl.src='';}catch(e){}currentAudioEl=null;}
+  synth.cancel();
+  document.querySelectorAll('[data-playing="1"]').forEach(b=>{b.textContent=b.textContent.includes('⏸')?'▶':'🔊';b.dataset.playing='';});
+  btn.textContent='⏸';btn.dataset.playing='1';
+  speak(msgStore[idx],getLang(),.9,()=>{btn.textContent='🔊';btn.dataset.playing='';});
+}
+
 function appendMsg(role,text,tr){
   const box=$('chatBox'),d=document.createElement('div');d.className='msg '+role;
   const safe=text.replace(/</g,'&lt;'),safeTr=tr?tr.replace(/</g,'&lt;'):'';
   const ml=role==='ai'?`<span style="font-size:.62rem;color:var(--mut);margin-left:5px">${{deepseek:'DeepSeek',qwen:'Qwen'}[convoModel]||'AI'}</span>`:'';
   const msgIdx=msgStore.push(text)-1;
-  const aiBtns=role==='ai'?`<div style="display:flex;gap:4px;margin-top:5px"><button class="sbtn" onclick="speak(msgStore[${msgIdx}],'${getLang()}')">🔊</button><button class="sbtn" onclick="translateMsg(this,msgStore[${msgIdx}])">🌐 Translate</button></div>`:'';
+  const aiBtns=role==='ai'?`<div style="display:flex;gap:4px;margin-top:5px"><button class="sbtn" data-playing="" onclick="toggleMsgPlay(this,${msgIdx})">🔊</button><button class="sbtn" onclick="translateMsg(this,msgStore[${msgIdx}])">🌐 Translate</button></div>`:'';
   d.innerHTML=`<div class="spk">${role==='ai'?'🤖 Yuki':'🎙 You'}${ml}</div>${safe}`+(safeTr?`<div class="tr">${safeTr}</div>`:'')+aiBtns;
   box.appendChild(d);box.scrollTop=box.scrollHeight;
 }
@@ -1361,7 +1373,7 @@ function appendStreamMsg(role,text,tr){
   const safeTr=tr?tr.replace(/</g,'&lt;'):'';
   const ml=role==='ai'?`<span style="font-size:.62rem;color:var(--mut);margin-left:5px">${{deepseek:'DeepSeek',qwen:'Qwen'}[convoModel]||'AI'}</span>`:'';
   const msgIdx=msgStore.push(text)-1;
-  const aiBtns=role==='ai'?`<div style="display:flex;gap:4px;margin-top:5px"><button class="sbtn" onclick="speak(msgStore[${msgIdx}],'${getLang()}')">🔊</button><button class="sbtn" onclick="translateMsg(this,msgStore[${msgIdx}])">🌐 Translate</button></div>`:'';
+  const aiBtns=role==='ai'?`<div style="display:flex;gap:4px;margin-top:5px"><button class="sbtn" data-playing="" onclick="toggleMsgPlay(this,${msgIdx})">🔊</button><button class="sbtn" onclick="translateMsg(this,msgStore[${msgIdx}])">🌐 Translate</button></div>`:'';
   d.innerHTML=`<div class="spk">${role==='ai'?'🤖 Yuki':'🎙 You'}${ml}</div><span class="word-stream"></span>`+
     (safeTr?`<div class="tr">${safeTr}</div>`:'')+aiBtns;
   box.appendChild(d);box.scrollTop=box.scrollHeight;
@@ -1731,7 +1743,7 @@ LESSON HAS THREE PHASES — flow through them naturally without announcing trans
 PHASE 1 — CONJUGATION WARM-UP (roughly the first ${Math.max(1,Math.round(vc*1.5))} exchanges):
 1. Greet briefly, introduce the topic in one sentence.
 2. ${verbIntro}
-3. For each verb, drill its most important conjugation forms ONE at a time as a question. E.g. "How do you say 'I speak'?" Wait for the student's answer. Correct warmly if needed.
+3. Before drilling, briefly show the student the key conjugation forms they'll practice — e.g. "For être: je suis, tu es, il/elle est." Then ask them ONE conjugation question at a time. E.g. "How do you say 'I am'?" Wait for their answer. Correct warmly if needed.
 4. Once the student has responded to all ${vc} verb${vc>1?'s':''} (even imperfectly), transition naturally into Phase 2 — do NOT announce the transition, just start teaching the topic.
 
 PHASE 2 — TOPIC LESSON:
@@ -1755,13 +1767,44 @@ ${getLangGuidance(lang)}`;
   glAppend('ai',opening);
   setAvatarState('speaking');
   speak(opening.substring(0,400),lang,.9,()=>setAvatarState('idle'));
-  // Extract verbs from opening and show as pills
+  // Extract verbs from opening and show as clickable pills
   const verbMatch=opening.match(/verbs? today[:\s]+([^.!\n]+)/i);
   if(verbMatch){
     const pills=verbMatch[1].split(/[,;]/).slice(0,3).map(v=>stripMd(v).trim().split('(')[0].trim()).filter(Boolean);
     glVerbs=pills;
-    $('glVerbPills').innerHTML=pills.map(v=>`<div style="background:rgba(255,255,255,0.2);color:#fff;font-size:.68rem;font-weight:600;padding:3px 9px;border-radius:12px;border:1px solid rgba(255,255,255,0.35)">${escHTML(v)}</div>`).join('');
+    $('glVerbPills').innerHTML='';
+    pills.forEach(v=>{
+      const pill=document.createElement('div');
+      pill.style.cssText='background:rgba(255,255,255,0.2);color:#fff;font-size:.68rem;font-weight:600;padding:3px 9px;border-radius:12px;border:1px solid rgba(255,255,255,0.35);cursor:pointer;user-select:none';
+      pill.title='Tap to see conjugation table';
+      pill.textContent=v;
+      pill.onclick=()=>showConjugationTable(v);
+      $('glVerbPills').appendChild(pill);
+    });
   }
+}
+
+async function showConjugationTable(verb){
+  const existing=$('conjPop');if(existing){existing.remove();if(existing.dataset.verb===verb)return;}
+  const lang=getLang();
+  const pop=document.createElement('div');
+  pop.id='conjPop';pop.dataset.verb=verb;
+  pop.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--s1);border:1px solid var(--bdr);border-radius:14px;padding:14px 16px;z-index:9999;width:min(340px,94vw);box-shadow:0 8px 28px rgba(0,0,0,.4);max-height:60vh;overflow-y:auto';
+  pop.innerHTML=`<div style="font-weight:700;font-size:.88rem;margin-bottom:8px">📋 ${escHTML(verb)}</div><div style="font-size:.78rem;color:var(--mut)">Loading…</div>`;
+  document.body.appendChild(pop);
+  setTimeout(()=>document.addEventListener('click',function h(e){if(!pop.contains(e.target)){pop.remove();document.removeEventListener('click',h);}},true),150);
+  try{
+    const table=await callDeepSeek(
+      `You are a ${lang} grammar reference. Respond ONLY with a plain-text conjugation table — no markdown, no extra explanation.`,
+      `Give the conjugation table for the ${lang} verb "${verb}". Include: Present tense (all 6 persons), Simple past, and Future. Format as labeled rows like:\nPRESENT\nI — ...\nYou — ...\netc.\n\nPAST\n...\n\nFUTURE\n...\n\nKeep it compact.`
+    );
+    pop.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div style="font-weight:700;font-size:.88rem">📋 ${escHTML(verb)}</div>
+      <button onclick="document.getElementById('conjPop')?.remove()" style="background:none;border:none;font-size:1rem;cursor:pointer;color:var(--mut)">✕</button>
+    </div>
+    <pre style="font-size:.74rem;line-height:1.65;white-space:pre-wrap;font-family:'Space Grotesk',sans-serif;margin:0;color:var(--txt)">${escHTML(table)}</pre>
+    <button onclick="speak('${verb}','${lang}')" style="margin-top:10px;background:none;border:1px solid var(--bdr);border-radius:8px;padding:5px 12px;font-size:.76rem;cursor:pointer;color:var(--acc)">🔊 Hear pronunciation</button>`;
+  }catch(e){pop.innerHTML=`<div style="font-size:.8rem;color:var(--mut)">Couldn't load conjugation. Try again.</div>`;}
 }
 
 function glAppend(role,text){
@@ -1787,7 +1830,18 @@ function glAppend(role,text){
   tr.onclick=()=>translateMsg(tr,msgStore[tIdx]);
   const spk=document.createElement('button');
   spk.style.cssText=tr.style.cssText;spk.textContent='▶';
-  spk.onclick=()=>speak(msgStore[tIdx],getLang());
+  spk.onclick=()=>{
+    if(spk.dataset.playing==='1'){
+      if(currentAudioEl){try{currentAudioEl.pause();currentAudioEl.src='';}catch(e){}currentAudioEl=null;}
+      synth.cancel();spk.textContent='▶';spk.dataset.playing='';return;
+    }
+    if(currentAudioEl){try{currentAudioEl.pause();currentAudioEl.src='';}catch(e){}currentAudioEl=null;}
+    synth.cancel();
+    // reset any other play buttons
+    document.querySelectorAll('[data-playing="1"]').forEach(b=>{b.textContent='▶';b.dataset.playing='';});
+    spk.textContent='⏸';spk.dataset.playing='1';
+    speak(msgStore[tIdx],getLang(),.9,()=>{spk.textContent='▶';spk.dataset.playing='';});
+  };
   btns.appendChild(tr);btns.appendChild(spk);d.appendChild(btns);
   box.appendChild(d);box.scrollTop=box.scrollHeight;
   // Phase 1→2 after warm-up exchanges (roughly 2 per verb), Phase 2→3 at 80%
@@ -1821,7 +1875,7 @@ async function glSend(){
   dot.textContent='…';$('glChat').appendChild(dot);$('glChat').scrollTop=$('glChat').scrollHeight;
   const sys=`You are Aria, a warm ${lang} tutor. Lesson: "${glNode?.title}". Verbs/key words being practiced: ${glVerbs.join(', ')||'relevant verbs'}.
 If the student made a clear grammar error, give the correct form briefly (1 sentence) then move forward immediately. Be generous — if you understand what they meant, move on without correcting. Never correct pronunciation or accent unless it would cause a completely different word. End with exactly one prompt for the student. ${getLessonImmersionPrompt(lang)}
-${getLangGuidance(lang)}${winding?'\n\nTIMER: You have been teaching for 8+ minutes. Warmly wrap up this lesson — summarize the key verbs practiced, praise the student, and say you\'ll pick up next time. End with: "Great work today! 🎉 Tap Complete Lesson when you\'re ready."':''}`;
+${getLangGuidance(lang)}${winding?'\n\nTIMER: You have been teaching for 8+ minutes. Warmly wrap up this lesson — summarize the key verbs practiced, praise the student, and say you\'ll pick up next time. End with: "Great work today! 🎉 Tap Done (top right) when you\'re ready."':''}`;
   const reply=await callDeepSeek(sys,txt,glHistory.slice(-8));
   dot.remove();
   glHistory.push({role:'assistant',content:reply});
@@ -1910,7 +1964,7 @@ function closeGuidedLesson(){
 // Hard cutoff — fires GL_MAX_MS after lesson start regardless of activity
 function forceEndLesson(){
   if(!$('guidedLessonModal').classList.contains('open'))return;
-  glAppend('ai',"Time's up for today — great session! 🎉 Tap Complete Lesson to save your progress.");
+  glAppend('ai',"Time's up for today — great session! 🎉 Tap Done (top right) to save your progress.");
   completeLesson(true);
 }
 
