@@ -417,7 +417,7 @@ input[type=text]:focus{border-color:var(--acc)}
 </div>
 <div class="mactions"><button class="btn btn-p" onclick="launchNode()">▶ Start</button><button class="btn btn-g" id="nMarkBtn" onclick="markNodeDone()">✓ Mark Done</button><button class="btn btn-a" onclick="openNodeTest()">⚡ Test Out</button><button class="btn btn-g" onclick="closeModal('nodeModal')">Close</button></div></div></div>
 <div class="overlay" id="objModal"><div class="mbox"><button class="mclose" onclick="closeModal('objModal')">✕</button><div style="font-size:1.5rem;margin-bottom:6px" id="oIcon"></div><h3 id="oTitle"></h3><p id="oDesc"></p><div id="oProg" style="font-size:.76rem;color:var(--mut);margin:4px 0 10px"></div><div id="oLessonList" style="display:flex;flex-direction:column;gap:6px;text-align:left"></div><div class="mactions"><button class="btn btn-g" onclick="closeModal('objModal')">Close</button></div></div></div>
-<div class="overlay" id="settingsModal"><div class="mbox" style="max-width:500px"><button class="mclose" onclick="closeModal('settingsModal')">✕</button><h3>⚙️ Settings &amp; API Keys</h3><p>Keys saved to your device only — never in the code, never on GitHub.</p><div id="keyBlocks"></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">🔊 Voice engine</label><select id="ttsEngineSel"><option value="openai">OpenAI TTS (tts-1-hd) — cheap, good Spanish</option><option value="elevenlabs">ElevenLabs — most natural, higher cost</option><option value="azure">Azure TTS — neural, many languages</option><option value="browser">Browser built-in — free, robotic</option></select></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">Voice style (ElevenLabs only)</label><select id="voiceStyleSel"><option value="natural">Natural &amp; warm</option><option value="clear">Clear &amp; precise</option><option value="slow">Slow &amp; deliberate</option></select></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">ElevenLabs Voice ID <span style="color:var(--acc);font-size:.7rem">(optional — overrides default voices)</span></label><input type="text" id="ki-el_voice_id" placeholder="e.g. pNInz6obpgDQGcFmaJgB" autocomplete="off" style="font-family:monospace;font-size:.8rem"><div class="mnote">Find your Voice ID at <a href="https://elevenlabs.io/voice-lab" target="_blank">elevenlabs.io/voice-lab</a> → click a voice → copy ID</div></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">Azure Region <span style="color:var(--acc);font-size:.7rem">(required for Azure TTS)</span></label><input type="text" id="ki-azure_region" placeholder="e.g. eastus" autocomplete="off" style="font-family:monospace;font-size:.8rem"><div class="mnote">Found on your Azure Speech resource page, e.g. <code>eastus</code>, <code>westeurope</code></div></div><div class="mactions"><button class="btn btn-p" onclick="saveKeys()">💾 Save</button><button class="btn btn-g" onclick="testKeys()">🧪 Test Keys</button><button class="btn btn-g" onclick="closeModal('settingsModal')">Cancel</button></div><div id="keyTestOut" style="margin-top:10px"></div></div></div>
+<div class="overlay" id="settingsModal"><div class="mbox" style="max-width:500px"><button class="mclose" onclick="closeModal('settingsModal')">✕</button><h3>⚙️ Settings &amp; API Keys</h3><p>Keys saved to your device only — never in the code, never on GitHub.</p><div id="keyBlocks"></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">🔊 Voice engine</label><select id="ttsEngineSel"><option value="openai">OpenAI TTS (tts-1-hd) — cheap, good Spanish</option><option value="elevenlabs">ElevenLabs — most natural, higher cost</option><option value="azure">Azure TTS — neural, many languages</option><option value="browser">Browser built-in — free, robotic</option></select></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">Voice style (ElevenLabs only)</label><select id="voiceStyleSel"><option value="natural">Natural &amp; warm</option><option value="clear">Clear &amp; precise</option><option value="slow">Slow &amp; deliberate</option></select></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">ElevenLabs Voice ID <span style="color:var(--acc);font-size:.7rem">(optional — overrides default voices)</span></label><input type="text" id="ki-el_voice_id" placeholder="e.g. pNInz6obpgDQGcFmaJgB" autocomplete="off" style="font-family:monospace;font-size:.8rem"><div class="mnote">Find your Voice ID at <a href="https://elevenlabs.io/voice-lab" target="_blank">elevenlabs.io/voice-lab</a> → click a voice → copy ID</div></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">Azure Region <span style="color:var(--acc);font-size:.7rem">(required for Azure TTS)</span></label><input type="text" id="ki-azure_region" placeholder="e.g. eastus" autocomplete="off" style="font-family:monospace;font-size:.8rem"><div class="mnote">Found on your Azure Speech resource page, e.g. <code>eastus</code>, <code>westeurope</code></div></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">🇪🇸 Spanish dialect</label><select id="spVarSel" onchange="spVar=this.value"><option value="MX">Latin American (Mexico / Colombia / US standard)</option><option value="ES">Castilian (Spain — includes vosotros &amp; th-sound)</option></select></div><div style="margin-top:10px"><label style="font-size:.78rem;color:var(--mut);display:block;margin-bottom:4px">🇧🇷 Portuguese dialect</label><select id="ptVarSel" onchange="ptVar=this.value"><option value="BR">Brazilian Portuguese</option><option value="PT">European Portuguese</option></select></div><div class="mactions"><button class="btn btn-p" onclick="saveKeys()">💾 Save</button><button class="btn btn-g" onclick="testKeys()">🧪 Test Keys</button><button class="btn btn-g" onclick="closeModal('settingsModal')">Cancel</button></div><div id="keyTestOut" style="margin-top:10px"></div></div></div>
 <div class="overlay" id="stModal"><div class="mbox"><button class="mclose" onclick="closeModal('stModal')">✕</button><h3>🧪 System Diagnostics</h3><div id="stOut" style="margin:12px 0"></div><button class="btn btn-g" onclick="closeModal('stModal')">Close</button></div></div>
 <div class="overlay" id="guidedLessonModal" style="padding:0;align-items:stretch;justify-content:stretch">
 <div style="width:100%;height:100%;max-width:600px;margin:0 auto;display:flex;flex-direction:column;background:#fff;position:relative">
@@ -697,7 +697,13 @@ const PATH_DATA = [
 
 const LANG_META={Spanish:{flag:'🇪🇸',code:'ES'},French:{flag:'🇫🇷',code:'FR'},Italian:{flag:'🇮🇹',code:'IT'},Russian:{flag:'🇷🇺',code:'RU'},German:{flag:'🇩🇪',code:'DE'},Portuguese:{flag:'🇧🇷',code:'PT'},English:{flag:'🇬🇧',code:'EN'},Japanese:{flag:'🇯🇵',code:'JA'},Korean:{flag:'🇰🇷',code:'KO'},Chinese:{flag:'🇨🇳',code:'ZH'}};
 const LANG_INFO={Spanish:{country:'Spain and Latin America',news:'Spanish-speaking world'},French:{country:'France',news:'France'},Russian:{country:'Russia',news:'Russia'},German:{country:'Germany',news:'Germany'},Portuguese:{country:'Brazil or Portugal',news:'Brazil'}};
-const LANG_CODES={Spanish:'es-ES',French:'fr-FR',Italian:'it-IT',Russian:'ru-RU',German:'de-DE',Portuguese:'pt-BR',English:'en-US',Japanese:'ja-JP',Korean:'ko-KR',Chinese:'zh-CN'};
+const LANG_CODES={Spanish:'es-MX',French:'fr-FR',Italian:'it-IT',Russian:'ru-RU',German:'de-DE',Portuguese:'pt-BR',English:'en-US',Japanese:'ja-JP',Korean:'ko-KR',Chinese:'zh-CN'};
+// Returns dialect-aware lang code for STT and browser TTS
+const getLangCode=lang=>{
+  if(lang==='Spanish')return spVar==='ES'?'es-ES':'es-MX';
+  if(lang==='Portuguese')return ptVar==='PT'?'pt-PT':'pt-BR';
+  return LANG_CODES[lang]||'en-US';
+};
 // Azure SSML lang tag must match the voice's locale
 const AZURE_LANG_CODES={...LANG_CODES}; // same except Portuguese already pt-BR
 // ElevenLabs voices — all use eleven_multilingual_v2 for native-accent output
@@ -761,7 +767,8 @@ KEYS.el_voice_id=localStorage.getItem('lf_el_voice_id')||'';
 KEYS.azure_region=localStorage.getItem('lf_azure_region')||'';
 let voiceStyle=localStorage.getItem('lf_voice_style')||'natural';
 let ttsEngine=localStorage.getItem('lf_tts_engine')||'openai';
-let ptVar='BR';
+let ptVar=localStorage.getItem('lf_pt_var')||'BR';
+let spVar=localStorage.getItem('lf_sp_var')||'MX';
 let convoActive=false,convoTopic='World Cup 2026',convoSys='';
 let chatHistory=[],userResponses=[];
 let convoModel='deepseek';
@@ -844,7 +851,6 @@ async function aiSuggestImmersion(){
   }catch(e){}
   btn.disabled=false;btn.textContent='🤖 Ask AI';
 }
-const getLangCode=lang=>LANG_CODES[lang]||'en-US';
 const $=id=>document.getElementById(id);
 const getLangKey=k=>`${k}_${getLang()}`;
 let completedNodes=JSON.parse(localStorage.getItem(getLangKey('lf_nodes'))||'[]');
@@ -964,6 +970,8 @@ function openSettings(){
   $('ttsEngineSel').value=ttsEngine;
   const vid=$('ki-el_voice_id');if(vid)vid.value=KEYS.el_voice_id||'';
   const azr=$('ki-azure_region');if(azr)azr.value=KEYS.azure_region||'';
+  if($('spVarSel'))$('spVarSel').value=spVar;
+  if($('ptVarSel'))$('ptVarSel').value=ptVar;
   openModal('settingsModal');
 }
 
@@ -974,6 +982,8 @@ function saveKeys(){
   });
   voiceStyle=$('voiceStyleSel').value;localStorage.setItem('lf_voice_style',voiceStyle);
   ttsEngine=$('ttsEngineSel').value;localStorage.setItem('lf_tts_engine',ttsEngine);
+  spVar=$('spVarSel')?.value||spVar;localStorage.setItem('lf_sp_var',spVar);
+  ptVar=$('ptVarSel')?.value||ptVar;localStorage.setItem('lf_pt_var',ptVar);
   const elv=$('ki-el_voice_id')?.value?.trim();
   if(elv){KEYS.el_voice_id=elv;localStorage.setItem('lf_el_voice_id',elv);}
   else{KEYS.el_voice_id='';localStorage.removeItem('lf_el_voice_id');}
@@ -1157,17 +1167,21 @@ async function speakOpenAI(text,lang,onEnd,streamEl){
   }catch(e){console.error('OpenAI TTS failed:',e);const t=document.createElement('div');t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#c0392b;color:#fff;padding:8px 16px;border-radius:8px;font-size:.8rem;z-index:9999';t.textContent='⚠️ TTS error: '+e.message;document.body.appendChild(t);setTimeout(()=>t.remove(),4000);if(KEYS.elevenlabs)await speakEL(text,lang,onEnd,streamEl);else{speakBrowser(text,lang,.9,onEnd);if(streamEl)streamEl.textContent=text;}}
 }
 
+// Azure Neural TTS — all verified high-quality neural voices
+// Spanish has two variants (like Portuguese BR/EP), selected via spVar
 const AZURE_TTS_VOICES={
-  Spanish:'es-ES-ElviraNeural',      // Castilian Spanish — warm, clear
-  French:'fr-FR-DeniseNeural',       // French — natural Parisian
-  Italian:'it-IT-ElsaNeural',        // Italian — expressive
-  Russian:'ru-RU-SvetlanaNeural',    // Russian — clear
+  Spanish:'es-MX-DaliaNeural',       // Latin American Spanish (default — most learners)
+  'Spanish-ES':'es-ES-ElviraNeural', // Castilian Spanish (Spain)
+  French:'fr-FR-DeniseNeural',       // Parisian French — natural, expressive
+  Italian:'it-IT-IsabellaNeural',    // Italian — expressive, modern
+  Russian:'ru-RU-SvetlanaNeural',    // Russian — clear, standard
   German:'de-DE-KatjaNeural',        // German — standard Hochdeutsch
-  Portuguese:'pt-BR-FranciscaNeural',// Brazilian Portuguese (most learners)
-  Japanese:'ja-JP-NanamiNeural',     // Japanese — natural, polite
-  Korean:'ko-KR-SunHiNeural',        // Korean — clear Standard Seoul
-  Chinese:'zh-CN-XiaoxiaoNeural',    // Mandarin — expressive, modern
-  English:'en-US-JennyNeural',       // English — neutral American
+  Portuguese:'pt-BR-FranciscaNeural',// Brazilian Portuguese (default)
+  'Portuguese-PT':'pt-PT-RaquelNeural',// European Portuguese
+  Japanese:'ja-JP-NanamiNeural',     // Japanese — natural, polite register
+  Korean:'ko-KR-SunHiNeural',        // Korean — clear Seoul Standard
+  Chinese:'zh-CN-XiaoxiaoNeural',    // Mandarin — Azure's best, very expressive
+  English:'en-US-JennyNeural',       // American English — neutral, warm
 };
 
 function escSSML(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
@@ -1177,13 +1191,15 @@ async function speakAzure(text,lang,onEnd,streamEl){
   setStatus('speaking');
   try{
     if(!KEYS.azure_region)throw new Error('No Azure region set — add it in Settings');
-    const voice=AZURE_TTS_VOICES[lang]||AZURE_TTS_VOICES.Spanish;
-    // Use the voice's own locale (first two segments of voice name) to avoid SSML mismatch
+    // Resolve dialect variant for Spanish and Portuguese
+    const voiceKey=lang==='Spanish'?(spVar==='ES'?'Spanish-ES':'Spanish'):lang==='Portuguese'?(ptVar==='PT'?'Portuguese-PT':'Portuguese'):lang;
+    const voice=AZURE_TTS_VOICES[voiceKey]||AZURE_TTS_VOICES.Spanish;
+    // Extract locale from voice name (e.g. es-MX from es-MX-DaliaNeural)
     const voiceLang=voice.split('-').slice(0,2).join('-');
-    const ssml=`<speak version="1.0" xml:lang="${voiceLang}"><voice name="${voice}">${escSSML(text)}</voice></speak>`;
+    const ssml=`<speak version="1.0" xml:lang="${voiceLang}"><voice name="${voice}"><prosody rate="0.95">${escSSML(text)}</prosody></voice></speak>`;
     const res=await fetch(`https://${KEYS.azure_region}.tts.speech.microsoft.com/cognitiveservices/v1`,{
       method:'POST',
-      headers:{'Ocp-Apim-Subscription-Key':KEYS.azure,'Content-Type':'application/ssml+xml','X-Microsoft-OutputFormat':'audio-24khz-48kbitrate-mono-mp3'},
+      headers:{'Ocp-Apim-Subscription-Key':KEYS.azure,'Content-Type':'application/ssml+xml','X-Microsoft-OutputFormat':'audio-48khz-96kbitrate-mono-mp3'},
       body:ssml
     });
     if(!res.ok)throw new Error('Azure TTS '+res.status);
@@ -1657,13 +1673,13 @@ function startWordLesson(idx){
 function getLangGuidance(lang){
   const pt=lang==='Portuguese'?(ptVar==='BR'?' Use Brazilian Portuguese (você, obrigado/a, tá, ônibus).':" Use European Portuguese (tu, obrigado/a, autocarro, casa de banho)."):'';
   const g={
-    Spanish:`SPANISH-SPECIFIC GUIDANCE:
+    Spanish:`SPANISH-SPECIFIC GUIDANCE (${spVar==='ES'?'Castilian — Spain':'Latin American — Mexico/Colombia/US standard'} variant):
 - Grammar: All nouns have gender (masculine -o, feminine -a as a rule — but memorise exceptions). Always teach the article with the noun (el/la, un/una).
 - Critical distinction: ser (permanent identity/origin) vs estar (temporary state/location) — introduce this early and reinforce constantly.
-- Register: tú (informal) vs usted (formal). In Latin America: ustedes for all plural "you"; in Spain: vosotros for informal plural.
+- Register: tú (informal) vs usted (formal).${spVar==='ES'?' In Spain: vosotros for informal plural (vosotros habláis).':" In Latin America: ustedes for all plural 'you' — vosotros is NOT used."}
 - Reflexive verbs (me llamo, se llama) appear very early — introduce the concept clearly.
 - At B1+: introduce subjunctive mood (quiero que…, espero que…) — explain it triggers a different verb form.
-- Pronunciation tip: rr vs r, ñ, ll/y — mention these when first words using them appear.`,
+- Pronunciation: ${spVar==='ES'?'In Spain, c/z are pronounced like English "th" (gracias = "grathias"). Distinguish this from Latin American pronunciation.':"No 'th' sound for c/z — pronounce s/c/z all as 's'. Teach rr vs r, ñ, and ll/y sounds when they appear."}`,
 
     French:`FRENCH-SPECIFIC GUIDANCE:
 - Grammar: All nouns have gender. Always teach noun + article together (le/la/un/une). Plural adds -s but it's usually silent.
