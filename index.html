@@ -526,166 +526,399 @@ const TOP_VERBS = {"Spanish": ["ser", "estar", "tener", "hacer", "poder", "decir
 const PATH_DATA = [
 {"level":"A1","label":"Beginner","desc":"Everyday expressions and basic phrases.","nodes":[
   {"id":"a1-1","icon":"👋","title":"Greetings & Introductions","desc":"Hello, goodbye, my name is, where are you from.","tag":"vocab","sug":true,"lessons":[
-    {"id":"a1-1","title":"Greetings & Introductions","desc":"Hello, goodbye, my name is, where are you from.","tag":"vocab","tab":"lessons","lessonTitle":"Greetings & Introductions"}
+    {"id":"a1-1a","title":"Basic Greetings","desc":"Hello, hi, good morning, good evening, goodbye, see you later.","tag":"vocab","tab":"lessons","lessonTitle":"Basic Greetings"},
+    {"id":"a1-1b","title":"Introducing Yourself","desc":"My name is, I am from, nice to meet you, how are you.","tag":"vocab","tab":"lessons","lessonTitle":"Introducing Yourself"},
+    {"id":"a1-1c","title":"Greetings Roleplay","desc":"Practice a short greeting conversation from start to finish.","tag":"convo","tab":"convo","topic":"Greetings & Introductions"}
   ]},
-  {"id":"a1-2","icon":"🔢","title":"Numbers & Calendar","desc":"Counting and talking about dates.","tag":"vocab","lessons":[
-    {"id":"a1-2a","icon":"🔢","title":"Numbers 1-100","desc":"Count, do basic math out loud, give your phone number.","tag":"vocab","tab":"words","wordCat":"numbers"},
-    {"id":"a1-2b","icon":"📅","title":"Days, Months & Dates","desc":"Days of the week, months, saying today's date.","tag":"vocab","tab":"lessons","lessonTitle":"Days, Months & Dates"}
+  {"id":"a1-2","icon":"🔢","title":"Numbers & Calendar","desc":"Counting, dates, days, and months.","tag":"vocab","lessons":[
+    {"id":"a1-2a","title":"Numbers 1–20","desc":"Count to twenty, say your age, simple arithmetic out loud.","tag":"vocab","tab":"words","wordCat":"numbers"},
+    {"id":"a1-2b","title":"Numbers 21–1000","desc":"Larger numbers, phone numbers, prices.","tag":"vocab","tab":"lessons","lessonTitle":"Numbers 21 to 1000"},
+    {"id":"a1-2c","title":"Days of the Week","desc":"Monday through Sunday, today, tomorrow, yesterday.","tag":"vocab","tab":"lessons","lessonTitle":"Days of the Week"},
+    {"id":"a1-2d","title":"Months & Dates","desc":"January through December, saying today's date, birthdays.","tag":"vocab","tab":"lessons","lessonTitle":"Months and Dates"}
   ]},
-  {"id":"a1-3","icon":"👤","title":"Pronouns & To Be","desc":"I, you, he, she + the verb to be conjugated.","tag":"grammar","lessons":[
-    {"id":"a1-3","title":"Pronouns & To Be","desc":"I, you, he, she + the verb to be conjugated.","tag":"grammar","tab":"words","wordCat":"pronouns"}
+  {"id":"a1-3","icon":"👤","title":"Pronouns & To Be","desc":"I, you, he, she — plus the essential verb to be.","tag":"grammar","lessons":[
+    {"id":"a1-3a","title":"Personal Pronouns","desc":"I, you, he, she, it, we, they — the subject pronouns.","tag":"grammar","tab":"words","wordCat":"pronouns"},
+    {"id":"a1-3b","title":"To Be — Present","desc":"Conjugate to be in all persons. I am, you are, he is.","tag":"grammar","tab":"lessons","lessonTitle":"The Verb To Be — Present Tense"},
+    {"id":"a1-3c","title":"Negative & Questions with To Be","desc":"I am not, are you?, is she? — forming negatives and questions.","tag":"grammar","tab":"lessons","lessonTitle":"To Be — Negatives and Questions"}
   ]},
-  {"id":"a1-4","icon":"❓","title":"Question Words","desc":"Who, what, where, when, why, how.","tag":"vocab","lessons":[
-    {"id":"a1-4","title":"Question Words","desc":"Who, what, where, when, why, how.","tag":"vocab","tab":"words","wordCat":"question_words"}
+  {"id":"a1-4","icon":"❓","title":"Question Words","desc":"Who, what, where, when, why, how — ask anything.","tag":"vocab","lessons":[
+    {"id":"a1-4a","title":"Core Question Words","desc":"Who, what, where, when, why, how, how much, how many.","tag":"vocab","tab":"words","wordCat":"question_words"},
+    {"id":"a1-4b","title":"Asking Simple Questions","desc":"Put question words into full sentences. Where is the café?","tag":"grammar","tab":"lessons","lessonTitle":"Asking Simple Questions"}
   ]},
-  {"id":"a1-5","icon":"🎨","title":"Colors & Descriptions","desc":"Basic colors and how to describe things around you.","tag":"vocab","lessons":[
-    {"id":"a1-5","title":"Colors & Descriptions","desc":"Basic colors and how to describe things around you.","tag":"vocab","tab":"lessons","lessonTitle":"Colors & Descriptions"}
+  {"id":"a1-5","icon":"🎨","title":"Colors & Basic Adjectives","desc":"Colors, sizes, and simple describing words.","tag":"vocab","lessons":[
+    {"id":"a1-5a","title":"Colors","desc":"Red, blue, green, yellow, black, white, pink, orange, purple, brown.","tag":"vocab","tab":"lessons","lessonTitle":"Colors"},
+    {"id":"a1-5b","title":"Size & Shape Adjectives","desc":"Big, small, tall, short, long, round, flat — describing what you see.","tag":"vocab","tab":"lessons","lessonTitle":"Size and Shape Adjectives"},
+    {"id":"a1-5c","title":"Basic Quality Adjectives","desc":"Good, bad, new, old, hot, cold, fast, slow, easy, hard.","tag":"vocab","tab":"lessons","lessonTitle":"Basic Quality Adjectives"}
   ]},
-  {"id":"a1-6","icon":"👨‍👩‍👧","title":"Family Members","desc":"Talking about your family, immediate to extended.","tag":"vocab","lessons":[
-    {"id":"a1-6a","icon":"👨‍👩‍👧","title":"Immediate Family","desc":"Mom, dad, brother, sister, parents, son, daughter.","tag":"vocab","tab":"lessons","lessonTitle":"Family Members — Immediate Family"},
-    {"id":"a1-6b","icon":"👵","title":"Extended Family & In-Laws","desc":"Grandparents, aunts, uncles, cousins, in-laws, step-family.","tag":"vocab","tab":"lessons","lessonTitle":"Family Members — Extended Family & In-Laws"},
-    {"id":"a1-6c","icon":"💬","title":"Talking About Family","desc":"Possessives (my sister, his mom) and describing relationships in sentences.","tag":"vocab","tab":"lessons","lessonTitle":"Family Members — Possessives & Describing Relationships"}
+  {"id":"a1-6","icon":"👨‍👩‍👧","title":"Family Members","desc":"Immediate and extended family vocabulary.","tag":"vocab","lessons":[
+    {"id":"a1-6a","title":"Immediate Family","desc":"Mom, dad, brother, sister, son, daughter, husband, wife.","tag":"vocab","tab":"lessons","lessonTitle":"Immediate Family"},
+    {"id":"a1-6b","title":"Extended Family","desc":"Grandparents, aunts, uncles, cousins, in-laws, step-family.","tag":"vocab","tab":"lessons","lessonTitle":"Extended Family"},
+    {"id":"a1-6c","title":"Talking About Family","desc":"My sister is tall. His mom is a teacher. Using possessives with family.","tag":"convo","tab":"convo","topic":"Family & Relationships"}
   ]},
-  {"id":"a1-7","icon":"🏠","title":"Around the House","desc":"Rooms, furniture, and everyday objects at home.","tag":"vocab","lessons":[
-    {"id":"a1-7a","icon":"🏠","title":"Rooms & Spaces","desc":"Kitchen, bedroom, bathroom, living room — naming rooms and saying where things are.","tag":"vocab","tab":"lessons","lessonTitle":"Around the House — Rooms & Spaces"},
-    {"id":"a1-7b","icon":"🛋️","title":"Furniture & Objects","desc":"Bed, table, chair, fridge, TV — everyday household objects.","tag":"vocab","tab":"lessons","lessonTitle":"Around the House — Furniture & Objects"}
+  {"id":"a1-7","icon":"🏠","title":"Around the House","desc":"Rooms, furniture, and everyday household objects.","tag":"vocab","lessons":[
+    {"id":"a1-7a","title":"Rooms & Spaces","desc":"Kitchen, bedroom, bathroom, living room — naming and locating rooms.","tag":"vocab","tab":"lessons","lessonTitle":"Rooms in a House"},
+    {"id":"a1-7b","title":"Furniture & Objects","desc":"Bed, table, chair, fridge, TV, sofa, lamp — household objects.","tag":"vocab","tab":"lessons","lessonTitle":"Furniture and Objects"},
+    {"id":"a1-7c","title":"Prepositions of Place","desc":"On the table, under the bed, next to the door — where things are.","tag":"grammar","tab":"lessons","lessonTitle":"Prepositions of Place"}
   ]},
-  {"id":"a1-8","icon":"💬","title":"First Conversation","desc":"Short chat about yourself — name, country, hobby.","tag":"convo","lessons":[
-    {"id":"a1-8","title":"First Conversation","desc":"Short chat about yourself — name, country, hobby.","tag":"convo","tab":"convo","topic":"Daily Routine"}
+  {"id":"a1-8","icon":"🧍","title":"The Human Body","desc":"Head, shoulders, arms, legs — name every body part.","tag":"vocab","lessons":[
+    {"id":"a1-8a","title":"Head & Face","desc":"Eyes, ears, nose, mouth, teeth, hair, forehead, chin.","tag":"vocab","tab":"lessons","lessonTitle":"Head and Face"},
+    {"id":"a1-8b","title":"Body & Limbs","desc":"Neck, shoulders, arms, hands, chest, back, legs, feet.","tag":"vocab","tab":"lessons","lessonTitle":"Body and Limbs"}
+  ]},
+  {"id":"a1-9","icon":"👕","title":"Clothing & Getting Dressed","desc":"Name what you wear and talk about getting dressed.","tag":"vocab","lessons":[
+    {"id":"a1-9a","title":"Everyday Clothing","desc":"Shirt, pants, dress, skirt, shoes, socks, jacket, coat.","tag":"vocab","tab":"lessons","lessonTitle":"Everyday Clothing"},
+    {"id":"a1-9b","title":"Describing What You're Wearing","desc":"I am wearing a blue shirt. She has red shoes. Colors + clothing.","tag":"convo","tab":"lessons","lessonTitle":"Describing Clothing"}
+  ]},
+  {"id":"a1-10","icon":"🍎","title":"Food & Drink Basics","desc":"Common foods, drinks, and expressing what you like.","tag":"vocab","lessons":[
+    {"id":"a1-10a","title":"Fruits & Vegetables","desc":"Apple, banana, orange, carrot, potato, tomato, onion.","tag":"vocab","tab":"lessons","lessonTitle":"Fruits and Vegetables"},
+    {"id":"a1-10b","title":"Common Foods & Drinks","desc":"Bread, rice, meat, water, juice, coffee, milk, tea.","tag":"vocab","tab":"lessons","lessonTitle":"Common Foods and Drinks"},
+    {"id":"a1-10c","title":"I Like / I Don't Like","desc":"Expressing food preferences. I love pizza. I don't like fish.","tag":"convo","tab":"convo","topic":"Food Preferences"}
+  ]},
+  {"id":"a1-11","icon":"🐶","title":"Animals","desc":"Pets, farm animals, wild animals — the animal kingdom.","tag":"vocab","lessons":[
+    {"id":"a1-11a","title":"Pets & Domestic Animals","desc":"Dog, cat, bird, fish, rabbit, hamster — common pets.","tag":"vocab","tab":"lessons","lessonTitle":"Pets and Domestic Animals"},
+    {"id":"a1-11b","title":"Farm & Wild Animals","desc":"Cow, horse, pig, lion, elephant, bear, bird, snake.","tag":"vocab","tab":"lessons","lessonTitle":"Farm and Wild Animals"}
+  ]},
+  {"id":"a1-12","icon":"🚌","title":"Transportation Basics","desc":"How to get around — vehicles and travel words.","tag":"vocab","lessons":[
+    {"id":"a1-12a","title":"Vehicles","desc":"Car, bus, train, plane, bike, taxi, boat, metro.","tag":"vocab","tab":"lessons","lessonTitle":"Vehicles"},
+    {"id":"a1-12b","title":"Getting Around","desc":"I take the bus. How do I get to the station? Simple directions.","tag":"convo","tab":"lessons","lessonTitle":"Getting Around — Basic Phrases"}
+  ]},
+  {"id":"a1-13","icon":"💼","title":"Jobs & Occupations","desc":"What do you do? Name common professions.","tag":"vocab","lessons":[
+    {"id":"a1-13a","title":"Common Jobs","desc":"Doctor, teacher, engineer, chef, driver, nurse, student, lawyer.","tag":"vocab","tab":"lessons","lessonTitle":"Common Jobs"},
+    {"id":"a1-13b","title":"Talking About Work","desc":"I am a teacher. She works at a hospital. What do you do?","tag":"convo","tab":"convo","topic":"Jobs & Work"}
+  ]},
+  {"id":"a1-14","icon":"⚡","title":"Core Verbs — To Have & To Want","desc":"Two essential verbs for expressing possession and desire.","tag":"grammar","lessons":[
+    {"id":"a1-14a","title":"To Have — Present","desc":"Conjugate to have. I have a dog. She has two brothers.","tag":"grammar","tab":"verbs","verb":"random"},
+    {"id":"a1-14b","title":"To Want & To Need","desc":"I want coffee. I need help. Expressing desires and needs.","tag":"grammar","tab":"lessons","lessonTitle":"To Want and To Need"}
+  ]},
+  {"id":"a1-15","icon":"💬","title":"First Real Conversation","desc":"Put it all together — a short chat about yourself.","tag":"convo","lessons":[
+    {"id":"a1-15","title":"First Real Conversation","desc":"Name, country, job, family, hobbies — a natural intro conversation.","tag":"convo","tab":"convo","topic":"Daily Routine"}
   ]}
 ]},
 {"level":"A2","label":"Elementary","desc":"Routine tasks and familiar topics.","nodes":[
-  {"id":"a2-1","icon":"📍","title":"Prepositions — with, in, on…","desc":"In, on, at, with, from, to — the glue words.","tag":"grammar","lessons":[
-    {"id":"a2-1","title":"Prepositions — with, in, on…","desc":"In, on, at, with, from, to — the glue words.","tag":"grammar","tab":"words","wordCat":"prepositions"}
+  {"id":"a2-1","icon":"📍","title":"Prepositions — Time & Place","desc":"In, on, at, with, from, to, before, after — the glue words.","tag":"grammar","lessons":[
+    {"id":"a2-1a","title":"Prepositions of Place","desc":"In, on, at, next to, between, behind, in front of.","tag":"grammar","tab":"words","wordCat":"prepositions"},
+    {"id":"a2-1b","title":"Prepositions of Time","desc":"At 3pm, on Monday, in July, before dinner, after work.","tag":"grammar","tab":"lessons","lessonTitle":"Prepositions of Time"}
   ]},
   {"id":"a2-2","icon":"🔗","title":"Conjunctions & Connectors","desc":"And, but, because, although — chain ideas together.","tag":"grammar","lessons":[
-    {"id":"a2-2","title":"Conjunctions & Connectors","desc":"And, but, because, although — chain ideas together.","tag":"grammar","tab":"words","wordCat":"conjunctions"}
+    {"id":"a2-2a","title":"Coordinating Conjunctions","desc":"And, but, or, so, yet — connecting equal ideas.","tag":"grammar","tab":"words","wordCat":"conjunctions"},
+    {"id":"a2-2b","title":"Subordinating Conjunctions","desc":"Because, although, when, if, while — creating complex sentences.","tag":"grammar","tab":"lessons","lessonTitle":"Subordinating Conjunctions"}
   ]},
-  {"id":"a2-3","icon":"⚡","title":"Core Verbs — To Have & To Go","desc":"Conjugate tener/avoir/haben and ir/aller/gehen.","tag":"grammar","lessons":[
-    {"id":"a2-3","title":"Core Verbs — To Have & To Go","desc":"Conjugate tener/avoir/haben and ir/aller/gehen.","tag":"grammar","tab":"verbs","verb":"random"}
+  {"id":"a2-3","icon":"⚡","title":"Core Verbs — To Have & To Go","desc":"Conjugate have and go in present — use them in real sentences.","tag":"grammar","lessons":[
+    {"id":"a2-3a","title":"To Have — All Forms","desc":"Have/has, negative and question forms. Do you have? She doesn't have.","tag":"grammar","tab":"verbs","verb":"random"},
+    {"id":"a2-3b","title":"To Go & To Come","desc":"Go, come, arrive, leave — movement verbs conjugated and drilled.","tag":"grammar","tab":"lessons","lessonTitle":"To Go and To Come"}
   ]},
   {"id":"a2-4","icon":"🍽️","title":"Food & Restaurants","desc":"Food vocabulary and ordering at a restaurant.","tag":"vocab","lessons":[
-    {"id":"a2-4a","icon":"🍽️","title":"Food Names & Meals","desc":"Common foods, drinks, breakfast/lunch/dinner vocabulary.","tag":"vocab","tab":"lessons","lessonTitle":"Food Vocabulary — Names & Meals"},
-    {"id":"a2-4b","icon":"🧾","title":"Ordering at a Restaurant","desc":"Café and restaurant phrases — ordering, paying, asking for the bill.","tag":"vocab","tab":"lessons","lessonTitle":"Ordering at a Restaurant"}
+    {"id":"a2-4a","title":"Food Names & Meals","desc":"Breakfast, lunch, dinner vocabulary — courses, ingredients, drinks.","tag":"vocab","tab":"lessons","lessonTitle":"Food Names and Meals"},
+    {"id":"a2-4b","title":"Ordering at a Restaurant","desc":"I'd like to order, the menu please, the bill, dietary restrictions.","tag":"vocab","tab":"lessons","lessonTitle":"Ordering at a Restaurant"},
+    {"id":"a2-4c","title":"Restaurant Roleplay","desc":"Full roleplay — you're ordering a meal. Waiter asks questions, you respond.","tag":"convo","tab":"convo","topic":"At a Restaurant"}
   ]},
-  {"id":"a2-5","icon":"🛒","title":"Shopping & Money","desc":"Prices, paying, sizes, I'd like to buy…","tag":"vocab","lessons":[
-    {"id":"a2-5","title":"Shopping & Money","desc":"Prices, paying, sizes, I'd like to buy…","tag":"vocab","tab":"lessons","lessonTitle":"Shopping"}
+  {"id":"a2-5","icon":"🛒","title":"Shopping & Money","desc":"Prices, paying, sizes, and negotiating purchases.","tag":"vocab","lessons":[
+    {"id":"a2-5a","title":"Shopping Vocabulary","desc":"Price, size, receipt, discount, refund, cash, card, market, store.","tag":"vocab","tab":"lessons","lessonTitle":"Shopping Vocabulary"},
+    {"id":"a2-5b","title":"Buying Something","desc":"How much is this? Do you have a smaller size? Can I pay by card?","tag":"convo","tab":"convo","topic":"Shopping"}
   ]},
   {"id":"a2-6","icon":"🗺️","title":"Asking for Directions","desc":"Where is, turn left, straight ahead, how far.","tag":"vocab","lessons":[
-    {"id":"a2-6","title":"Asking for Directions","desc":"Where is, turn left, straight ahead, how far.","tag":"vocab","tab":"lessons","lessonTitle":"Asking for Directions"}
+    {"id":"a2-6a","title":"Direction Words","desc":"Left, right, straight, turn, corner, block, traffic light, intersection.","tag":"vocab","tab":"lessons","lessonTitle":"Direction Words"},
+    {"id":"a2-6b","title":"Asking & Giving Directions","desc":"How do I get to? Take the second left. It's next to the bank.","tag":"convo","tab":"convo","topic":"Asking for Directions"}
   ]},
-  {"id":"a2-7","icon":"⏰","title":"Telling the Time","desc":"What time is it? Morning, afternoon, half past.","tag":"vocab","lessons":[
-    {"id":"a2-7","title":"Telling the Time","desc":"What time is it? Morning, afternoon, half past.","tag":"vocab","tab":"lessons","lessonTitle":"Telling the Time"}
+  {"id":"a2-7","icon":"⏰","title":"Telling the Time","desc":"What time is it? Morning, afternoon, half past, quarter to.","tag":"vocab","lessons":[
+    {"id":"a2-7a","title":"Hours & Minutes","desc":"It's three o'clock. It's half past two. Quarter to five.","tag":"vocab","tab":"lessons","lessonTitle":"Telling the Time"},
+    {"id":"a2-7b","title":"Scheduling & Appointments","desc":"What time does it open? My appointment is at 9am. See you at noon.","tag":"convo","tab":"lessons","lessonTitle":"Scheduling and Appointments"}
   ]},
-  {"id":"a2-8","icon":"🌤️","title":"Weather & Seasons","desc":"It's hot, raining, cloudy — talk about the weather.","tag":"vocab","lessons":[
-    {"id":"a2-8","title":"Weather & Seasons","desc":"It's hot, raining, cloudy — talk about the weather.","tag":"vocab","tab":"lessons","lessonTitle":"Weather & Seasons"}
+  {"id":"a2-8","icon":"🌤️","title":"Weather & Seasons","desc":"It's hot, it's raining, the forecast — talk about weather.","tag":"vocab","lessons":[
+    {"id":"a2-8a","title":"Weather Vocabulary","desc":"Sun, rain, wind, snow, fog, storm, hot, cold, warm, humid.","tag":"vocab","tab":"lessons","lessonTitle":"Weather Vocabulary"},
+    {"id":"a2-8b","title":"Seasons & Climate","desc":"Spring, summer, autumn, winter — describing seasonal weather.","tag":"vocab","tab":"lessons","lessonTitle":"Seasons and Climate"},
+    {"id":"a2-8c","title":"Talking About Weather","desc":"What's the weather like? It's going to rain tomorrow. Weather chat.","tag":"convo","tab":"convo","topic":"Weather"}
   ]},
-  {"id":"a2-9","icon":"💬","title":"Daily Life Chat","desc":"Talk through your morning routine.","tag":"convo","lessons":[
-    {"id":"a2-9","title":"Daily Life Chat","desc":"Talk through your morning routine.","tag":"convo","tab":"convo","topic":"Daily Routine"}
+  {"id":"a2-9","icon":"😊","title":"Emotions & Feelings","desc":"Express how you feel — happy, tired, nervous, excited.","tag":"vocab","lessons":[
+    {"id":"a2-9a","title":"Basic Emotions","desc":"Happy, sad, angry, scared, surprised, bored, excited, tired.","tag":"vocab","tab":"lessons","lessonTitle":"Basic Emotions"},
+    {"id":"a2-9b","title":"Expressing How You Feel","desc":"I feel nervous. She seems tired. Why are you sad? Emotional phrases.","tag":"convo","tab":"convo","topic":"Feelings & Emotions"}
+  ]},
+  {"id":"a2-10","icon":"🧑","title":"Describing People","desc":"Appearance, personality, and character — describe anyone.","tag":"vocab","lessons":[
+    {"id":"a2-10a","title":"Physical Appearance","desc":"Tall, short, slim, curly hair, blue eyes, bearded — describing looks.","tag":"vocab","tab":"lessons","lessonTitle":"Physical Appearance"},
+    {"id":"a2-10b","title":"Personality & Character","desc":"Funny, kind, shy, confident, lazy, hardworking, friendly, serious.","tag":"vocab","tab":"lessons","lessonTitle":"Personality and Character"},
+    {"id":"a2-10c","title":"Describing Someone You Know","desc":"Tell Aria about a person — what they look like and what they're like.","tag":"convo","tab":"convo","topic":"Describing People"}
+  ]},
+  {"id":"a2-11","icon":"🏨","title":"At the Hotel","desc":"Check in, ask for a room, handle common hotel situations.","tag":"vocab","lessons":[
+    {"id":"a2-11a","title":"Hotel Vocabulary","desc":"Reservation, check-in, room type, floor, key, towels, WiFi.","tag":"vocab","tab":"lessons","lessonTitle":"Hotel Vocabulary"},
+    {"id":"a2-11b","title":"Hotel Roleplay","desc":"Checking in, asking for an upgrade, reporting a problem in your room.","tag":"convo","tab":"convo","topic":"At the Hotel"}
+  ]},
+  {"id":"a2-12","icon":"🤧","title":"Health Basics","desc":"Feeling sick, naming symptoms, going to the pharmacy.","tag":"vocab","lessons":[
+    {"id":"a2-12a","title":"Common Symptoms","desc":"Headache, fever, sore throat, cough, stomach ache, tired, dizzy.","tag":"vocab","tab":"lessons","lessonTitle":"Common Symptoms"},
+    {"id":"a2-12b","title":"At the Pharmacy","desc":"I need medicine for a cold. Do you have aspirin? Pharmacy phrases.","tag":"convo","tab":"convo","topic":"At the Pharmacy"}
+  ]},
+  {"id":"a2-13","icon":"🎮","title":"Hobbies & Free Time","desc":"What do you do for fun? Sports, music, reading, gaming.","tag":"vocab","lessons":[
+    {"id":"a2-13a","title":"Hobby Vocabulary","desc":"Reading, cooking, gaming, hiking, painting, music, dancing, football.","tag":"vocab","tab":"lessons","lessonTitle":"Hobbies and Interests"},
+    {"id":"a2-13b","title":"Talking About Your Hobbies","desc":"I enjoy cooking. She loves dancing. What do you do on weekends?","tag":"convo","tab":"convo","topic":"Hobbies & Free Time"}
+  ]},
+  {"id":"a2-14","icon":"🌐","title":"Nationalities & Languages","desc":"Countries, nationalities, languages — talk about the world.","tag":"vocab","lessons":[
+    {"id":"a2-14a","title":"Countries & Nationalities","desc":"France/French, Spain/Spanish, Japan/Japanese — country + nationality pairs.","tag":"vocab","tab":"lessons","lessonTitle":"Countries and Nationalities"},
+    {"id":"a2-14b","title":"Languages & Origins","desc":"I speak Spanish. She is from Brazil. Where is he from?","tag":"convo","tab":"lessons","lessonTitle":"Languages and Where You're From"}
+  ]},
+  {"id":"a2-15","icon":"🏦","title":"At the Bank","desc":"Open an account, exchange money, basic banking phrases.","tag":"vocab","lessons":[
+    {"id":"a2-15a","title":"Banking Vocabulary","desc":"Account, deposit, withdraw, transfer, exchange rate, ATM, balance.","tag":"vocab","tab":"lessons","lessonTitle":"Banking Vocabulary"},
+    {"id":"a2-15b","title":"Banking Roleplay","desc":"I'd like to exchange dollars. Can I open an account? ATM help.","tag":"convo","tab":"convo","topic":"At the Bank"}
+  ]},
+  {"id":"a2-16","icon":"💬","title":"Daily Life Chat","desc":"Put A2 together — a relaxed chat about your week.","tag":"convo","lessons":[
+    {"id":"a2-16","title":"Daily Life Chat","desc":"Morning routine, weekly plans, what you ate, how you feel — natural A2 conversation.","tag":"convo","tab":"convo","topic":"Daily Routine"}
   ]}
 ]},
-{"level":"B1","label":"Intermediate","desc":"Most situations while travelling.","nodes":[
-  {"id":"b1-1","icon":"⏮","title":"Past Tense — Regular Verbs","desc":"Preterite/Passé composé/Perfekt — tell stories.","tag":"grammar","lessons":[
-    {"id":"b1-1","title":"Past Tense — Regular Verbs","desc":"Preterite/Passé composé/Perfekt — tell stories.","tag":"grammar","tab":"verbs","verb":"hablar"}
+{"level":"B1","label":"Intermediate","desc":"Handle most situations while travelling.","nodes":[
+  {"id":"b1-1","icon":"⏮","title":"Past Tense — Regular Verbs","desc":"Tell stories about what happened — preterite / passé composé / Perfekt.","tag":"grammar","lessons":[
+    {"id":"b1-1a","title":"Past Tense Forms","desc":"How to form the simple past for regular verbs. I walked, she talked.","tag":"grammar","tab":"verbs","verb":"random"},
+    {"id":"b1-1b","title":"Past Tense — Irregular Verbs","desc":"Common irregular past forms: went, was, had, saw, ate, did.","tag":"grammar","tab":"lessons","lessonTitle":"Irregular Past Tense Verbs"},
+    {"id":"b1-1c","title":"Telling a Story","desc":"What happened yesterday? Narrate a simple past event step by step.","tag":"convo","tab":"convo","topic":"Telling Stories"}
   ]},
-  {"id":"b1-2","icon":"⏩","title":"Future Tense","desc":"I will, I'm going to — plan and predict.","tag":"grammar","lessons":[
-    {"id":"b1-2","title":"Future Tense","desc":"I will, I'm going to — plan and predict.","tag":"grammar","tab":"verbs","verb":"ir"}
+  {"id":"b1-2","icon":"⏩","title":"Future Tense","desc":"I will go, I'm going to eat — plan and predict.","tag":"grammar","lessons":[
+    {"id":"b1-2a","title":"Simple Future","desc":"Will vs going to — form, usage, and when to use each.","tag":"grammar","tab":"verbs","verb":"random"},
+    {"id":"b1-2b","title":"Future Plans & Predictions","desc":"Talk about next week, next year, what the weather will be. Future in context.","tag":"convo","tab":"convo","topic":"Future Plans"}
   ]},
-  {"id":"b1-3","icon":"💨","title":"Adverbs & Flow Words","desc":"Always, never, almost, however, therefore.","tag":"grammar","lessons":[
-    {"id":"b1-3","title":"Adverbs & Flow Words","desc":"Always, never, almost, however, therefore.","tag":"grammar","tab":"words","wordCat":"adverbs"}
+  {"id":"b1-3","icon":"🔁","title":"Imperfect vs Simple Past","desc":"What you used to do vs what you did once — the key contrast.","tag":"grammar","lessons":[
+    {"id":"b1-3a","title":"The Imperfect Tense","desc":"I used to live, she was sleeping, we always ate there — habitual past.","tag":"grammar","tab":"lessons","lessonTitle":"The Imperfect Tense"},
+    {"id":"b1-3b","title":"Imperfect vs Preterite in Context","desc":"Setting the scene (imperfect) vs action (preterite). Telling richer stories.","tag":"grammar","tab":"lessons","lessonTitle":"Imperfect vs Preterite"}
   ]},
-  {"id":"b1-4","icon":"🗣️","title":"Expressing Opinions","desc":"I think, I agree, in my opinion.","tag":"convo","lessons":[
-    {"id":"b1-4","title":"Expressing Opinions","desc":"I think, I agree, in my opinion.","tag":"convo","tab":"lessons","lessonTitle":"Expressing Opinions"}
+  {"id":"b1-4","icon":"💨","title":"Adverbs & Flow Words","desc":"Always, never, almost, quite, however, therefore — add nuance.","tag":"grammar","lessons":[
+    {"id":"b1-4a","title":"Adverbs of Frequency","desc":"Always, usually, often, sometimes, rarely, never — how often you do things.","tag":"grammar","tab":"words","wordCat":"adverbs"},
+    {"id":"b1-4b","title":"Adverbs of Manner & Degree","desc":"Quickly, slowly, very, quite, almost, hardly, enough — how and how much.","tag":"grammar","tab":"lessons","lessonTitle":"Adverbs of Manner and Degree"},
+    {"id":"b1-4c","title":"Discourse Markers","desc":"However, therefore, moreover, on the other hand — linking ideas in speech.","tag":"grammar","tab":"lessons","lessonTitle":"Discourse Markers"}
   ]},
-  {"id":"b1-5","icon":"✈️","title":"Travel Scenarios","desc":"Airport, check-in, passport control, luggage.","tag":"vocab","lessons":[
-    {"id":"b1-5","title":"Travel Scenarios","desc":"Airport, check-in, passport control, luggage.","tag":"vocab","tab":"lessons","lessonTitle":"Airport & Travel"}
+  {"id":"b1-5","icon":"🗣️","title":"Expressing Opinions","desc":"I think, I agree, in my opinion — speak your mind confidently.","tag":"convo","lessons":[
+    {"id":"b1-5a","title":"Opinion Phrases","desc":"I think, I believe, in my opinion, as far as I know, I'm not sure but.","tag":"vocab","tab":"lessons","lessonTitle":"Expressing Opinions"},
+    {"id":"b1-5b","title":"Agreeing & Disagreeing","desc":"Exactly! I see your point but… I totally disagree because…","tag":"convo","tab":"convo","topic":"Opinions & Discussions"}
   ]},
-  {"id":"b1-6","icon":"🏥","title":"At the Doctor","desc":"Symptoms, body parts, making an appointment.","tag":"vocab","lessons":[
-    {"id":"b1-6","title":"At the Doctor","desc":"Symptoms, body parts, making an appointment.","tag":"vocab","tab":"lessons","lessonTitle":"At the Doctor"}
+  {"id":"b1-6","icon":"✈️","title":"Travel Scenarios","desc":"Airport, check-in, passport control, lost luggage.","tag":"vocab","lessons":[
+    {"id":"b1-6a","title":"Airport Vocabulary","desc":"Departure, arrival, boarding pass, gate, customs, luggage claim, delay.","tag":"vocab","tab":"lessons","lessonTitle":"Airport Vocabulary"},
+    {"id":"b1-6b","title":"Airport Roleplay","desc":"Check in, go through security, ask about delays, find your gate.","tag":"convo","tab":"convo","topic":"At the Airport"}
   ]},
-  {"id":"b1-7","icon":"📱","title":"Technology & Devices","desc":"Phone, internet, social media vocabulary.","tag":"vocab","lessons":[
-    {"id":"b1-7","title":"Technology & Devices","desc":"Phone, internet, social media vocabulary.","tag":"vocab","tab":"lessons","lessonTitle":"Technology & Social Media"}
+  {"id":"b1-7","icon":"🏥","title":"At the Doctor","desc":"Describe symptoms, understand diagnoses, make appointments.","tag":"vocab","lessons":[
+    {"id":"b1-7a","title":"Medical Vocabulary","desc":"Symptom, prescription, injection, allergy, surgery, diagnosis, specialist.","tag":"vocab","tab":"lessons","lessonTitle":"Medical Vocabulary"},
+    {"id":"b1-7b","title":"Doctor's Visit Roleplay","desc":"Describe what's wrong, answer the doctor's questions, understand advice.","tag":"convo","tab":"convo","topic":"At the Doctor"}
   ]},
-  {"id":"b1-8","icon":"🎉","title":"Celebrations & Invitations","desc":"Birthday, holiday greetings, inviting someone out.","tag":"convo","lessons":[
-    {"id":"b1-8","title":"Celebrations & Invitations","desc":"Birthday, holiday greetings, inviting someone out.","tag":"convo","tab":"lessons","lessonTitle":"Celebrations & Holidays"}
+  {"id":"b1-8","icon":"🌿","title":"Environment & Nature","desc":"Nature vocabulary, environmental issues, outdoor activities.","tag":"vocab","lessons":[
+    {"id":"b1-8a","title":"Nature Vocabulary","desc":"Forest, river, mountain, ocean, desert, valley, wildlife, ecosystem.","tag":"vocab","tab":"lessons","lessonTitle":"Nature Vocabulary"},
+    {"id":"b1-8b","title":"Environmental Issues","desc":"Pollution, climate change, recycling, conservation — discussing the planet.","tag":"convo","tab":"convo","topic":"Environment & Nature"}
   ]},
-  {"id":"b1-9","icon":"⚽","title":"Sports & Hobbies","desc":"Talk about what you like to do. Sports vocabulary.","tag":"convo","lessons":[
-    {"id":"b1-9","title":"Sports & Hobbies","desc":"Talk about what you like to do. Sports vocabulary.","tag":"convo","tab":"convo","topic":"Sports & Hobbies"}
+  {"id":"b1-9","icon":"🎓","title":"Education & School","desc":"Subjects, school life, studying, and academic vocabulary.","tag":"vocab","lessons":[
+    {"id":"b1-9a","title":"School Subjects & Vocabulary","desc":"Math, history, science, literature, exam, grade, degree, university.","tag":"vocab","tab":"lessons","lessonTitle":"School Subjects and Vocabulary"},
+    {"id":"b1-9b","title":"Talking About Your Studies","desc":"What did you study? What was your favorite subject? Education chat.","tag":"convo","tab":"convo","topic":"Education & School"}
   ]},
-  {"id":"b1-10","icon":"💬","title":"Real Conversation","desc":"Free chat — travel, food, your life.","tag":"convo","lessons":[
-    {"id":"b1-10","title":"Real Conversation","desc":"Free chat — travel, food, your life.","tag":"convo","tab":"convo","topic":"Daily Routine"}
+  {"id":"b1-10","icon":"💑","title":"Relationships & Social Life","desc":"Friendships, romance, and navigating social situations.","tag":"convo","lessons":[
+    {"id":"b1-10a","title":"Relationship Vocabulary","desc":"Friend, partner, colleague, neighbor, acquaintance, breakup, date.","tag":"vocab","tab":"lessons","lessonTitle":"Relationship Vocabulary"},
+    {"id":"b1-10b","title":"Social Situations","desc":"Making plans, canceling, complimenting, small talk at a party.","tag":"convo","tab":"convo","topic":"Social Life"}
+  ]},
+  {"id":"b1-11","icon":"📱","title":"Technology & Devices","desc":"Phone, internet, social media, apps — modern life vocabulary.","tag":"vocab","lessons":[
+    {"id":"b1-11a","title":"Device Vocabulary","desc":"Smartphone, laptop, tablet, charger, password, app, download, Wi-Fi.","tag":"vocab","tab":"lessons","lessonTitle":"Technology and Devices"},
+    {"id":"b1-11b","title":"Social Media & Online Life","desc":"Post, like, share, profile, comment, video call, streaming, account.","tag":"vocab","tab":"lessons","lessonTitle":"Social Media and Online Life"},
+    {"id":"b1-11c","title":"Tech Support Roleplay","desc":"My phone won't turn on. How do I reset my password? Tech troubleshooting.","tag":"convo","tab":"convo","topic":"Technology Help"}
+  ]},
+  {"id":"b1-12","icon":"💰","title":"Money & Personal Finance","desc":"Budgeting, paying bills, and talking about money comfortably.","tag":"vocab","lessons":[
+    {"id":"b1-12a","title":"Money Vocabulary","desc":"Budget, salary, expense, savings, loan, rent, bill, invoice, debt.","tag":"vocab","tab":"lessons","lessonTitle":"Money Vocabulary"},
+    {"id":"b1-12b","title":"Talking About Finances","desc":"How much does it cost? I can't afford it. Is it on sale? Money chat.","tag":"convo","tab":"convo","topic":"Money & Finances"}
+  ]},
+  {"id":"b1-13","icon":"🎉","title":"Celebrations & Invitations","desc":"Birthdays, holidays, events — invite, RSVP, and celebrate.","tag":"convo","lessons":[
+    {"id":"b1-13a","title":"Celebrations Vocabulary","desc":"Birthday, anniversary, wedding, party, toast, gift, invitation, RSVP.","tag":"vocab","tab":"lessons","lessonTitle":"Celebrations Vocabulary"},
+    {"id":"b1-13b","title":"Inviting & Responding","desc":"Would you like to come? I'd love to! Sorry, I can't make it. RSVPs.","tag":"convo","tab":"convo","topic":"Invitations & Events"}
+  ]},
+  {"id":"b1-14","icon":"🚨","title":"Crime & Safety","desc":"Emergency vocabulary and talking about crime and safety.","tag":"vocab","lessons":[
+    {"id":"b1-14a","title":"Safety & Emergency Vocabulary","desc":"Police, ambulance, fire, theft, accident, help, emergency, lost.","tag":"vocab","tab":"lessons","lessonTitle":"Safety and Emergency Vocabulary"},
+    {"id":"b1-14b","title":"Reporting an Incident","desc":"My wallet was stolen. I had an accident. Can you call the police?","tag":"convo","tab":"convo","topic":"Emergencies & Safety"}
+  ]},
+  {"id":"b1-15","icon":"⚽","title":"Sports & Hobbies","desc":"Sports vocabulary, talking about teams, and what you like to do.","tag":"convo","lessons":[
+    {"id":"b1-15a","title":"Sports Vocabulary","desc":"Football, basketball, tennis, swim, score, team, coach, stadium, match.","tag":"vocab","tab":"lessons","lessonTitle":"Sports Vocabulary"},
+    {"id":"b1-15b","title":"Your Favorite Sport","desc":"What sport do you play? Who's your team? Sports conversation.","tag":"convo","tab":"convo","topic":"Sports & Hobbies"}
+  ]},
+  {"id":"b1-16","icon":"🍜","title":"Food Culture","desc":"Regional dishes, eating habits, cooking — food beyond the menu.","tag":"vocab","lessons":[
+    {"id":"b1-16a","title":"Regional Cuisine","desc":"Famous dishes, local ingredients, street food — food culture in the target country.","tag":"vocab","tab":"lessons","lessonTitle":"Regional Cuisine"},
+    {"id":"b1-16b","title":"Food & Culture Chat","desc":"What's a typical meal here? Do you cook? Favorite dish conversation.","tag":"convo","tab":"convo","topic":"Food & Culture"}
+  ]},
+  {"id":"b1-17","icon":"🔀","title":"Giving Advice & Recommendations","desc":"You should, why don't you, I'd recommend — helping others decide.","tag":"grammar","lessons":[
+    {"id":"b1-17a","title":"Advice Phrases","desc":"You should, you shouldn't, I'd suggest, have you tried, why not.","tag":"grammar","tab":"lessons","lessonTitle":"Giving Advice"},
+    {"id":"b1-17b","title":"Making Recommendations","desc":"I'd recommend the pasta. You should visit the museum. Practical recommendations.","tag":"convo","tab":"convo","topic":"Recommendations"}
+  ]},
+  {"id":"b1-18","icon":"💬","title":"Real Conversation","desc":"Free flowing B1 chat — travel, life, the week.","tag":"convo","lessons":[
+    {"id":"b1-18","title":"Real Conversation","desc":"Open B1 conversation covering any topic naturally — no scaffolding.","tag":"convo","tab":"convo","topic":"Daily Routine"}
   ]}
 ]},
-{"level":"B2","label":"Upper Intermediate","desc":"Fluency with native speakers.","nodes":[
+{"level":"B2","label":"Upper Intermediate","desc":"Speak fluently with native speakers.","nodes":[
   {"id":"b2-1","icon":"🌀","title":"Subjunctive / Konjunktiv","desc":"Wishes, doubts, hypotheticals — the mood of uncertainty.","tag":"grammar","lessons":[
-    {"id":"b2-1","title":"Subjunctive / Konjunktiv","desc":"Wishes, doubts, hypotheticals — the mood of uncertainty.","tag":"grammar","tab":"verbs","verb":"querer"}
+    {"id":"b2-1a","title":"Subjunctive — Forms","desc":"How the subjunctive is formed — present and past subjunctive.","tag":"grammar","tab":"verbs","verb":"random"},
+    {"id":"b2-1b","title":"Subjunctive — Usage","desc":"After verbs of wish, doubt, emotion, and impersonal expressions.","tag":"grammar","tab":"lessons","lessonTitle":"Subjunctive Usage"},
+    {"id":"b2-1c","title":"Subjunctive in Conversation","desc":"I wish I could. It's important that you be here. Subjunctive in real speech.","tag":"convo","tab":"convo","topic":"Hypotheticals & Wishes"}
   ]},
-  {"id":"b2-2","icon":"🔄","title":"Passive Voice","desc":"The house was built, the letter was written.","tag":"grammar","lessons":[
-    {"id":"b2-2","title":"Passive Voice","desc":"The house was built, the letter was written.","tag":"grammar","tab":"lessons","lessonTitle":"Passive Voice"}
+  {"id":"b2-2","icon":"🔄","title":"Passive Voice","desc":"The house was built. The report has been submitted.","tag":"grammar","lessons":[
+    {"id":"b2-2a","title":"Passive — Forms & Usage","desc":"Be + past participle. When to use passive vs active voice.","tag":"grammar","tab":"lessons","lessonTitle":"Passive Voice Forms"},
+    {"id":"b2-2b","title":"Passive in Context","desc":"News headlines, formal writing, impersonal statements — passive in real use.","tag":"grammar","tab":"lessons","lessonTitle":"Passive Voice in Context"}
   ]},
-  {"id":"b2-3","icon":"🎨","title":"Descriptive Adjectives","desc":"Expand beyond good and bad — vivid descriptions.","tag":"vocab","lessons":[
-    {"id":"b2-3","title":"Descriptive Adjectives","desc":"Expand beyond good and bad — vivid descriptions.","tag":"vocab","tab":"words","wordCat":"adjectives"}
+  {"id":"b2-3","icon":"🔮","title":"Conditional Tense","desc":"If I had more time I would travel — conditional structures.","tag":"grammar","lessons":[
+    {"id":"b2-3a","title":"Real Conditionals (1st)","desc":"If it rains, I'll stay home. Talking about likely future outcomes.","tag":"grammar","tab":"lessons","lessonTitle":"First Conditional"},
+    {"id":"b2-3b","title":"Hypothetical Conditionals (2nd)","desc":"If I won the lottery, I would travel the world. Unreal present/future.","tag":"grammar","tab":"lessons","lessonTitle":"Second Conditional"},
+    {"id":"b2-3c","title":"Past Conditionals (3rd)","desc":"If she had studied, she would have passed. Regret and past hypotheticals.","tag":"grammar","tab":"lessons","lessonTitle":"Third Conditional"},
+    {"id":"b2-3d","title":"Conditionals in Conversation","desc":"Practice all conditional types in a natural back-and-forth.","tag":"convo","tab":"convo","topic":"Hypotheticals & Wishes"}
   ]},
-  {"id":"b2-4","icon":"📅","title":"Making & Declining Plans","desc":"Social negotiation — agree, cancel, reschedule.","tag":"convo","lessons":[
-    {"id":"b2-4","title":"Making & Declining Plans","desc":"Social negotiation — agree, cancel, reschedule.","tag":"convo","tab":"lessons","lessonTitle":"Making Plans"}
+  {"id":"b2-4","icon":"🎨","title":"Descriptive Adjectives","desc":"Expand beyond good and bad — vivid, precise descriptions.","tag":"vocab","lessons":[
+    {"id":"b2-4a","title":"Advanced Descriptive Words","desc":"Breathtaking, gloomy, vibrant, bizarre, subtle, profound, elegant.","tag":"vocab","tab":"words","wordCat":"adjectives"},
+    {"id":"b2-4b","title":"Describing Places & Scenes","desc":"Paint a picture in words — a city, a meal, a person you met.","tag":"convo","tab":"convo","topic":"Descriptive Speaking"}
   ]},
-  {"id":"b2-5","icon":"💼","title":"Work & Professional Life","desc":"Meetings, emails, workplace phrases.","tag":"convo","lessons":[
-    {"id":"b2-5","title":"Work & Professional Life","desc":"Meetings, emails, workplace phrases.","tag":"convo","tab":"convo","topic":"Work & Career"}
+  {"id":"b2-5","icon":"📅","title":"Making & Declining Plans","desc":"Propose, negotiate, accept, cancel — social fluency.","tag":"convo","lessons":[
+    {"id":"b2-5a","title":"Making Plans","desc":"Would you be free Saturday? How about we meet at 7? Plan-making phrases.","tag":"vocab","tab":"lessons","lessonTitle":"Making Plans"},
+    {"id":"b2-5b","title":"Declining & Rescheduling","desc":"I'm afraid I can't make it. Could we reschedule? Polite refusal.","tag":"convo","tab":"convo","topic":"Social Plans"}
   ]},
-  {"id":"b2-6","icon":"🏠","title":"Renting & Housing","desc":"Apartment hunting, contracts, talking to a landlord.","tag":"vocab","lessons":[
-    {"id":"b2-6","title":"Renting & Housing","desc":"Apartment hunting, contracts, talking to a landlord.","tag":"vocab","tab":"lessons","lessonTitle":"Renting an Apartment"}
+  {"id":"b2-6","icon":"💼","title":"Work & Professional Life","desc":"Meetings, emails, negotiations, and office small talk.","tag":"convo","lessons":[
+    {"id":"b2-6a","title":"Workplace Vocabulary","desc":"Deadline, agenda, proposal, client, colleague, budget, feedback, KPI.","tag":"vocab","tab":"lessons","lessonTitle":"Workplace Vocabulary"},
+    {"id":"b2-6b","title":"Meetings & Emails","desc":"I'm writing to follow up. Let's circle back on that. Professional phrases.","tag":"vocab","tab":"lessons","lessonTitle":"Meetings and Professional Emails"},
+    {"id":"b2-6c","title":"Work Conversation","desc":"How's the project going? Telling your boss bad news. Professional roleplay.","tag":"convo","tab":"convo","topic":"Work & Career"}
   ]},
-  {"id":"b2-7","icon":"🍳","title":"Cooking & Recipes","desc":"Follow a recipe — ingredients, quantities, methods.","tag":"vocab","lessons":[
-    {"id":"b2-7","title":"Cooking & Recipes","desc":"Follow a recipe — ingredients, quantities, methods.","tag":"vocab","tab":"lessons","lessonTitle":"Cooking & Recipes"}
+  {"id":"b2-7","icon":"🏠","title":"Renting & Housing","desc":"Apartment hunting, contracts, talking to a landlord.","tag":"vocab","lessons":[
+    {"id":"b2-7a","title":"Housing Vocabulary","desc":"Lease, deposit, utilities, landlord, tenant, furnished, neighborhood, mortgage.","tag":"vocab","tab":"lessons","lessonTitle":"Housing Vocabulary"},
+    {"id":"b2-7b","title":"Renting an Apartment","desc":"Viewing a flat, negotiating rent, reporting a maintenance issue.","tag":"convo","tab":"convo","topic":"Renting & Housing"}
   ]},
-  {"id":"b2-8","icon":"📰","title":"Current Events Chat","desc":"Discuss real news, share your views.","tag":"convo","lessons":[
-    {"id":"b2-8","title":"Current Events Chat","desc":"Discuss real news, share your views.","tag":"convo","tab":"convo","topic":"Current Events"}
+  {"id":"b2-8","icon":"🍳","title":"Cooking & Recipes","desc":"Follow a recipe — ingredients, quantities, methods.","tag":"vocab","lessons":[
+    {"id":"b2-8a","title":"Cooking Vocabulary","desc":"Chop, boil, fry, bake, marinate, simmer, stir, drain, season, serve.","tag":"vocab","tab":"lessons","lessonTitle":"Cooking Vocabulary"},
+    {"id":"b2-8b","title":"Describing a Recipe","desc":"Walk Aria through how to make your favorite dish step by step.","tag":"convo","tab":"convo","topic":"Cooking & Recipes"}
   ]},
-  {"id":"b2-9","icon":"😄","title":"Humor & Small Talk","desc":"Jokes, idioms, being funny in the language.","tag":"convo","lessons":[
-    {"id":"b2-9","title":"Humor & Small Talk","desc":"Jokes, idioms, being funny in the language.","tag":"convo","tab":"lessons","lessonTitle":"Humor & Small Talk"}
+  {"id":"b2-9","icon":"🏛️","title":"Politics & Government","desc":"Elections, parties, policy, rights — civic vocabulary.","tag":"vocab","lessons":[
+    {"id":"b2-9a","title":"Political Vocabulary","desc":"Election, democracy, parliament, policy, vote, minister, constitution.","tag":"vocab","tab":"lessons","lessonTitle":"Political Vocabulary"},
+    {"id":"b2-9b","title":"Discussing Current Affairs","desc":"Who won the election? What's the government doing about it? Political chat.","tag":"convo","tab":"convo","topic":"Politics & Government"}
   ]},
-  {"id":"b2-10","icon":"⚽","title":"World Cup 2026","desc":"Teams, predictions, fan talk — timely sports convo.","tag":"convo","sug":true,"lessons":[
-    {"id":"b2-10","title":"World Cup 2026","desc":"Teams, predictions, fan talk — timely sports convo.","tag":"convo","tab":"convo","topic":"World Cup 2026"}
+  {"id":"b2-10","icon":"💹","title":"Economy & Business","desc":"Trade, markets, companies, and economic concepts.","tag":"vocab","lessons":[
+    {"id":"b2-10a","title":"Economic Vocabulary","desc":"GDP, inflation, unemployment, trade, investment, startup, revenue, profit.","tag":"vocab","tab":"lessons","lessonTitle":"Economic Vocabulary"},
+    {"id":"b2-10b","title":"Business Conversation","desc":"What does your company do? Pitching an idea, discussing strategy.","tag":"convo","tab":"convo","topic":"Business & Economy"}
+  ]},
+  {"id":"b2-11","icon":"🗺️","title":"History & Geography","desc":"Talk about countries, landmarks, and historical events.","tag":"vocab","lessons":[
+    {"id":"b2-11a","title":"Geography Vocabulary","desc":"Border, continent, capital, peninsula, coast, region, population, territory.","tag":"vocab","tab":"lessons","lessonTitle":"Geography Vocabulary"},
+    {"id":"b2-11b","title":"Discussing History","desc":"When was this founded? What happened during the revolution? History chat.","tag":"convo","tab":"convo","topic":"History & Geography"}
+  ]},
+  {"id":"b2-12","icon":"🎵","title":"Art, Music & Film","desc":"Discuss creative works — movies, songs, paintings, books.","tag":"convo","lessons":[
+    {"id":"b2-12a","title":"Arts Vocabulary","desc":"Genre, artist, director, album, exhibition, canvas, sculpture, premiere.","tag":"vocab","tab":"lessons","lessonTitle":"Arts Vocabulary"},
+    {"id":"b2-12b","title":"Recommending & Reviewing","desc":"Have you seen this film? I thought the ending was brilliant. Arts chat.","tag":"convo","tab":"convo","topic":"Culture & Arts"}
+  ]},
+  {"id":"b2-13","icon":"🌱","title":"Environmental Issues","desc":"Climate, sustainability, and environmental debate vocabulary.","tag":"vocab","lessons":[
+    {"id":"b2-13a","title":"Environment Vocabulary","desc":"Carbon footprint, renewable energy, deforestation, extinction, emissions.","tag":"vocab","tab":"lessons","lessonTitle":"Environmental Vocabulary"},
+    {"id":"b2-13b","title":"Debating Environmental Issues","desc":"Should governments do more? Electric cars vs public transport debate.","tag":"convo","tab":"convo","topic":"Environment & Climate"}
+  ]},
+  {"id":"b2-14","icon":"❤️","title":"Relationships & Dating","desc":"Romance, dating culture, talking about love and relationships.","tag":"convo","lessons":[
+    {"id":"b2-14a","title":"Romance Vocabulary","desc":"Date, attraction, commit, trust, break up, fall in love, jealous, loyal.","tag":"vocab","tab":"lessons","lessonTitle":"Romance and Relationships Vocabulary"},
+    {"id":"b2-14b","title":"Talking About Relationships","desc":"How did you two meet? What do you look for in a partner? Dating chat.","tag":"convo","tab":"convo","topic":"Relationships & Love"}
+  ]},
+  {"id":"b2-15","icon":"😄","title":"Humor & Small Talk","desc":"Jokes, idioms, being funny and relaxed in the language.","tag":"convo","lessons":[
+    {"id":"b2-15a","title":"Humor Vocabulary","desc":"Pun, sarcasm, irony, wit, joke, tease, laugh, banter, wordplay.","tag":"vocab","tab":"lessons","lessonTitle":"Humor Vocabulary"},
+    {"id":"b2-15b","title":"Being Funny in a New Language","desc":"Timing, wordplay, self-deprecation — how humor works across cultures.","tag":"convo","tab":"convo","topic":"Humor & Small Talk"}
+  ]},
+  {"id":"b2-16","icon":"⚽","title":"World Cup 2026","desc":"Teams, predictions, fan phrases — timely sports conversation.","tag":"convo","sug":true,"lessons":[
+    {"id":"b2-16","title":"World Cup 2026","desc":"Groups, upsets, goal celebrations, post-match analysis in the target language.","tag":"convo","tab":"convo","topic":"World Cup 2026"}
+  ]},
+  {"id":"b2-17","icon":"📰","title":"Current Events & Media","desc":"Discuss real news, newspapers, media literacy.","tag":"convo","lessons":[
+    {"id":"b2-17a","title":"Media Vocabulary","desc":"Headline, article, reporter, broadcast, bias, editorial, source, clickbait.","tag":"vocab","tab":"lessons","lessonTitle":"Media Vocabulary"},
+    {"id":"b2-17b","title":"Current Events Chat","desc":"What's in the news? Discuss a real story, share your view.","tag":"convo","tab":"convo","topic":"Current Events"}
+  ]},
+  {"id":"b2-18","icon":"⚖️","title":"Legal Basics","desc":"Rights, contracts, legal situations — essential adult vocabulary.","tag":"vocab","lessons":[
+    {"id":"b2-18a","title":"Legal Vocabulary","desc":"Contract, rights, attorney, court, sue, fine, witness, guilty, appeal.","tag":"vocab","tab":"lessons","lessonTitle":"Legal Vocabulary"},
+    {"id":"b2-18b","title":"Legal Scenarios","desc":"My landlord isn't returning my deposit. I need a lawyer. Legal phrases.","tag":"convo","tab":"convo","topic":"Legal Situations"}
   ]}
 ]},
-{"level":"C1","label":"Advanced","desc":"Fluent, spontaneous expression.","nodes":[
-  {"id":"c1-1","icon":"🧠","title":"Nuance & Register","desc":"Formal vs informal, hedging, softening language.","tag":"grammar","lessons":[
-    {"id":"c1-1","title":"Nuance & Register","desc":"Formal vs informal, hedging, softening language.","tag":"grammar","tab":"lessons","lessonTitle":"Nuance & Register"}
+{"level":"C1","label":"Advanced","desc":"Fluent, spontaneous, and precise expression.","nodes":[
+  {"id":"c1-1","icon":"🧠","title":"Nuance & Register","desc":"Formal vs informal, hedging, softening — speaking with sophistication.","tag":"grammar","lessons":[
+    {"id":"c1-1a","title":"Register — Formal vs Informal","desc":"When to use tu vs vous, du vs Sie, tú vs usted — and how to switch.","tag":"grammar","tab":"lessons","lessonTitle":"Formal vs Informal Register"},
+    {"id":"c1-1b","title":"Hedging & Softening Language","desc":"I was wondering if… It might be worth considering… Diplomatic speech.","tag":"grammar","tab":"lessons","lessonTitle":"Hedging and Softening Language"},
+    {"id":"c1-1c","title":"Nuance in Practice","desc":"Roleplay switching registers — job interview vs friend conversation.","tag":"convo","tab":"convo","topic":"Register & Formality"}
   ]},
-  {"id":"c1-2","icon":"🔀","title":"Advanced Connectors","desc":"Nevertheless, whereas, provided that, notwithstanding.","tag":"grammar","lessons":[
-    {"id":"c1-2","title":"Advanced Connectors","desc":"Nevertheless, whereas, provided that, notwithstanding.","tag":"grammar","tab":"words","wordCat":"connectors"}
+  {"id":"c1-2","icon":"🔀","title":"Advanced Connectors","desc":"Nevertheless, whereas, provided that — linking ideas like a native.","tag":"grammar","lessons":[
+    {"id":"c1-2a","title":"Contrast & Concession","desc":"Nevertheless, however, although, despite, even though, yet.","tag":"grammar","tab":"words","wordCat":"connectors"},
+    {"id":"c1-2b","title":"Condition & Result","desc":"Provided that, as long as, consequently, therefore, as a result.","tag":"grammar","tab":"lessons","lessonTitle":"Condition and Result Connectors"},
+    {"id":"c1-2c","title":"Addition & Emphasis","desc":"Furthermore, in addition, above all, what's more, not only but also.","tag":"grammar","tab":"lessons","lessonTitle":"Addition and Emphasis"}
   ]},
-  {"id":"c1-3","icon":"⚖️","title":"Debate & Argumentation","desc":"Structure arguments, concede points, rebut.","tag":"convo","lessons":[
-    {"id":"c1-3","title":"Debate & Argumentation","desc":"Structure arguments, concede points, rebut.","tag":"convo","tab":"convo","topic":"Technology & AI"}
+  {"id":"c1-3","icon":"⚖️","title":"Debate & Argumentation","desc":"Structure arguments, concede points, rebut — debate like a pro.","tag":"convo","lessons":[
+    {"id":"c1-3a","title":"Argument Structure","desc":"Thesis, evidence, counterargument, rebuttal — how to build a position.","tag":"vocab","tab":"lessons","lessonTitle":"Structuring an Argument"},
+    {"id":"c1-3b","title":"Conceding & Rebutting","desc":"You have a point, however… While I understand that… That may be true, but…","tag":"grammar","tab":"lessons","lessonTitle":"Conceding and Rebutting"},
+    {"id":"c1-3c","title":"Live Debate Practice","desc":"Pick a side and debate Aria on a topic: AI, social media, immigration.","tag":"convo","tab":"convo","topic":"Debate & Argumentation"}
   ]},
   {"id":"c1-4","icon":"🎭","title":"Idioms & Set Phrases","desc":"Native-level expressions that don't translate literally.","tag":"vocab","lessons":[
-    {"id":"c1-4","title":"Idioms & Set Phrases","desc":"Native-level expressions that don't translate literally.","tag":"vocab","tab":"lessons","lessonTitle":"Idioms & Expressions"}
+    {"id":"c1-4a","title":"Common Idioms","desc":"Kick the bucket, break the ice, bite the bullet — idioms in context.","tag":"vocab","tab":"lessons","lessonTitle":"Common Idioms"},
+    {"id":"c1-4b","title":"Collocations & Fixed Phrases","desc":"Make a decision (not do), heavy rain (not strong) — what goes with what.","tag":"vocab","tab":"lessons","lessonTitle":"Collocations and Fixed Phrases"},
+    {"id":"c1-4c","title":"Using Idioms Naturally","desc":"Drop idioms into conversation without it sounding forced.","tag":"convo","tab":"convo","topic":"Idioms & Expressions"}
   ]},
-  {"id":"c1-5","icon":"📺","title":"Media & Culture","desc":"Movies, music, literature — talk about culture like a native.","tag":"convo","lessons":[
-    {"id":"c1-5","title":"Media & Culture","desc":"Movies, music, literature — talk about culture like a native.","tag":"convo","tab":"convo","topic":"Culture & Society"}
+  {"id":"c1-5","icon":"📺","title":"Media & Culture","desc":"Movies, music, literature — discuss culture at a native level.","tag":"convo","lessons":[
+    {"id":"c1-5a","title":"Film & TV Analysis","desc":"Plot, character arc, cinematography, director's vision, themes.","tag":"vocab","tab":"lessons","lessonTitle":"Film and TV Analysis"},
+    {"id":"c1-5b","title":"Music & Literature","desc":"Lyrics, metaphor, verse, prose, narrative voice, symbolism.","tag":"vocab","tab":"lessons","lessonTitle":"Music and Literature"},
+    {"id":"c1-5c","title":"Culture Deep Dive","desc":"What's a classic film/book in the target language? Discuss it with Aria.","tag":"convo","tab":"convo","topic":"Culture & Society"}
   ]},
-  {"id":"c1-6","icon":"✍️","title":"Writing Style","desc":"Formal letters, emails, essays — written register.","tag":"grammar","lessons":[
-    {"id":"c1-6","title":"Writing Style","desc":"Formal letters, emails, essays — written register.","tag":"grammar","tab":"lessons","lessonTitle":"Writing Style"}
+  {"id":"c1-6","icon":"✍️","title":"Writing Style & Rhetoric","desc":"Formal letters, essays, persuasive writing — master written register.","tag":"grammar","lessons":[
+    {"id":"c1-6a","title":"Formal Writing Conventions","desc":"Opening, closing, tone, structure for letters, emails, and essays.","tag":"grammar","tab":"lessons","lessonTitle":"Formal Writing Conventions"},
+    {"id":"c1-6b","title":"Persuasive Rhetoric","desc":"Ethos, pathos, logos — techniques of persuasion in speech and writing.","tag":"grammar","tab":"lessons","lessonTitle":"Persuasive Rhetoric"},
+    {"id":"c1-6c","title":"Writing Out Loud","desc":"Dictate a persuasive paragraph and get feedback on style and word choice.","tag":"convo","tab":"convo","topic":"Writing & Communication"}
   ]},
-  {"id":"c1-7","icon":"🔬","title":"Abstract Concepts","desc":"Time, justice, freedom — talk about ideas.","tag":"convo","lessons":[
-    {"id":"c1-7","title":"Abstract Concepts","desc":"Time, justice, freedom — talk about ideas.","tag":"convo","tab":"convo","topic":"Philosophy & Ideas"}
+  {"id":"c1-7","icon":"🔬","title":"Abstract Concepts","desc":"Time, justice, freedom, identity — discuss complex ideas fluently.","tag":"convo","lessons":[
+    {"id":"c1-7a","title":"Abstract Vocabulary","desc":"Justice, freedom, equality, identity, consciousness, ideology, paradox.","tag":"vocab","tab":"lessons","lessonTitle":"Abstract Vocabulary"},
+    {"id":"c1-7b","title":"Philosophical Discussion","desc":"What does freedom mean to you? Is justice always fair? Big ideas chat.","tag":"convo","tab":"convo","topic":"Philosophy & Ideas"}
+  ]},
+  {"id":"c1-8","icon":"🧪","title":"Science & Technology Deep Dive","desc":"AI, medicine, engineering — explain and discuss technical topics.","tag":"vocab","lessons":[
+    {"id":"c1-8a","title":"Science Vocabulary","desc":"Hypothesis, experiment, evidence, data, algorithm, gene, quantum, theory.","tag":"vocab","tab":"lessons","lessonTitle":"Science Vocabulary"},
+    {"id":"c1-8b","title":"Explaining Complex Topics Simply","desc":"Explain how a vaccine works, or what AI does — clarity over jargon.","tag":"convo","tab":"convo","topic":"Science & Technology"}
+  ]},
+  {"id":"c1-9","icon":"💼","title":"Business Negotiation","desc":"Deals, contracts, compromise — professional negotiation language.","tag":"convo","lessons":[
+    {"id":"c1-9a","title":"Negotiation Vocabulary","desc":"Offer, counteroffer, concession, terms, deadline, leverage, stake.","tag":"vocab","tab":"lessons","lessonTitle":"Negotiation Vocabulary"},
+    {"id":"c1-9b","title":"Negotiation Roleplay","desc":"Negotiate a deal with Aria — price, terms, and closing the agreement.","tag":"convo","tab":"convo","topic":"Business Negotiation"}
+  ]},
+  {"id":"c1-10","icon":"🧬","title":"Psychology & Human Behavior","desc":"Emotions, motivation, behavior — the language of the mind.","tag":"vocab","lessons":[
+    {"id":"c1-10a","title":"Psychology Vocabulary","desc":"Anxiety, motivation, trauma, resilience, bias, empathy, cognition.","tag":"vocab","tab":"lessons","lessonTitle":"Psychology Vocabulary"},
+    {"id":"c1-10b","title":"Mental Health Conversation","desc":"Talking about stress, burnout, therapy — sensitive but important language.","tag":"convo","tab":"convo","topic":"Mental Health & Wellbeing"}
+  ]},
+  {"id":"c1-11","icon":"📜","title":"History & Narrative","desc":"Tell and discuss historical events with fluency and accuracy.","tag":"convo","lessons":[
+    {"id":"c1-11a","title":"Historical Narrative Vocabulary","desc":"Revolution, empire, colonialism, treaty, regime, era, turning point.","tag":"vocab","tab":"lessons","lessonTitle":"Historical Narrative Vocabulary"},
+    {"id":"c1-11b","title":"Discussing a Historical Event","desc":"Explain a major event in the target country's history and discuss its impact.","tag":"convo","tab":"convo","topic":"History & Society"}
+  ]},
+  {"id":"c1-12","icon":"🌐","title":"Globalization & Society","desc":"Migration, cultural identity, globalization — macro-level discussion.","tag":"convo","lessons":[
+    {"id":"c1-12a","title":"Society & Culture Vocabulary","desc":"Globalization, immigration, integration, inequality, diversity, diaspora.","tag":"vocab","tab":"lessons","lessonTitle":"Society and Culture Vocabulary"},
+    {"id":"c1-12b","title":"Big Picture Discussion","desc":"Is globalization good? What defines a culture? Society-level debate.","tag":"convo","tab":"convo","topic":"Culture & Society"}
+  ]},
+  {"id":"c1-13","icon":"😏","title":"Sarcasm, Irony & Wit","desc":"Understand and use subtle humor — the native speaker's secret weapon.","tag":"convo","lessons":[
+    {"id":"c1-13a","title":"Sarcasm & Irony","desc":"Oh sure, that's a great plan. Right… — recognizing and using irony.","tag":"vocab","tab":"lessons","lessonTitle":"Sarcasm and Irony"},
+    {"id":"c1-13b","title":"Wit in Conversation","desc":"Quick comebacks, playful teasing, banter — keeping it sharp and light.","tag":"convo","tab":"convo","topic":"Humor & Wit"}
+  ]},
+  {"id":"c1-14","icon":"💬","title":"Advanced Free Chat","desc":"No scaffolding, no hints — full C1 conversation on any topic.","tag":"convo","lessons":[
+    {"id":"c1-14","title":"Advanced Free Chat","desc":"Open-ended C1 conversation — Aria will challenge your vocabulary and precision.","tag":"convo","tab":"convo","topic":"Philosophy & Ideas"}
   ]}
 ]},
-{"level":"C2","label":"Mastery","desc":"Virtually everything — effortless.","nodes":[
-  {"id":"c2-1","icon":"🌊","title":"Spontaneous Free Talk","desc":"Open conversation. No hints. Pure fluency.","tag":"convo","lessons":[
-    {"id":"c2-1","title":"Spontaneous Free Talk","desc":"Open conversation. No hints. Pure fluency.","tag":"convo","tab":"convo","topic":"Current Events"}
+{"level":"C2","label":"Mastery","desc":"Virtually indistinguishable from a native speaker.","nodes":[
+  {"id":"c2-1","icon":"🌊","title":"Spontaneous Free Talk","desc":"Open conversation. No hints. No safety net. Pure fluency.","tag":"convo","lessons":[
+    {"id":"c2-1a","title":"Spontaneous Monologue","desc":"Pick any topic. Talk for 2 minutes without stopping. Aria gives feedback.","tag":"convo","tab":"convo","topic":"Spontaneous Speaking"},
+    {"id":"c2-1b","title":"Rapid Fire Conversation","desc":"Fast-paced exchange — Aria fires questions and you respond without pause.","tag":"convo","tab":"convo","topic":"Current Events"}
   ]},
-  {"id":"c2-2","icon":"🎯","title":"Precision Vocabulary","desc":"Fine-tune word choice, native-level accuracy.","tag":"grammar","lessons":[
-    {"id":"c2-2","title":"Precision Vocabulary","desc":"Fine-tune word choice, native-level accuracy.","tag":"grammar","tab":"verbs","verb":"random"}
+  {"id":"c2-2","icon":"🎯","title":"Precision Vocabulary","desc":"The right word — not just a good word. Synonyms, connotation, register.","tag":"grammar","lessons":[
+    {"id":"c2-2a","title":"Synonyms & Shades of Meaning","desc":"Happy vs elated vs content. Afraid vs terrified. Precision word choice.","tag":"grammar","tab":"verbs","verb":"random"},
+    {"id":"c2-2b","title":"Connotation & Register","desc":"Home vs residence. Help vs assist. The weight a word carries.","tag":"grammar","tab":"lessons","lessonTitle":"Connotation and Register"}
   ]},
-  {"id":"c2-3","icon":"🗞️","title":"News Discussion","desc":"Read and discuss a real article — C2 speed and vocab.","tag":"convo","lessons":[
-    {"id":"c2-3","title":"News Discussion","desc":"Read and discuss a real article — C2 speed and vocab.","tag":"convo","tab":"convo","topic":"Current Events"}
+  {"id":"c2-3","icon":"🗞️","title":"Live News Discussion","desc":"Read and dissect a real article — C2 speed and critical vocabulary.","tag":"convo","lessons":[
+    {"id":"c2-3a","title":"Analyzing a News Piece","desc":"Summarize, evaluate bias, challenge the claims — critical media literacy.","tag":"convo","tab":"convo","topic":"Current Events"},
+    {"id":"c2-3b","title":"Opinion Editorial","desc":"Dictate your own opinion piece on a current issue. Aria edits and debates you.","tag":"convo","tab":"convo","topic":"Debate & Argumentation"}
   ]},
-  {"id":"c2-4","icon":"🎤","title":"Storytelling","desc":"Tell a story with emotion, pacing, and native flow.","tag":"convo","lessons":[
-    {"id":"c2-4","title":"Storytelling","desc":"Tell a story with emotion, pacing, and native flow.","tag":"convo","tab":"lessons","lessonTitle":"Storytelling"}
+  {"id":"c2-4","icon":"🎤","title":"Storytelling & Performance","desc":"Captivate with a story — timing, emotion, native-level flow.","tag":"convo","lessons":[
+    {"id":"c2-4a","title":"Narrative Techniques","desc":"Foreshadowing, pacing, suspense, climax, resolution — telling a great story.","tag":"vocab","tab":"lessons","lessonTitle":"Narrative Techniques"},
+    {"id":"c2-4b","title":"Tell Aria a Story","desc":"Tell a real or invented story. Aria gives feedback on pacing, word choice, and impact.","tag":"convo","tab":"convo","topic":"Storytelling"}
   ]},
-  {"id":"c2-5","icon":"🌍","title":"Regional Accents & Slang","desc":"Regional dialects, slang, and accent variation across the main speaking regions.","tag":"vocab","lessons":[
-    {"id":"c2-5","title":"Regional Accents & Slang","desc":"Regional dialects, slang, and accent variation across the main speaking regions.","tag":"vocab","tab":"lessons","lessonTitle":"Regional Accents & Slang"}
+  {"id":"c2-5","icon":"🎭","title":"Literature & Poetry","desc":"Analyze poems, excerpts, and literary devices in the target language.","tag":"vocab","lessons":[
+    {"id":"c2-5a","title":"Literary Devices","desc":"Metaphor, simile, alliteration, personification, irony, allegory.","tag":"vocab","tab":"lessons","lessonTitle":"Literary Devices"},
+    {"id":"c2-5b","title":"Literature Discussion","desc":"Discuss a poem or passage from a classic work in the target language.","tag":"convo","tab":"convo","topic":"Literature & Poetry"}
+  ]},
+  {"id":"c2-6","icon":"🧠","title":"Philosophy Debate","desc":"Consciousness, ethics, meaning — deep philosophical argument.","tag":"convo","lessons":[
+    {"id":"c2-6a","title":"Philosophical Vocabulary","desc":"Epistemology, ethics, consciousness, determinism, virtue, nihilism.","tag":"vocab","tab":"lessons","lessonTitle":"Philosophical Vocabulary"},
+    {"id":"c2-6b","title":"Philosophy Debate with Aria","desc":"Pick a proposition: Free will is an illusion. Argue for or against.","tag":"convo","tab":"convo","topic":"Philosophy & Ideas"}
+  ]},
+  {"id":"c2-7","icon":"😂","title":"Comedy & Wit","desc":"Stand-up, timing, wordplay — being genuinely funny in the language.","tag":"convo","lessons":[
+    {"id":"c2-7a","title":"Comedy Mechanics","desc":"Setup, punchline, misdirection, timing — how comedy works linguistically.","tag":"vocab","tab":"lessons","lessonTitle":"Comedy Mechanics"},
+    {"id":"c2-7b","title":"Improv & Banter","desc":"Quick wit, playful banter, improvised comedy with Aria as your audience.","tag":"convo","tab":"convo","topic":"Humor & Wit"}
+  ]},
+  {"id":"c2-8","icon":"🎙️","title":"Speechmaking & Rhetoric","desc":"Public speaking, persuasion, and oratory — lead the room.","tag":"convo","lessons":[
+    {"id":"c2-8a","title":"Rhetoric & Oratory","desc":"Anaphora, tricolon, allusion, call to action — tools of great speakers.","tag":"vocab","tab":"lessons","lessonTitle":"Rhetoric and Oratory"},
+    {"id":"c2-8b","title":"Deliver a Speech","desc":"Give a 3-minute speech on any topic. Aria gives feedback on delivery and language.","tag":"convo","tab":"convo","topic":"Public Speaking"}
+  ]},
+  {"id":"c2-9","icon":"⚕️","title":"Technical Domains","desc":"Law, medicine, finance — professional C2 vocabulary and communication.","tag":"vocab","lessons":[
+    {"id":"c2-9a","title":"Legal Language","desc":"Liability, defendant, precedent, statute, litigation, jurisdiction, verdict.","tag":"vocab","tab":"lessons","lessonTitle":"Legal Language"},
+    {"id":"c2-9b","title":"Medical Language","desc":"Prognosis, etiology, chronic, acute, inflammation, contraindication.","tag":"vocab","tab":"lessons","lessonTitle":"Medical Language"},
+    {"id":"c2-9c","title":"Financial Language","desc":"Liquidity, equity, portfolio, derivatives, fiscal, hedge, dividends.","tag":"vocab","tab":"lessons","lessonTitle":"Financial Language"}
+  ]},
+  {"id":"c2-10","icon":"🌍","title":"Regional Dialects & Deep Slang","desc":"Sound local — regional accents, slang, and informal native speech.","tag":"vocab","lessons":[
+    {"id":"c2-10a","title":"Regional Dialect Variations","desc":"How Spanish differs in Mexico vs Spain, French in France vs Quebec, etc.","tag":"vocab","tab":"lessons","lessonTitle":"Regional Dialect Variations"},
+    {"id":"c2-10b","title":"Slang & Colloquial Speech","desc":"Street-level informal language — slang, contractions, casual native speech.","tag":"vocab","tab":"lessons","lessonTitle":"Slang and Colloquial Speech"},
+    {"id":"c2-10c","title":"Sounding Native","desc":"Full unscripted conversation where Aria uses natural native-speed speech.","tag":"convo","tab":"convo","topic":"Culture & Society"}
   ]}
 ]}
 ];
