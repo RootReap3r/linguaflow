@@ -1186,6 +1186,27 @@ const AZURE_TTS_VOICES={
 
 function escSSML(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
+// For languages with non-Latin scripts (Russian, Japanese, Korean, Chinese),
+// wrap English-only words/phrases in <lang xml:lang="en-US"> so Azure pronounces
+// them clearly instead of through the target language's phonology.
+const NON_LATIN_LANGS=new Set(['Russian','Japanese','Korean','Chinese']);
+function addSSMLLangSwitches(text,lang){
+  if(!NON_LATIN_LANGS.has(lang))return escSSML(text);
+  // Split on whitespace boundaries, group consecutive English-only tokens
+  const tokens=text.split(/(\s+)/);
+  let out='',enBuf='',inEn=false;
+  const flush=()=>{if(enBuf){out+=`<lang xml:lang="en-US">${escSSML(enBuf.trim())}</lang> `;enBuf='';}inEn=false;};
+  tokens.forEach(tok=>{
+    if(/^\s+$/.test(tok)){if(inEn)enBuf+=tok;else out+=tok;return;}
+    // Token is "English-only" if it contains only ASCII letters/digits/punctuation
+    const isEn=/^[a-zA-Z0-9\s'"\-.,!?;:()/]+$/.test(tok)&&tok.trim().length>0;
+    if(isEn){inEn=true;enBuf+=tok;}
+    else{flush();out+=escSSML(tok);}
+  });
+  flush();
+  return out;
+}
+
 async function speakAzure(text,lang,onEnd,streamEl){
   if(currentAudioEl){try{currentAudioEl.pause();currentAudioEl.src='';}catch(e){}currentAudioEl=null;}
   setStatus('speaking');
@@ -1196,7 +1217,7 @@ async function speakAzure(text,lang,onEnd,streamEl){
     const voice=AZURE_TTS_VOICES[voiceKey]||AZURE_TTS_VOICES.Spanish;
     // Extract locale from voice name (e.g. es-MX from es-MX-DaliaNeural)
     const voiceLang=voice.split('-').slice(0,2).join('-');
-    const ssml=`<speak version="1.0" xml:lang="${voiceLang}"><voice name="${voice}"><prosody rate="0.95">${escSSML(text)}</prosody></voice></speak>`;
+    const ssml=`<speak version="1.0" xml:lang="${voiceLang}"><voice name="${voice}"><prosody rate="0.95">${addSSMLLangSwitches(text,lang)}</prosody></voice></speak>`;
     const res=await fetch(`https://${KEYS.azure_region}.tts.speech.microsoft.com/cognitiveservices/v1`,{
       method:'POST',
       headers:{'Ocp-Apim-Subscription-Key':KEYS.azure,'Content-Type':'application/ssml+xml','X-Microsoft-OutputFormat':'audio-48khz-96kbitrate-mono-mp3'},
@@ -1800,17 +1821,17 @@ LESSON HAS THREE PHASES — flow through them naturally without announcing trans
 PHASE 1 — CONJUGATION WARM-UP (roughly the first ${Math.max(1,Math.round(vc*1.5))} exchanges):
 1. Greet briefly, introduce the topic in one sentence.
 2. ${verbIntro}
-3. Before drilling, briefly show the student the key conjugation forms they'll practice — e.g. "For être: je suis, tu es, il/elle est." Then ask them ONE conjugation question at a time. E.g. "How do you say 'I am'?" Wait for their answer. Correct warmly if needed.
-4. Once the student has responded to all ${vc} verb${vc>1?'s':''} (even imperfectly), transition naturally into Phase 2 — do NOT announce the transition, just start teaching the topic.
+3. TEACH BEFORE DRILLING — for each verb, first model all key conjugation forms out loud with their English meaning. E.g. "The verb être means 'to be'. Here are the forms: je suis — I am, tu es — you are, il/elle est — he/she is. Say it with me: je suis." Give the student a moment to absorb, then ask ONE drill question. E.g. "Now you try — how would you say 'I am'?" Correct warmly if needed, then move to the next form or verb.
+4. Once the student has practiced all ${vc} verb${vc>1?'s':''} (even imperfectly), flow naturally into Phase 2 — do NOT announce the transition.
 
 PHASE 2 — TOPIC LESSON:
 5. Teach the actual lesson content one concept at a time (1-2 sentences max per turn).
 6. Ask the student to repeat a phrase or answer a question after each concept.
 7. Weave the conjugated verbs into every example sentence.
 
-PHASE 3 — FREE PRACTICE (last ~20% of the lesson):
-8. Give the student an open prompt to use everything they've learned in a short response.
-9. Validate their effort, correct gently, wrap up warmly.
+PHASE 3 — REAL-WORLD ROLEPLAY (last ~20% of the lesson):
+8. Set up a specific real-world scenario using the lesson vocabulary (e.g., a café, restaurant, airport, market, hotel). Announce the scene in the target language with a brief English aside, then stay in character as the other person (waiter, shopkeeper, receptionist, etc.). Use the verbs and phrases from this lesson naturally in the roleplay.
+9. After 2-3 roleplay exchanges, step out of character, summarize what was practiced, praise the student warmly, and close the lesson.
 
 RULES: End every turn with exactly ONE question or prompt. Never ask multiple questions at once. Keep responses short and natural — like a real tutor, not a lecture.
 PRONUNCIATION: Be encouraging and forgiving. If you can understand what the student said, treat it as correct and move forward. Only correct pronunciation when it changes the word's meaning entirely. Never nitpick accent — accent is normal and expected.
