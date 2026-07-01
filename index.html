@@ -698,7 +698,22 @@ const PATH_DATA = [
 const LANG_META={Spanish:{flag:'🇪🇸',code:'ES'},French:{flag:'🇫🇷',code:'FR'},Italian:{flag:'🇮🇹',code:'IT'},Russian:{flag:'🇷🇺',code:'RU'},German:{flag:'🇩🇪',code:'DE'},Portuguese:{flag:'🇧🇷',code:'PT'},English:{flag:'🇬🇧',code:'EN'},Japanese:{flag:'🇯🇵',code:'JA'},Korean:{flag:'🇰🇷',code:'KO'},Chinese:{flag:'🇨🇳',code:'ZH'}};
 const LANG_INFO={Spanish:{country:'Spain and Latin America',news:'Spanish-speaking world'},French:{country:'France',news:'France'},Russian:{country:'Russia',news:'Russia'},German:{country:'Germany',news:'Germany'},Portuguese:{country:'Brazil or Portugal',news:'Brazil'}};
 const LANG_CODES={Spanish:'es-ES',French:'fr-FR',Italian:'it-IT',Russian:'ru-RU',German:'de-DE',Portuguese:'pt-BR',English:'en-US',Japanese:'ja-JP',Korean:'ko-KR',Chinese:'zh-CN'};
-const EL_VOICES={Spanish:'pNInz6obpgDQGcFmaJgB',French:'jBpfuIE2acCO8z3wKNLl',Russian:'AZnzlk1XvdvUeBnXmlld',German:'GBv7mTt0atIp3Br8iCZE',Portuguese:'pNInz6obpgDQGcFmaJgB'};
+// Azure SSML lang tag must match the voice's locale
+const AZURE_LANG_CODES={...LANG_CODES}; // same except Portuguese already pt-BR
+// ElevenLabs voices — all use eleven_multilingual_v2 for native-accent output
+// Adam (warm male) works well for most langs; female alternatives per region
+const EL_VOICES={
+  Spanish:'pNInz6obpgDQGcFmaJgB',   // Adam — strong Spanish/Latin
+  French:'jBpfuIE2acCO8z3wKNLl',    // Bella — natural French
+  Italian:'pNInz6obpgDQGcFmaJgB',   // Adam — good Italian
+  Portuguese:'pNInz6obpgDQGcFmaJgB',// Adam — good Brazilian PT
+  German:'GBv7mTt0atIp3Br8iCZE',    // Daniel — natural German
+  Russian:'AZnzlk1XvdvUeBnXmlld',   // Elli — clear Russian
+  Japanese:'pNInz6obpgDQGcFmaJgB',  // Adam — multilingual v2 handles Japanese
+  Korean:'pNInz6obpgDQGcFmaJgB',    // Adam — multilingual v2 handles Korean
+  Chinese:'pNInz6obpgDQGcFmaJgB',   // Adam — multilingual v2 handles Mandarin
+  English:'21m00Tcm4TlvDq8ikWAM',   // Rachel — natural English
+};
 const EL_STYLES={natural:{stability:.52,similarity_boost:.82,style:.35,use_speaker_boost:true},clear:{stability:.75,similarity_boost:.75,style:.1,use_speaker_boost:false},slow:{stability:.65,similarity_boost:.8,style:.2,use_speaker_boost:true}};
 const KEY_DEFS=[
   {id:'deepseek',  label:'🔵 DeepSeek',   sub:'Conversations, lessons, corrections',   url:'platform.deepseek.com',  uses:'Primary AI'},
@@ -730,7 +745,15 @@ function sanitizeHTML(html){
 }
 function escHTML(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 // Strip markdown formatting (**, *, __, _, `) so TTS and display don't emit literal punctuation
-function stripMd(s){return String(s).replace(/\*\*([^*]+)\*\*/g,'$1').replace(/\*([^*]+)\*/g,'$1').replace(/__([^_]+)__/g,'$1').replace(/_([^_]+)_/g,'$1').replace(/`([^`]+)`/g,'$1');}
+function stripMd(s){
+  return String(s)
+    .replace(/\*\*([^*]+)\*\*/g,'$1').replace(/\*([^*]+)\*/g,'$1')
+    .replace(/__([^_]+)__/g,'$1').replace(/_([^_]+)_/g,'$1')
+    .replace(/`([^`]+)`/g,'$1')
+    // strip all emoji and pictographic symbols so TTS doesn't read them aloud
+    .replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{2300}-\u{23FF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FEFF}]+/gu,'')
+    .replace(/\s{2,}/g,' ').trim();
+}
 const glInspirationStore=[];
 let KEYS={};
 KEY_DEFS.forEach(k=>{KEYS[k.id]=localStorage.getItem('lf_key_'+k.id)||'';});
@@ -1108,7 +1131,10 @@ function speakBrowser(text,lang,rate=.9,onEnd=null){
   synth.speak(u);
 }
 
-const OPENAI_TTS_VOICES={Spanish:'nova',French:'nova',Italian:'nova',Russian:'alloy',German:'alloy',Portuguese:'nova',Japanese:'shimmer',Korean:'shimmer',Chinese:'shimmer',English:'alloy'};
+// OpenAI TTS voices — shimmer/nova handle romance/Asian well, alloy for Germanic/Slavic
+const OPENAI_TTS_VOICES={Spanish:'nova',French:'nova',Italian:'nova',Portuguese:'nova',German:'alloy',Russian:'alloy',Japanese:'shimmer',Korean:'shimmer',Chinese:'shimmer',English:'alloy'};
+// Language hint codes passed to OpenAI TTS for accurate accent rendering
+const OPENAI_TTS_LANG={Spanish:'es',French:'fr',Italian:'it',Portuguese:'pt',German:'de',Russian:'ru',Japanese:'ja',Korean:'ko',Chinese:'zh',English:'en'};
 
 async function speakOpenAI(text,lang,onEnd,streamEl){
   if(currentAudioEl){try{currentAudioEl.pause();currentAudioEl.src='';}catch(e){}currentAudioEl=null;}
@@ -1117,7 +1143,7 @@ async function speakOpenAI(text,lang,onEnd,streamEl){
     const res=await fetch('https://api.openai.com/v1/audio/speech',{
       method:'POST',
       headers:{'Authorization':'Bearer '+KEYS.openai,'Content-Type':'application/json'},
-      body:JSON.stringify({model:'tts-1-hd',input:text,voice:OPENAI_TTS_VOICES[lang]||'nova',response_format:'mp3'})
+      body:JSON.stringify({model:'tts-1-hd',input:text,voice:OPENAI_TTS_VOICES[lang]||'nova',response_format:'mp3',language:OPENAI_TTS_LANG[lang]||'en'})
     });
     if(!res.ok)throw new Error('OpenAI TTS '+res.status);
     const blob=await res.blob();
@@ -1131,7 +1157,18 @@ async function speakOpenAI(text,lang,onEnd,streamEl){
   }catch(e){console.error('OpenAI TTS failed:',e);const t=document.createElement('div');t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#c0392b;color:#fff;padding:8px 16px;border-radius:8px;font-size:.8rem;z-index:9999';t.textContent='⚠️ TTS error: '+e.message;document.body.appendChild(t);setTimeout(()=>t.remove(),4000);if(KEYS.elevenlabs)await speakEL(text,lang,onEnd,streamEl);else{speakBrowser(text,lang,.9,onEnd);if(streamEl)streamEl.textContent=text;}}
 }
 
-const AZURE_TTS_VOICES={Spanish:'es-ES-ElviraNeural',French:'fr-FR-DeniseNeural',Italian:'it-IT-ElsaNeural',Russian:'ru-RU-SvetlanaNeural',German:'de-DE-KatjaNeural',Portuguese:'pt-PT-RaquelNeural',Japanese:'ja-JP-NanamiNeural',Korean:'ko-KR-SunHiNeural',Chinese:'zh-CN-XiaoxiaoNeural',English:'en-US-JennyNeural'};
+const AZURE_TTS_VOICES={
+  Spanish:'es-ES-ElviraNeural',      // Castilian Spanish — warm, clear
+  French:'fr-FR-DeniseNeural',       // French — natural Parisian
+  Italian:'it-IT-ElsaNeural',        // Italian — expressive
+  Russian:'ru-RU-SvetlanaNeural',    // Russian — clear
+  German:'de-DE-KatjaNeural',        // German — standard Hochdeutsch
+  Portuguese:'pt-BR-FranciscaNeural',// Brazilian Portuguese (most learners)
+  Japanese:'ja-JP-NanamiNeural',     // Japanese — natural, polite
+  Korean:'ko-KR-SunHiNeural',        // Korean — clear Standard Seoul
+  Chinese:'zh-CN-XiaoxiaoNeural',    // Mandarin — expressive, modern
+  English:'en-US-JennyNeural',       // English — neutral American
+};
 
 function escSSML(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
@@ -1141,8 +1178,9 @@ async function speakAzure(text,lang,onEnd,streamEl){
   try{
     if(!KEYS.azure_region)throw new Error('No Azure region set — add it in Settings');
     const voice=AZURE_TTS_VOICES[lang]||AZURE_TTS_VOICES.Spanish;
-    const langCode=getLangCode(lang);
-    const ssml=`<speak version="1.0" xml:lang="${langCode}"><voice name="${voice}">${escSSML(text)}</voice></speak>`;
+    // Use the voice's own locale (first two segments of voice name) to avoid SSML mismatch
+    const voiceLang=voice.split('-').slice(0,2).join('-');
+    const ssml=`<speak version="1.0" xml:lang="${voiceLang}"><voice name="${voice}">${escSSML(text)}</voice></speak>`;
     const res=await fetch(`https://${KEYS.azure_region}.tts.speech.microsoft.com/cognitiveservices/v1`,{
       method:'POST',
       headers:{'Ocp-Apim-Subscription-Key':KEYS.azure,'Content-Type':'application/ssml+xml','X-Microsoft-OutputFormat':'audio-24khz-48kbitrate-mono-mp3'},
